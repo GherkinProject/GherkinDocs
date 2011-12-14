@@ -9,24 +9,26 @@ import sys
 import os
 #script using dom
 from xml.dom.minidom import Document
+#ID3 tag library
+import mutagen
 
 #local libraries
-from config import *
+import config
 
 
 #This is a test function, creating a list with locations in it
-def list_files(directory, fileExtSet = defaultFileExtSet):
+def list_files(directory, fileExt = config.defaultFileExt.keys()):
     """get list of directories in the directory"""
     files = []
     for dirname, dirnames, filenames in os.walk(directory):
         for f in filenames:
-            if os.path.splitext(f)[1] in fileExtSet:
+            if os.path.splitext(f)[1] in fileExt:
                 files.append(os.path.join(dirname, f))
     return files
 
 #print list_files("/home/nicolas")
 
-def create_db(directory, fileExtSet = defaultFileExtSet, dbLocation = defaultDbLocation):
+def create_db(directory, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation):
     """create xml database (location : dbLocation) for the files in the directory with the extension in defaultFileExtSet"""
     id = 0
     doc = Document()
@@ -34,16 +36,21 @@ def create_db(directory, fileExtSet = defaultFileExtSet, dbLocation = defaultDbL
     doc.appendChild(root)
     for dirname, dirnames, filenames in os.walk(directory):
         for f in filenames:
-            if os.path.splitext(f)[1] in fileExtSet:
+            if os.path.splitext(f)[1] in fileExt.keys():
                 block = doc.createElement("file")
                 block.setAttribute("id", str(id))
                 id += 1
                 root.appendChild(block)
                 location = doc.createElement("location")
-                location.setAttribute("value", os.path.join(dirname, f))
                 block.appendChild(location)
+                locationValue = doc.createTextNode(os.path.join(dirname, f))
+                location.appendChild(locationValue)
+                #audio =  ID3(os.path.join(dirname, f))
+                audio = mutagen.File(os.path.join(dirname, f), easy = True)
+                #audio =  getattr(mutagen, fileExt[os.path.splitext(f)[1]])(os.path.join(dirname, f))
+                print audio#.pprint()
     db = open("db.xml", "w")
-    doc.writexml(db, "", "   ", '\n')
+    doc.writexml(db, "\n", "  ")
     db.close()
     
 create_db("/home/nicolas")
