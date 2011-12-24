@@ -28,15 +28,15 @@ def list_files(directory, fileExt = config.defaultFileExt.keys()):
 
 #print list_files("/home/nicolas")
 
-def create_db(directory, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation):
-    """create xml database (location : dbLocation) for the files in the directory with the extension in defaultFileExtSet"""
+def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation):
+    """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""
     id = 0
     doc = Document()
     root = doc.createElement("db")
     doc.appendChild(root)
     for dirname, dirnames, filenames in os.walk(directory):
         for f in filenames:
-            if os.path.splitext(f)[1] in fileExt.keys():
+            if os.path.splitext(f)[1] in fileExt:
                 block = doc.createElement("file")
                 block.setAttribute("id", str(id))
                 id += 1
@@ -48,15 +48,17 @@ def create_db(directory, fileExt = config.defaultFileExt, dbLocation = config.de
                 audio = mutagen.File(os.path.join(dirname, f), easy = True)
 		tag = dict()
 		tagValue = dict()
-		print audio
-		for i in audio.keys():
+		for i in set(audio.keys()).intersection(tagKept):
 		    tag[i] = doc.createElement(i)
 		    block.appendChild(tag[i])
-		    print audio[i][0].encode("utf-8")
 		    tagValue[i] = doc.createTextNode(audio[i][0].encode("utf-8"))
 		    tag[i].appendChild(tagValue[i]) 
     db = open("db.xml", "w")
     doc.writexml(db, "\n", "  ")
     db.close()
-    
-create_db("example/")
+
+if sys.argv[1] == "":
+    print "path of the data base expected"
+else:
+    create_db(sys.argv[1])
+    print "database created at " + defaultDbLocation
