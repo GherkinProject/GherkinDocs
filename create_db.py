@@ -45,12 +45,18 @@ def create_db(directory, fileExt = config.defaultFileExt, dbLocation = config.de
                 block.appendChild(location)
                 locationValue = doc.createTextNode(os.path.join(dirname, f))
                 location.appendChild(locationValue)
-                #audio =  ID3(os.path.join(dirname, f))
                 audio = mutagen.File(os.path.join(dirname, f), easy = True)
-                #audio =  getattr(mutagen, fileExt[os.path.splitext(f)[1]])(os.path.join(dirname, f))
-                print audio#.pprint()
+		tag = dict()
+		tagValue = dict()
+		print audio
+		for i in audio.keys():
+		    tag[i] = doc.createElement(i)
+		    block.appendChild(tag[i])
+		    print audio[i][0].encode("utf-8")
+		    tagValue[i] = doc.createTextNode(audio[i][0].encode("utf-8"))
+		    tag[i].appendChild(tagValue[i]) 
     db = open("db.xml", "w")
     doc.writexml(db, "\n", "  ")
     db.close()
     
-create_db("/home/nicolas")
+create_db("example/")
