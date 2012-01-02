@@ -61,4 +61,4 @@ if sys.argv[1] == "":
     print "path of the data base expected"
 else:
     create_db(sys.argv[1])
-    print "database created at " + defaultDbLocation
+    print "database created at " + config.defaultDbLocation
