@@ -17,7 +17,7 @@ import config
 
 
 #This is a test function, creating a list with locations in it
-def list_files(directory, fileExt = config.defaultFileExt.keys()):
+def list_files(directory, fileExt = config.defaultFileExt):
     """get list of directories in the directory"""
     files = []
     for dirname, dirnames, filenames in os.walk(directory):
@@ -36,23 +36,26 @@ def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defau
     doc.appendChild(root)
     for dirname, dirnames, filenames in os.walk(directory):
         for f in filenames:
-            if os.path.splitext(f)[1] in fileExt:
-                block = doc.createElement("file")
-                block.setAttribute("id", str(id))
-                id += 1
-                root.appendChild(block)
-                location = doc.createElement("location")
-                block.appendChild(location)
-                locationValue = doc.createTextNode(os.path.join(dirname, f))
-                location.appendChild(locationValue)
-                audio = mutagen.File(os.path.join(dirname, f), easy = True)
-		tag = dict()
-		tagValue = dict()
-		for i in set(audio.keys()).intersection(tagKept):
-		    tag[i] = doc.createElement(i)
-		    block.appendChild(tag[i])
-		    tagValue[i] = doc.createTextNode(audio[i][0].encode("utf-8"))
-		    tag[i].appendChild(tagValue[i]) 
+            if os.path.splitext(f)[1].lower() in fileExt:
+                try:    
+                    audio = mutagen.File(os.path.join(dirname, f), easy = True)
+                    block = doc.createElement("file")
+                    block.setAttribute("id", str(id))
+                    id += 1
+                    root.appendChild(block)
+                    location = doc.createElement("location")
+                    block.appendChild(location)
+                    locationValue = doc.createTextNode(os.path.join(dirname, f))
+                    location.appendChild(locationValue)
+                    tag = dict()
+                    tagValue = dict()
+                    for i in set(audio.keys()).intersection(tagKept):
+                        tag[i] = doc.createElement(i)
+                        block.appendChild(tag[i])
+                        tagValue[i] = doc.createTextNode(audio[i][0].encode("utf-8"))
+                        tag[i].appendChild(tagValue[i])
+                except:
+                    print "bad file encoding : " + os.path.join(dirname, f)
     db = open("db.xml", "w")
     doc.writexml(db, "\n", "  ")
     db.close()
