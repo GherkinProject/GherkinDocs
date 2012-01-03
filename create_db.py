@@ -15,19 +15,6 @@ import mutagen
 #local libraries
 import config
 
-
-#This is a test function, creating a list with locations in it
-def list_files(directory, fileExt = config.defaultFileExt):
-    """get list of directories in the directory"""
-    files = []
-    for dirname, dirnames, filenames in os.walk(directory):
-        for f in filenames:
-            if os.path.splitext(f)[1] in fileExt:
-                files.append(os.path.join(dirname, f))
-    return files
-
-#print list_files("/home/nicolas")
-
 def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation):
     """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""
     id = 0
