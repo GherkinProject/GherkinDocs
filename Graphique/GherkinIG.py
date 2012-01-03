@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Gherkin.ui'
 #
-# Created: Tue Jan  3 20:27:19 2012
+# Created: Tue Jan  3 21:43:24 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,6 +35,7 @@ class Ui_ProjetGherkin(object):
         self.Playlist = QtGui.QTreeWidget(self.centralwidget)
         self.Playlist.setObjectName(_fromUtf8("Playlist"))
         self.Playlist.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Playlist", None, QtGui.QApplication.UnicodeUTF8))
+        self.Playlist.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
         self.gridLayout.addWidget(self.Playlist, 2, 0, 7, 1)
         self.Album = QtGui.QTreeWidget(self.centralwidget)
         self.Album.setObjectName(_fromUtf8("Album"))
@@ -107,6 +108,8 @@ class Ui_ProjetGherkin(object):
         self.label = QtGui.QLabel(self.centralwidget)
         self.label.setText(_fromUtf8(""))
         self.label.setPixmap(QtGui.QPixmap(_fromUtf8("Cornichon.png")))
+        self.label.setScaledContents(True)
+        self.label.setWordWrap(False)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 0, 0, 2, 1)
         self.RepeatButton = QtGui.QPushButton(self.centralwidget)
