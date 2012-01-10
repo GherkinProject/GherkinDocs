@@ -52,6 +52,11 @@
         <set>AlignHCenter|AlignVCenter|AlignCenter</set>
        </property>
       </column>
+      <item>
+       <property name="text">
+        <string>Banane</string>
+       </property>
+      </item>
      </widget>
     </item>
     <item row="4" column="2" rowspan="4">
@@ -64,6 +69,26 @@
         <set>AlignHCenter|AlignVCenter|AlignCenter</set>
        </property>
       </column>
+      <item>
+       <property name="text">
+        <string>Mangue</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Kiwi</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Asperge</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Goyave</string>
+       </property>
+      </item>
      </widget>
     </item>
     <item row="3" column="3">
@@ -73,7 +98,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>Random.png</normaloff>Random.png</iconset>
+        <normaloff>../../../../.designer/backup/Random.png</normaloff>../../../../.designer/backup/Random.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -126,7 +151,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>forward.png</normaloff>forward.png</iconset>
+        <normaloff>../../../../.designer/backup/forward.png</normaloff>../../../../.designer/backup/forward.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -155,7 +180,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>play.png</normaloff>play.png</iconset>
+        <normaloff>../../../../.designer/backup/play.png</normaloff>../../../../.designer/backup/play.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -178,7 +203,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>backward.png</normaloff>backward.png</iconset>
+        <normaloff>../../../../.designer/backup/backward.png</normaloff>../../../../.designer/backup/backward.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -201,7 +226,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>Repeat.png</normaloff>Repeat.png</iconset>
+        <normaloff>../../../../.designer/backup/Repeat.png</normaloff>../../../../.designer/backup/Repeat.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -230,7 +255,7 @@
        <string/>
       </property>
       <property name="pixmap">
-       <pixmap>Cornichon.png</pixmap>
+       <pixmap>../../../../.designer/backup/Cornichon.png</pixmap>
       </property>
       <property name="scaledContents">
        <bool>true</bool>
@@ -345,7 +370,7 @@
   <connection>
    <sender>LookingFor</sender>
    <signal>returnPressed()</signal>
-   <receiver>ProjetGherkin</receiver>
+   <receiver>Album</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -353,8 +378,40 @@
      <y>106</y>
     </hint>
     <hint type="destinationlabel">
-     <x>319</x>
-     <y>239</y>
+     <x>290</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PlayButton</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>PisteAudio</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>604</x>
+     <y>295</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>362</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Album</sender>
+   <signal>itemDoubleClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>Artiste</receiver>
+   <slot>selectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>196</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>480</x>
+     <y>196</y>
     </hint>
    </hints>
   </connection>
