@@ -16,6 +16,11 @@ except AttributeError:
 
 class Ui_ProjetGherkin(object):
     def setupUi(self, ProjetGherkin):
+	self.iteratorPlaylist = 0
+        self.iteratorArtist = 0
+        self.iteratorAlbum = 0
+        self.iteratorTrack = 0
+        self.listAlbums = ["Boris", "Elsin","Mange","Vache","Eau","H20","Manger ma banane"]
         ProjetGherkin.setObjectName(_fromUtf8("ProjetGherkin"))
         ProjetGherkin.resize(640, 480)
         ProjetGherkin.setWindowTitle(QtGui.QApplication.translate("ProjetGherkin", "Projet Gherkin", None, QtGui.QApplication.UnicodeUTF8))
@@ -37,12 +42,12 @@ class Ui_ProjetGherkin(object):
         self.Album.setObjectName(_fromUtf8("Album"))
         self.Album.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Album", None, QtGui.QApplication.UnicodeUTF8))
         self.Album.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        self.gridLayout.addWidget(self.Album, 4, 1, 4, 1)
+        self.gridLayout.addWidget(self.Album, 4, 2, 4, 1)
         self.Artiste = QtGui.QTreeWidget(self.centralwidget)
         self.Artiste.setObjectName(_fromUtf8("Artiste"))
         self.Artiste.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Artiste", None, QtGui.QApplication.UnicodeUTF8))
         self.Artiste.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        self.gridLayout.addWidget(self.Artiste, 4, 2, 4, 1)
+        self.gridLayout.addWidget(self.Artiste, 4, 1, 4, 1)
         self.RandomButton = QtGui.QPushButton(self.centralwidget)
         self.RandomButton.setText(_fromUtf8(""))
         icon = QtGui.QIcon()
@@ -169,7 +174,14 @@ class Ui_ProjetGherkin(object):
         self.MenuBarPG.addAction(self.menuMedia.menuAction())
         self.MenuBarPG.addAction(self.menuAffichage.menuAction())
         self.MenuBarPG.addAction(self.menuEdition.menuAction())
+	
+	for u in self.listAlbums:
+            item_0 = QtGui.QTreeWidgetItem(self.Album)
+            self.Album.topLevelItem(self.iteratorAlbum).setText(0, QtGui.QApplication.translate("ProjetGherkin", u, None, QtGui.QApplication.UnicodeUTF8))
+            self.iteratorAlbum+=1
 
+
+	
         self.retranslateUi(ProjetGherkin)
         QtCore.QMetaObject.connectSlotsByName(ProjetGherkin)
 
