@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Gherkin.ui'
 #
-# Created: Wed Jan 11 11:53:46 2012
+# Created: Wed Jan 11 12:50:17 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -16,6 +16,10 @@ except AttributeError:
 
 class Ui_ProjetGherkin(object):
     def setupUi(self, ProjetGherkin):
+        self.iteratorPlaylist = 0
+        self.iteratorArtist = 0
+        self.iteratorAlbum = 0
+        self.iteratorTrack = 0
         ProjetGherkin.setObjectName(_fromUtf8("ProjetGherkin"))
         ProjetGherkin.resize(640, 480)
         ProjetGherkin.setWindowTitle(QtGui.QApplication.translate("ProjetGherkin", "Projet Gherkin", None, QtGui.QApplication.UnicodeUTF8))
@@ -55,11 +59,6 @@ class Ui_ProjetGherkin(object):
         self.RandomRepeat.setObjectName(_fromUtf8("RandomRepeat"))
         self.RandomRepeat.addButton(self.RandomButton)
         self.gridLayout.addWidget(self.RandomButton, 3, 3, 1, 1)
-        self.PisteAudio = QtGui.QTreeWidget(self.centralwidget)
-        self.PisteAudio.setObjectName(_fromUtf8("PisteAudio"))
-        self.PisteAudio.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Piste audio", None, QtGui.QApplication.UnicodeUTF8))
-        self.PisteAudio.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        self.gridLayout.addWidget(self.PisteAudio, 8, 1, 4, 2)
         self.verticalSlider = QtGui.QSlider(self.centralwidget)
         self.verticalSlider.setOrientation(QtCore.Qt.Vertical)
         self.verticalSlider.setTickPosition(QtGui.QSlider.TicksBelow)
@@ -132,6 +131,15 @@ class Ui_ProjetGherkin(object):
         self.gridLayout.addWidget(self.label, 0, 0, 4, 1)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 10, 3, 1, 1)
+        self.PisteAudio = QtGui.QTreeWidget(self.centralwidget)
+        self.PisteAudio.setObjectName(_fromUtf8("PisteAudio"))
+        self.PisteAudio.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Piste audio", None, QtGui.QApplication.UnicodeUTF8))
+        self.PisteAudio.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        item_0 = QtGui.QTreeWidgetItem(self.PisteAudio)
+        self.PisteAudio.topLevelItem(0).setText(0, QtGui.QApplication.translate("ProjetGherkin", "Boris Elsin", None, QtGui.QApplication.UnicodeUTF8))
+        item_0 = QtGui.QTreeWidgetItem(self.PisteAudio)
+        self.PisteAudio.topLevelItem(1).setText(0, QtGui.QApplication.translate("ProjetGherkin", "Plop", None, QtGui.QApplication.UnicodeUTF8))
+        self.gridLayout.addWidget(self.PisteAudio, 8, 1, 4, 2)
         ProjetGherkin.setCentralWidget(self.centralwidget)
         self.MenuBarPG = QtGui.QMenuBar(ProjetGherkin)
         self.MenuBarPG.setGeometry(QtCore.QRect(0, 0, 640, 25))
@@ -171,15 +179,39 @@ class Ui_ProjetGherkin(object):
         self.MenuBarPG.addAction(self.menuEdition.menuAction())
 
         self.retranslateUi(ProjetGherkin)
+        QtCore.QObject.connect(self.LookingFor, QtCore.SIGNAL(_fromUtf8("returnPressed()")), ProjetGherkin.close)
         QtCore.QMetaObject.connectSlotsByName(ProjetGherkin)
 
     def retranslateUi(self, ProjetGherkin):
-        pass
+        __sortingEnabled = self.PisteAudio.isSortingEnabled()
+        self.PisteAudio.setSortingEnabled(False)
+        self.PisteAudio.setSortingEnabled(__sortingEnabled)
+
+    def add_artist(self, artist):
+        try:
+            self.Artiste.topLevelItem(self.iteratorArtist).setText(0, QtGui.QApplication.translate("ProjetGherkin", artist, None, QtGui.QApplication.UnicodeUTF8))
+            self.iteratorArtist +=1
+        except:
+            pass
+         
+    def add_track(self, track):
+        try:
+            self.PisteAudio.topLevelItem(self.iteratorTrack).setText(0,QtGui.       QApplication.translate("ProjetGherkin", track, None, QtGui.QApplication.       UnicodeUTF8))
+            self.iteratorTrack +=1
+        except:
+            pass
+
+    def add_album(self,album):
+        try:
+            self.Album.topLevelItem(self.iteratorAlbum).setText(0,QtGui.QApplication.translate("ProjetGherkin", album, None, QtGui.QApplication.UnicodeUTF8))
+            self.iteratorAlbum +=1
+        except:
+            pass
+        
 
 
 if __name__ == "__main__":
     import sys
-    app = QtGui.QApplication(sys.argv)
     ProjetGherkin = QtGui.QMainWindow()
     ui = Ui_ProjetGherkin()
     ui.setupUi(ProjetGherkin)
