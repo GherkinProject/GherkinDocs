@@ -9,24 +9,24 @@ import sys
 import os
 #script using dom
 from xml.dom.minidom import Document
+from xml.dom import minidom
+
+#patch dom to gain space
+def newwritexml(self, writer, indent= '', addindent= '', newl= ''):
+    if len(self.childNodes)==1 and self.firstChild.nodeType==3:
+        writer.write(indent)
+        self.oldwritexml(writer) # cancel extra whitespace
+        writer.write(newl)
+    else:
+        self.oldwritexml(writer, indent, addindent, newl)
+minidom.Element.oldwritexml= minidom.Element.writexml
+minidom.Element.writexml= newwritexml
+
 #ID3 tag library
 import mutagen
 
 #local libraries
 import config
-
-
-#This is a test function, creating a list with locations in it
-def list_files(directory, fileExt = config.defaultFileExt):
-    """get list of directories in the directory"""
-    files = []
-    for dirname, dirnames, filenames in os.walk(directory):
-        for f in filenames:
-            if os.path.splitext(f)[1] in fileExt:
-                files.append(os.path.join(dirname, f))
-    return files
-
-#print list_files("/home/nicolas")
 
 def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation):
     """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""
