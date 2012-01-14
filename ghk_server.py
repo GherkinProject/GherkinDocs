@@ -8,7 +8,13 @@ import gst
 #os
 import os
 
-class server:
+#http server
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+
+#config file
+import config
+
+class audio_server:
     def __init__(self):
         self.playing = False
         self.player = gst.element_factory_make("playbin2", "player")
@@ -41,3 +47,11 @@ class server:
             self.player.set_state(gst.STATE_NULL)
             err, debug = message.parse_error()
             print "Error: %s" % err, debug
+
+# Create server
+server = SimpleXMLRPCServer(("localhost", config.defaultPort), allow_none=True)
+server.register_introspection_functions()
+server.register_instance(audio_server())
+
+# Run the server's main loop
+server.serve_forever()
