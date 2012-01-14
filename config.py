@@ -1,10 +1,9 @@
 #file for constant definition
 
 #list of working extensions :
-defaultFileExt = {".mp3":"MP3", ".ogg":"OGG", ".aif":"AIF"}
-
-#text Database location
+defaultFileExt = {".mp3", ".ogg", ".flac"}
 defaultDbLocation = "./db.xml"
-
-#Useful tag kept
 defaultTagKept = {"artist", "album", "title", "date", "tracknumber", "genre"}
+
+#server port
+defaultPort = 1664
