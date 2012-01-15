@@ -36,9 +36,18 @@ class audio_server:
             self.player.set_state(gst.STATE_PLAYING)
             self.playing = True
         else:
-            self.player.set_state(gst.STATE_NULL)
+            self.player.set_state(gst.STATE_PAUSED)
             self.playing = False
+    
+    def stop(self):
+        self.player.set_state(gst.STATE_NULL)
 
+    def get_duration(self):
+        return self.player.QUERY_DURATION
+
+    def get_position(self):
+        return self.player.QUERY_POSITION
+    
     def on_message(self, bus, message):
         t = message.type
         if t == gst.MESSAGE_EOS:
