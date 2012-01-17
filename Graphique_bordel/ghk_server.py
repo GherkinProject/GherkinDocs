@@ -33,6 +33,7 @@ class audio_server:
 
     def load_bis(self, song, integer =0):
 	print song
+	print integer
 	#print song['location']
 	#if os.path.isfile(song['location']):
 	#    self.player.set_property("uri", "file://" + song['location'])

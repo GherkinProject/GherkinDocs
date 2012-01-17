@@ -65,6 +65,7 @@ class Ui_ProjetGherkin(object):
         self.AudioTrack.setObjectName(_fromUtf8("AudioTrack"))
         self.AudioTrack.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Piste audio", None, QtGui.QApplication.UnicodeUTF8))
         self.AudioTrack.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+	self.AudioTrack.headerItem().setText(1, QtGui.QApplication.translate("ProjetGherkin", "id", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout.addWidget(self.AudioTrack, 8, 1, 4, 2)
         self.verticalSlider = QtGui.QSlider(self.centralwidget)
         self.verticalSlider.setOrientation(QtCore.Qt.Vertical)
@@ -220,9 +221,8 @@ class Ui_ProjetGherkin(object):
 
     def addTrack(self,u):
         item_0 = QtGui.QTreeWidgetItem(self.AudioTrack)
-        #self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(0, QtGui.QApplication.translate("ProjetGherkin", u['title'], None, QtGui.QApplication.UnicodeUTF8))
-	item_0.setData(0, Role, QVARIANT)
-	self.AudioTrack.addTopLevelItem(item_0)
+        self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(0, QtGui.QApplication.translate("ProjetGherkin", u['title'], None, QtGui.QApplication.UnicodeUTF8))
+	self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(1, QtGui.QApplication.translate("ProjetGherkin", str(u['id']), None, QtGui.QApplication.UnicodeUTF8))
         self.iteratorAudioTrack+=1
 
 
