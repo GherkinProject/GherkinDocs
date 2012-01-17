@@ -1,0 +1,40 @@
+#!/usr/bin/python -d
+ 
+import sys
+from PyQt4 import QtCore, QtGui
+from GherkinIG import Ui_ProjetGherkin
+
+#client lib
+import xmlrpclib
+
+#local lib : loading db
+from load_db import *
+
+#config file
+import config
+ 
+class MyForm(QtGui.QMainWindow):
+  def __init__(self, parent=None):
+    QtGui.QWidget.__init__(self, parent)
+    self.ui = Ui_ProjetGherkin()
+    self.ui.setupUi(self)
+	    
+    #getting in touch with server
+    self.server = xmlrpclib.ServerProxy("http://localhost:" + str(config.defaultPort))
+
+    #just tu show what commands are available
+    #print self.server.system.listMethods()
+
+    self.songs = get_lib()
+
+  def add_entry(self):
+    self.ui.lineEdit.selectAll()
+    self.ui.lineEdit.cut()
+    self.ui.textEdit.append("")
+    self.ui.textEdit.paste()
+ 
+if __name__ == "__main__":
+  app = QtGui.QApplication(sys.argv)
+  myapp = MyForm()
+  myapp.show()
+  sys.exit(app.exec_())
