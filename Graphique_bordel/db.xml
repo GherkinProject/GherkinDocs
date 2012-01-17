@@ -1,0 +1,156 @@
+<?xml version="1.0" ?>
+<db>
+  <file id="0">
+    <location>/data/The Beatles - Abbey Road (1969)/08. Because - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Because</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>08</tracknumber>
+  </file>
+  <file id="1">
+    <location>/data/The Beatles - Abbey Road (1969)/01. Come Together - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Come Together</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>01</tracknumber>
+  </file>
+  <file id="2">
+    <location>/data/The Beatles - Abbey Road (1969)/02. Something - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Something</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>02</tracknumber>
+  </file>
+  <file id="3">
+    <location>/data/The Beatles - Abbey Road (1969)/03. Maxwell's Silver Hammer - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Maxwell's Silver Hammer</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>03</tracknumber>
+  </file>
+  <file id="4">
+    <location>/data/The Beatles - Abbey Road (1969)/04. Oh! Darling - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Oh! Darling</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>04</tracknumber>
+  </file>
+  <file id="5">
+    <location>/data/The Beatles - Abbey Road (1969)/05. Octopus's Garden - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Octopus's Garden</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>05</tracknumber>
+  </file>
+  <file id="6">
+    <location>/data/The Beatles - Abbey Road (1969)/06. I Want You (She's So Heavy) - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>I Want You (She's So Heavy)</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>06</tracknumber>
+  </file>
+  <file id="7">
+    <location>/data/The Beatles - Abbey Road (1969)/07. Here Comes The Sun - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Here Comes The Sun</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>07</tracknumber>
+  </file>
+  <file id="8">
+    <location>/data/The Beatles - Abbey Road (1969)/09. You Never Give Me Your Money - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>You Never Give Me Your Money</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>09</tracknumber>
+  </file>
+  <file id="9">
+    <location>/data/The Beatles - Abbey Road (1969)/10. Sun King - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Sun King</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>10</tracknumber>
+  </file>
+  <file id="10">
+    <location>/data/The Beatles - Abbey Road (1969)/11. Mean Mr. Mustard - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Mean Mr. Mustard</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>11</tracknumber>
+  </file>
+  <file id="11">
+    <location>/data/The Beatles - Abbey Road (1969)/12. Polythene Pam - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Polythene Pam</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>12</tracknumber>
+  </file>
+  <file id="12">
+    <location>/data/The Beatles - Abbey Road (1969)/13. She Came In Through The Bathroom Window - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>She Came In Through The Bathroom Window</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>13</tracknumber>
+  </file>
+  <file id="13">
+    <location>/data/The Beatles - Abbey Road (1969)/14. Golden Slumbers - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Golden Slumbers</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>14</tracknumber>
+  </file>
+  <file id="14">
+    <location>/data/The Beatles - Abbey Road (1969)/15. Carry That Weight - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Carry That Weight</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>15</tracknumber>
+  </file>
+  <file id="15">
+    <location>/data/The Beatles - Abbey Road (1969)/16. The End - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>The End</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>16</tracknumber>
+  </file>
+  <file id="16">
+    <location>/data/The Beatles - Abbey Road (1969)/17. Her Majesty - The Beatles.flac</location>
+    <album>Abbey Road</album>
+    <title>Her Majesty</title>
+    <artist>The Beatles</artist>
+    <genre>Pop</genre>
+    <date>1969</date>
+    <tracknumber>17</tracknumber>
+  </file>
+</db>
