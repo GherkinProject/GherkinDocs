@@ -17,9 +17,11 @@ import config
 class audio_server:
     def __init__(self):
         self.playing = False
+        #self.player = gst.Pipeline("player")
         self.player = gst.element_factory_make("playbin2", "player")
         fakesink = gst.element_factory_make("fakesink", "fakesink")
         self.player.set_property("video-sink", fakesink)
+        
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self.on_message)
@@ -40,13 +42,15 @@ class audio_server:
             self.playing = False
     
     def stop(self):
+        self.playing = False
         self.player.set_state(gst.STATE_NULL)
 
-    def get_duration(self):
-        return self.player.QUERY_DURATION
+    def get_time_position(self):
+        #return self.player.get_base_time()
+        return self.player.get_clock().get_event_time()# - self.player.get_base_time())
 
-    def get_position(self):
-        return self.player.QUERY_POSITION
+    def get_time_final(self):
+        return self.player
     
     def on_message(self, bus, message):
         t = message.type
