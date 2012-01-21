@@ -219,20 +219,26 @@ class Ui_ProjetGherkin(object):
         self.Artist.topLevelItem(self.iteratorArtist).setText(0, QtGui.QApplication.translate("ProjetGherkin", artist, None, QtGui.QApplication.UnicodeUTF8))
         self.iteratorArtist+=1
 
-    def addTrack(self,u):
-        item_0 = QtGui.QTreeWidgetItem(self.AudioTrack)
-        self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(0, QtGui.QApplication.translate("ProjetGherkin", u['title'], None, QtGui.QApplication.UnicodeUTF8))
-	self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(1, QtGui.QApplication.translate("ProjetGherkin", str(u['id']), None, QtGui.QApplication.UnicodeUTF8))
-        self.iteratorAudioTrack+=1
-
+    def addTrack(self,u,v):
+#        item_0 = QtGui.QTreeWidgetItem(self.AudioTrack)
+#        self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(0, QtGui.QApplication.translate("ProjetGherkin", u['title'], None, QtGui.QApplication.UnicodeUTF8))
+#        self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(1, QtGui.QApplication.translate("ProjetGherkin", str(u['id']), None, QtGui.QApplication.UnicodeUTF8))
+#        self.iteratorAudioTrack+=1
+        item_0 = QtGui.QTreeWidgetItem()
+        item_0.setText(0,u)
+        item_1 = QtGui.QTreeWidgetItem()
+        item_1.setText(0,v)
+        item_1.setHidden(True)
+        item_0.addChild(item_1)
+        print item_0.text(0)
+        self.AudioTrack.addTopLevelItem(item_0)
+        
 
     def addPlaylist(self,playlist):
     	item_0 = QtGui.QTreeWidgetItem(self.Playlist)
         self.Playlist.topLevelItem(self.iteratorPlaylist).setText(0, QtGui.QApplication.translate("ProjetGherkin", playlist, None, QtGui.QApplication.UnicodeUTF8))
         self.iteratorPlaylist=1
 
-    def loadSong(self, tree, integer):
-        print integer
 
 if __name__ == "__main__":
     import sys

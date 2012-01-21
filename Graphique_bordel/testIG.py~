@@ -65,6 +65,7 @@ class Ui_ProjetGherkin(object):
         self.AudioTrack.setObjectName(_fromUtf8("AudioTrack"))
         self.AudioTrack.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Piste audio", None, QtGui.QApplication.UnicodeUTF8))
         self.AudioTrack.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+	self.AudioTrack.headerItem().setText(1, QtGui.QApplication.translate("ProjetGherkin", "id", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout.addWidget(self.AudioTrack, 8, 1, 4, 2)
         self.verticalSlider = QtGui.QSlider(self.centralwidget)
         self.verticalSlider.setOrientation(QtCore.Qt.Vertical)
@@ -218,19 +219,29 @@ class Ui_ProjetGherkin(object):
         self.Artist.topLevelItem(self.iteratorArtist).setText(0, QtGui.QApplication.translate("ProjetGherkin", artist, None, QtGui.QApplication.UnicodeUTF8))
         self.iteratorArtist+=1
 
-    def addTrack(self,u):
-        item_0 = QtGui.QTreeWidgetItem(self.AudioTrack)
-        self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(0, QtGui.QApplication.translate("ProjetGherkin", u['title'], None, QtGui.QApplication.UnicodeUTF8))
-        self.iteratorAudioTrack+=1
-
+    def addTrack(self,u,v):
+#        item_0 = QtGui.QTreeWidgetItem(self.AudioTrack)
+#        self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(0, QtGui.QApplication.translate("ProjetGherkin", u['title'], None, QtGui.QApplication.UnicodeUTF8))
+#        self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(1, QtGui.QApplication.translate("ProjetGherkin", str(u['id']), None, QtGui.QApplication.UnicodeUTF8))
+#        self.iteratorAudioTrack+=1
+        item_0 = QtGui.QTreeWidgetItem()
+        item_0.setText(0,u)
+        item_1 = QtGui.QTreeWidgetItem()
+        item_1.setText(0,v)
+        item_1.setHidden(True)
+        item_0.addChild(item_1)
+        print item_0.text(0)
+        self.AudioTrack.addTopLevelItem(item_0)
+        
 
     def addPlaylist(self,playlist):
     	item_0 = QtGui.QTreeWidgetItem(self.Playlist)
         self.Playlist.topLevelItem(self.iteratorPlaylist).setText(0, QtGui.QApplication.translate("ProjetGherkin", playlist, None, QtGui.QApplication.UnicodeUTF8))
         self.iteratorPlaylist=1
 
-    def loadSong(self, tree, integer):
-        print integer
+    def load_bis(self, item, integer):
+        print u.child(0).text(0)
+        self.load(u.child(0).text(0))
 
 if __name__ == "__main__":
     import sys

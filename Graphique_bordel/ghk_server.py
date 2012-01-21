@@ -8,6 +8,9 @@ import gst
 #os
 import os
 
+#Qt
+from PyQt4 import QtCore, QtGui
+
 #http server
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 
@@ -31,14 +34,9 @@ class audio_server:
         else:
             print "bad file path"
 
-    def load_bis(self, song, integer =0):
-	print song
-	print integer
-	#print song['location']
-	#if os.path.isfile(song['location']):
-	#    self.player.set_property("uri", "file://" + song['location'])
-	#else:
-	#    print "bad file path in load_bis"
+    def load_bis(self, u, integer):
+        print u.child(0).text(0)
+        self.load(u.child(0).text(0))
 
     def play_pause(self, Qt = 0, integer =0):
         if not self.playing:
