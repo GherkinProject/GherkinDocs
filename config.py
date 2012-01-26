@@ -7,3 +7,6 @@ defaultTagKept = {"artist", "album", "title", "date", "tracknumber", "genre"}
 
 #server port
 defaultPort = 1664
+
+#time
+dt = 0.5
