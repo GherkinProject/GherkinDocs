@@ -10,3 +10,13 @@ defaultPort = 1664
 
 #time
 dt = 0.5
+
+#icon and locations
+iconLocation = "pictures/"
+playIcon = iconLocation + "play.png"
+pauseIcon = iconLocation + "pause.png"
+nextIcon = iconLocation + "forward.png"
+prevIcon = iconLocation + "backward.png"
+randomIcon = iconLocation + "random.png"
+repeatIcon = iconLocation + "repeat.png"
+gherkinIcon = iconLocation + "Cornichon.png"
