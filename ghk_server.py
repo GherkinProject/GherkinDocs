@@ -46,8 +46,7 @@ class audio_server:
         self.player.set_state(gst.STATE_NULL)
 
     def get_time_position(self):
-        #return self.player.get_base_time()
-        return self.player.get_clock().get_event_time()# - self.player.get_base_time())
+        return self.player.query_duration(gst.FORMAT_TIME, None)[0]#return self.player.get_base_time()
 
     def get_time_final(self):
         return self.player
