@@ -2,12 +2,16 @@
 
 # Form implementation generated from reading ui file 'Gherkin.ui'
 #
-# Created: Tue Jan 10 09:48:58 2012
+# Created: Wed Jan 11 11:53:46 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
+from time import *
+
+#configuration constant
+import config
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -15,15 +19,13 @@ except AttributeError:
     _fromUtf8 = lambda s: s
 
 class Ui_ProjetGherkin(object):
-
-    def addPlaylist(self,playlist):
-    	item_0 = QtGui.QTreeWidgetItem(self.Playlist)
-        self.Playlist.topLevelItem(self.iteratorPlaylist).setText(0, QtGui.QApplication.translate("ProjetGherkin", playlist, None, QtGui.QApplication.UnicodeUTF8))
-        self.iteratorPlaylist=1
-
     def setupUi(self, ProjetGherkin):
+    	self.iteratorPlaylist = 0
+        self.iteratorArtist = 0
+        self.iteratorAlbum = 0
+        self.iteratorAudioTrack = 0
+    	self.isPlaying = False   
 
-        self.iteratorPlaylist
         ProjetGherkin.setObjectName(_fromUtf8("ProjetGherkin"))
         ProjetGherkin.resize(640, 480)
         ProjetGherkin.setWindowTitle(QtGui.QApplication.translate("ProjetGherkin", "Projet Gherkin", None, QtGui.QApplication.UnicodeUTF8))
@@ -45,26 +47,16 @@ class Ui_ProjetGherkin(object):
         self.Album.setObjectName(_fromUtf8("Album"))
         self.Album.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Album", None, QtGui.QApplication.UnicodeUTF8))
         self.Album.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        item_0 = QtGui.QTreeWidgetItem(self.Album)
-        self.Album.topLevelItem(0).setText(0, QtGui.QApplication.translate("ProjetGherkin", "Banane", None, QtGui.QApplication.UnicodeUTF8))
-        self.gridLayout.addWidget(self.Album, 4, 1, 4, 1)
-        self.Artiste = QtGui.QTreeWidget(self.centralwidget)
-        self.Artiste.setObjectName(_fromUtf8("Artiste"))
-        self.Artiste.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Artiste", None, QtGui.QApplication.UnicodeUTF8))
-        self.Artiste.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        item_0 = QtGui.QTreeWidgetItem(self.Artiste)
-        self.Artiste.topLevelItem(0).setText(0, QtGui.QApplication.translate("ProjetGherkin", "Mangue", None, QtGui.QApplication.UnicodeUTF8))
-        item_0 = QtGui.QTreeWidgetItem(self.Artiste)
-        self.Artiste.topLevelItem(1).setText(0, QtGui.QApplication.translate("ProjetGherkin", "Kiwi", None, QtGui.QApplication.UnicodeUTF8))
-        item_0 = QtGui.QTreeWidgetItem(self.Artiste)
-        self.Artiste.topLevelItem(2).setText(0, QtGui.QApplication.translate("ProjetGherkin", "Asperge", None, QtGui.QApplication.UnicodeUTF8))
-        item_0 = QtGui.QTreeWidgetItem(self.Artiste)
-        self.Artiste.topLevelItem(3).setText(0, QtGui.QApplication.translate("ProjetGherkin", "Goyave", None, QtGui.QApplication.UnicodeUTF8))
-        self.gridLayout.addWidget(self.Artiste, 4, 2, 4, 1)
+        self.gridLayout.addWidget(self.Album, 4, 2, 4, 1)
+        self.Artist = QtGui.QTreeWidget(self.centralwidget)
+        self.Artist.setObjectName(_fromUtf8("Artiste"))
+        self.Artist.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Artiste", None, QtGui.QApplication.UnicodeUTF8))
+        self.Artist.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.gridLayout.addWidget(self.Artist, 4, 1, 4, 1)
         self.RandomButton = QtGui.QPushButton(self.centralwidget)
         self.RandomButton.setText(_fromUtf8(""))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("../../../../.designer/backup/Random.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(config.randomIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.RandomButton.setIcon(icon)
         self.RandomButton.setIconSize(QtCore.QSize(30, 30))
         self.RandomButton.setFlat(True)
@@ -73,6 +65,18 @@ class Ui_ProjetGherkin(object):
         self.RandomRepeat.setObjectName(_fromUtf8("RandomRepeat"))
         self.RandomRepeat.addButton(self.RandomButton)
         self.gridLayout.addWidget(self.RandomButton, 3, 3, 1, 1)
+        self.AudioTrack = QtGui.QTreeWidget(self.centralwidget)
+        self.AudioTrack.setObjectName(_fromUtf8("AudioTrack"))
+        self.AudioTrack.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Piste", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.AudioTrack.headerItem().setText(1, QtGui.QApplication.translate("ProjetGherkin", "Artiste", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(1, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.AudioTrack.headerItem().setText(2, QtGui.QApplication.translate("ProjetGherkin", "Album", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(2, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+
+
+
+        self.gridLayout.addWidget(self.AudioTrack, 8, 1, 4, 2)
         self.verticalSlider = QtGui.QSlider(self.centralwidget)
         self.verticalSlider.setOrientation(QtCore.Qt.Vertical)
         self.verticalSlider.setTickPosition(QtGui.QSlider.TicksBelow)
@@ -91,7 +95,7 @@ class Ui_ProjetGherkin(object):
         self.NextButton = QtGui.QPushButton(self.centralwidget)
         self.NextButton.setText(_fromUtf8(""))
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(_fromUtf8("../../../../.designer/backup/forward.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(config.nextIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.NextButton.setIcon(icon1)
         self.NextButton.setIconSize(QtCore.QSize(30, 30))
         self.NextButton.setAutoDefault(False)
@@ -105,7 +109,7 @@ class Ui_ProjetGherkin(object):
         self.PlayButton = QtGui.QPushButton(self.centralwidget)
         self.PlayButton.setText(_fromUtf8(""))
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(_fromUtf8("../../../../.designer/backup/play.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(config.playIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.PlayButton.setIcon(icon2)
         self.PlayButton.setIconSize(QtCore.QSize(30, 30))
         self.PlayButton.setFlat(True)
@@ -115,7 +119,7 @@ class Ui_ProjetGherkin(object):
         self.PreviousButton = QtGui.QPushButton(self.centralwidget)
         self.PreviousButton.setText(_fromUtf8(""))
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(_fromUtf8("../../../../.designer/backup/backward.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(_fromUtf8(config.prevIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.PreviousButton.setIcon(icon3)
         self.PreviousButton.setIconSize(QtCore.QSize(30, 30))
         self.PreviousButton.setFlat(True)
@@ -125,35 +129,25 @@ class Ui_ProjetGherkin(object):
         self.RepeatButton = QtGui.QPushButton(self.centralwidget)
         self.RepeatButton.setText(_fromUtf8(""))
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(_fromUtf8("../../../../.designer/backup/Repeat.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(_fromUtf8(config.repeatIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.RepeatButton.setIcon(icon4)
         self.RepeatButton.setIconSize(QtCore.QSize(30, 30))
         self.RepeatButton.setFlat(True)
         self.RepeatButton.setObjectName(_fromUtf8("RepeatButton"))
         self.RandomRepeat.addButton(self.RepeatButton)
         self.gridLayout.addWidget(self.RepeatButton, 4, 3, 1, 1)
-        self.SongBar = QtGui.QSlider(self.centralwidget)
-        self.SongBar.setOrientation(QtCore.Qt.Horizontal)
+        self.SongBar = QtGui.QProgressBar(self.centralwidget)
         self.SongBar.setObjectName(_fromUtf8("SongBar"))
         self.gridLayout.addWidget(self.SongBar, 2, 1, 1, 2)
         self.label = QtGui.QLabel(self.centralwidget)
         self.label.setText(_fromUtf8(""))
-        self.label.setPixmap(QtGui.QPixmap(_fromUtf8("../../../../.designer/backup/Cornichon.png")))
+        self.label.setPixmap(QtGui.QPixmap(_fromUtf8(config.gherkinIcon)))
         self.label.setScaledContents(True)
         self.label.setWordWrap(False)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 0, 0, 4, 1)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 10, 3, 1, 1)
-        self.PisteAudio = QtGui.QTreeWidget(self.centralwidget)
-        self.PisteAudio.setObjectName(_fromUtf8("PisteAudio"))
-        self.PisteAudio.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Piste audio", None, QtGui.QApplication.UnicodeUTF8))
-        self.PisteAudio.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        item_0 = QtGui.QTreeWidgetItem(self.PisteAudio)
-        self.PisteAudio.topLevelItem(0).setText(0, QtGui.QApplication.translate("ProjetGherkin", "Boris Elsin", None, QtGui.QApplication.UnicodeUTF8))
-        item_0 = QtGui.QTreeWidgetItem(self.PisteAudio)
-        self.PisteAudio.topLevelItem(1).setText(0, QtGui.QApplication.translate("ProjetGherkin", "Plop", None, QtGui.QApplication.UnicodeUTF8))
-        self.gridLayout.addWidget(self.PisteAudio, 8, 1, 4, 2)
         ProjetGherkin.setCentralWidget(self.centralwidget)
         self.MenuBarPG = QtGui.QMenuBar(ProjetGherkin)
         self.MenuBarPG.setGeometry(QtCore.QRect(0, 0, 640, 25))
@@ -192,25 +186,58 @@ class Ui_ProjetGherkin(object):
         self.MenuBarPG.addAction(self.menuAffichage.menuAction())
         self.MenuBarPG.addAction(self.menuEdition.menuAction())
 
+ 
 
 
-        self.retranslateUi(ProjetGherkin)
-        QtCore.QObject.connect(self.LookingFor, QtCore.SIGNAL(_fromUtf8("returnPressed()")), self.Album.close)
-        QtCore.QObject.connect(self.PlayButton, QtCore.SIGNAL(_fromUtf8("clicked(bool)")), self.PisteAudio.clear)
-        QtCore.QObject.connect(self.Album, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QTreeWidgetItem*,int)")), (self.addPlaylist("Igor")))
-        QtCore.QMetaObject.connectSlotsByName(ProjetGherkin)
+       
+
+
+
+
+#        QtCore.QMetaObject.connectSlotsByName(ProjetGherkin)
 
     def retranslateUi(self, ProjetGherkin):
-        __sortingEnabled = self.Album.isSortingEnabled()
-        self.Album.setSortingEnabled(False)
-        self.Album.setSortingEnabled(__sortingEnabled)
-        __sortingEnabled = self.Artiste.isSortingEnabled()
-        self.Artiste.setSortingEnabled(False)
-        self.Artiste.setSortingEnabled(__sortingEnabled)
-        __sortingEnabled = self.PisteAudio.isSortingEnabled()
-        self.PisteAudio.setSortingEnabled(False)
-        self.PisteAudio.setSortingEnabled(__sortingEnabled)
+        pass
 
+    def addAlbum(self,album):
+        item_0 = QtGui.QTreeWidgetItem(self.Album)
+        self.Album.topLevelItem(self.iteratorAlbum).setText(0, QtGui.QApplication.translate("ProjetGherkin", album, None, QtGui.QApplication.UnicodeUTF8))
+        self.iteratorAlbum+=1
+
+    def addArtist(self,artist):
+        item_0 = QtGui.QTreeWidgetItem(self.Artist)
+        self.Artist.topLevelItem(self.iteratorArtist).setText(0, QtGui.QApplication.translate("ProjetGherkin", artist, None, QtGui.QApplication.UnicodeUTF8))
+        self.iteratorArtist+=1
+
+    def addTrack(self,u):
+#        item_0 = QtGui.QTreeWidgetItem(self.AudioTrack)
+#        self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(0, QtGui.QApplication.translate("ProjetGherkin", u['title'], None, QtGui.QApplication.UnicodeUTF8))
+#        self.AudioTrack.topLevelItem(self.iteratorAudioTrack).setText(1, QtGui.QApplication.translate("ProjetGherkin", str(u['id']), None, QtGui.QApplication.UnicodeUTF8))
+               
+        itemAT=QtGui.QTreeWidgetItem()
+        try:
+            itemAT.setText(0,u['title'])
+        except:
+            itemAT.setText(0,"Unknown")
+        try:
+            itemAT.setText(1,u['artist'])
+        except:
+            itemAT.setText(1,"Unknown")
+        try:
+            itemAT.setText(2,u['album'])
+        except:
+            itemAT.setText(2,"Unknown")
+
+        itemAT.setText(3,u['location'])
+        itemAT.setText(4,str(u['id']))
+        self.AudioTrack.addTopLevelItem(itemAT)
+        
+
+    def addPlaylist(self,playlist):
+    	item_0 = QtGui.QTreeWidgetItem(self.Playlist)
+        self.Playlist.topLevelItem(self.iteratorPlaylist).setText(0, QtGui.QApplication.translate("ProjetGherkin", playlist, None, QtGui.QApplication.UnicodeUTF8))
+        self.iteratorPlaylist=1
+   
 
 if __name__ == "__main__":
     import sys
@@ -220,4 +247,3 @@ if __name__ == "__main__":
     ui.setupUi(ProjetGherkin)
     ProjetGherkin.show()
     sys.exit(app.exec_())
-
