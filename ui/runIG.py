@@ -61,7 +61,7 @@ class MyForm(QtGui.QMainWindow):
 
     def call_play_pause(self):
         self.server.play_pause()
-	self.runSong()
+     	self.runSong()
         self.iconChange()
 
     def call_load(self, QtWidget, val = 0):
@@ -70,8 +70,8 @@ class MyForm(QtGui.QMainWindow):
         self.pointeur = int(QtWidget.text(4))
         self.server.load(s)
         self.server.play_pause()
-	self.iconChange()
-	self.runSong()
+    	self.iconChange()
+        self.runSong()
 
     def call_next(self):
         self.server.stop()
@@ -87,8 +87,8 @@ class MyForm(QtGui.QMainWindow):
             print self.songs[self.pointeur]['title']
 
         self.server.play_pause()
-	self.iconChange()
-	self.runSong()  
+        self.iconChange()
+        self.runSong()  
 
 
     def call_prev(self):
@@ -102,7 +102,7 @@ class MyForm(QtGui.QMainWindow):
             self.server.load(self.songs[self.pointeur]['location'])
 
         self.server.play_pause()
-	self.iconChange()
+        self.iconChange()
         self.runSong()
 
     def call_random(self):
@@ -146,6 +146,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.SongBar.repaint()
 
     def updateSongProgress2(self):
+        self.setWindowTitle("Projet Gherkin : "+ self.songs[self.pointeur]['title'] )
         self.ui.SongBar.setMinimum(0)
         try:
             self.ui.SongBar.setMaximum(self.server.get_duration())
@@ -175,13 +176,10 @@ class Song(QtCore.QThread):
     def __init__(self):
         QtCore.QThread.__init__(self)
         self.min = 0
-        self.max = 10000 
+        self.max = 100000
         self.progress = 0
-	
     def run(self):
 	for self.progress in range(self.min, self.max):
-            #self.emit(QtCore.SIGNAL("progressUpdated"), self.min,
-            #self.max, self.progress)
             self.emit(QtCore.SIGNAL("progressUpdated"))
             time.sleep(0.2)  
      
