@@ -63,15 +63,18 @@ class MyForm(QtGui.QMainWindow):
         self.server.play_pause()
      	self.runSong()
         self.iconChange()
+        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
 
     def call_load(self, QtWidget, val = 0):
         self.server.stop()
         s = str(QtWidget.text(3))
+        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
         self.pointeur = int(QtWidget.text(4))
         self.server.load(s)
         self.server.play_pause()
     	self.iconChange()
         self.runSong()
+        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
 
     def call_next(self):
         self.server.stop()
@@ -88,8 +91,9 @@ class MyForm(QtGui.QMainWindow):
 
         self.server.play_pause()
         self.iconChange()
-        self.runSong()  
-
+        self.runSong()
+        self.ui.AudioTrack.topLevelItem(self.pointeur - 1).setSelected(False)
+        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
 
     def call_prev(self):
         self.server.stop()
@@ -104,6 +108,8 @@ class MyForm(QtGui.QMainWindow):
         self.server.play_pause()
         self.iconChange()
         self.runSong()
+        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
+        self.ui.AudioTrack.topLevelItem(self.pointeur + 1).setSelected(False)
 
     def call_random(self):
         if self.random:
