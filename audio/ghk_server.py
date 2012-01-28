@@ -27,6 +27,7 @@ class audio_server:
         bus.connect("message", self.on_message)
     
     def load(self, path):
+        """Load a song from the absolution or relative path "path" to the gstreamer audio server"""
         print path
         if os.path.isfile(path):
             self.player.set_property("uri", "file://" + path)
@@ -34,6 +35,7 @@ class audio_server:
             print "bad file path"
 
     def play_pause(self):
+        """Play or pause the file if loaded, if not, do nothing"""
         if not self.playing:
             self.player.set_state(gst.STATE_PLAYING)
             self.playing = True
@@ -42,16 +44,20 @@ class audio_server:
             self.playing = False
     
     def stop(self):
+        """De-load the file if loaded, compulsory if wanted to load a new file"""
         self.playing = False
         self.player.set_state(gst.STATE_NULL)
 
-    def get_time_position(self):
-        return self.player.query_duration(gst.FORMAT_TIME, None)[0]#return self.player.get_base_time()
+    def get_position(self):
+        """return (int) the current position in the song ( in second )"""
+        return int(self.player.query_position(gst.FORMAT_TIME, None)[0] // 1000000000)
 
-    def get_time_final(self):
-        return self.player
+    def get_duration(self):
+        """return (int) the total duration of the song ( in second )"""
+        return int(self.player.query_duration(gst.FORMAT_TIME, None)[0] // 1000000000)
     
     def on_message(self, bus, message):
+        """Print message sent by gstreamer"""
         t = message.type
         if t == gst.MESSAGE_EOS:
             self.player.set_state(gst.STATE_NULL)
@@ -61,6 +67,7 @@ class audio_server:
             print "Error: %s" % err, debug
     
     def is_playing(self):
+        """Return the state of the audio player"""
         return self.playing
 
 # Create server
