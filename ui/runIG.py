@@ -61,7 +61,7 @@ class MyForm(QtGui.QMainWindow):
     def call_play_pause(self):
         self.server.play_pause()
         self.iconChange()
-        self.pushProgressBar()
+        self.runProgressBarWorker()
 
     def call_load(self, QtWidget, val = 0):
         self.server.stop()
@@ -110,11 +110,26 @@ class MyForm(QtGui.QMainWindow):
             self.repeat = False
         else:
             self.repeat = True
+    
+    def runProgressBarWorker():
+        self.progressBarWorker = Worker()
+        self.progressBarWorker.start()
 
     def pushBar(self, dt):
         u = self.ui.SongBar.value()
         self.ui.SongBar.setValue(u + 100*dt/180)#self.server.get_duration())
         self.ui.SongBar.repaint()
+    
+    #this function is to obtain hours, second, minutes from the duration sent by the server.
+    def convert_ns(self, t):
+        s,ns = divmod(t, 1000000000)
+        m,s = divmod(s, 60)
+        if m < 60:
+            return "%02i:%02i" %(m,s)
+        else:
+            h,m = divmod(m, 60)
+            return "%i:%02i:%02i" %(h,m,s)
+
       
  #   def pushProgressBar(self):
  #       u = self.server.is_playing()
@@ -140,7 +155,16 @@ class MyForm(QtGui.QMainWindow):
     	    self.ui.PlayButton.setIcon(icon2)
             self.ui.PlayButton.setIconSize(QtCore.QSize(30, 30))
   
-        
+class progressBarWorker(QtCore.QThread):
+    __pyqtSignals__ = ("updateProgressBar")
+    
+    def __init__(self):
+        QtCore.QThread.__init__(self)
+    
+    def run(self):
+        self.emit(QtCore.SIGNAL("updateProgressBar"))
+        sleep(1)
+    
         
 
 app = QtGui.QApplication(sys.argv)
