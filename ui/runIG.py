@@ -50,8 +50,7 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.PreviousButton, QtCore.SIGNAL("clicked()"), self.call_prev)
         QtCore.QObject.connect(self.ui.RandomButton, QtCore.SIGNAL("clicked()"), self.call_random)
         QtCore.QObject.connect(self.ui.RepeatButton,QtCore.SIGNAL("clicked()"), self.call_repeat)
-#       QtCore.QObject.connect(self.server, QtCore.SIGNAL("Fin_de_lecture"), self.call_next)
-	
+#        QtCore.QObject.connect(self.ui.verticalSlider, QtCore.SIGNAL("valueChanged(int)"), self.call_volume )	
 
     def add_entry(self):
         self.ui.lineEdit.selectAll()
@@ -120,6 +119,9 @@ class MyForm(QtGui.QMainWindow):
             self.repeat = False
         else:
             self.repeat = True
+
+    def call_volume(self, int):
+        self.server.set_volume(int * 10 / (self.ui.verticalSlider.maximum()-self.ui.verticalSlider.minimum()))
 
    
 
