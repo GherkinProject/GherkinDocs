@@ -5,7 +5,6 @@
 # Created: Wed Jan 11 11:53:46 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
-# WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 from time import *
