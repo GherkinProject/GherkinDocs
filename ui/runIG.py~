@@ -1,17 +1,21 @@
 #!/usr/bin/python -d
  
-import sys
 from PyQt4 import QtCore, QtGui
 from testIG import Ui_ProjetGherkin
-
-#client lib
-import xmlrpclib
-
+import sys
 #local lib : loading db
 from load_db import *
 
-#config file
+#configuration constant
 import config
+
+#config file
+import time
+import random
+
+#client lib for calling server
+import xmlrpclib
+
 
 class MyForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -19,36 +23,33 @@ class MyForm(QtGui.QMainWindow):
         self.ui = Ui_ProjetGherkin()
         self.ui.setupUi(self)
         self.pointeur = 0
-     
+        self.random =False
+        self.repeat = False 
     #getting in touch with server
         self.server = xmlrpclib.ServerProxy("http://localhost:" + str(config.defaultPort))
 
-    #just tu show what commands are available
+    #just to show what commands are available
+
     #print self.server.system.listMethods()
 
         self.songs = get_lib()
 
-        print self.songs
         for u in self.songs:
-            try:    
-                self.ui.addTrack(u['title'],u['location'])
-            except:
-                self.ui.addTrack("Unknown",u['location']) 
+            self.ui.addTrack(u)
 # l'except est present pour les fichiers n'ayant pas de titre.
 
     #loading song into the server
         self.server.load(self.songs[self.pointeur]['location'])
+        
     
-        QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.server.play_pause )
-        QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.ui.iconChange )
-        QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemDoubleClicked(QTreeWidgetItem*,int)"), self.server.stop )
-        QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemDoubleClicked(QTreeWidgetItem*,int)"), self.ui.iconChange )
-        QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemDoubleClicked(QTreeWidgetItem*,int)"), self.load_bis )
-        QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemDoubleClicked(QTreeWidgetItem*,int)"), self.server.play_pause )
-        QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemDoubleClicked(QTreeWidgetItem*, int)"), self.ui.iconChange )
+        QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
+        QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemDoubleClicked(QTreeWidgetItem*,int)"), self.call_load )
+        QtCore.QObject.connect(self.ui.NextButton, QtCore.SIGNAL("clicked()"), self.call_next)
+        QtCore.QObject.connect(self.ui.PreviousButton, QtCore.SIGNAL("clicked()"), self.call_prev)
+        QtCore.QObject.connect(self.ui.RandomButton, QtCore.SIGNAL("clicked()"), self.call_random)
+        QtCore.QObject.connect(self.ui.RepeatButton,QtCore.SIGNAL("clicked()"), self.call_repeat)
 
-    #playing song
-    #s.play_pause()
+	
 
     def add_entry(self):
         self.ui.lineEdit.selectAll()
@@ -56,9 +57,118 @@ class MyForm(QtGui.QMainWindow):
         self.ui.textEdit.append("")
         self.ui.textEdit.paste()
 
- 
-if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
-    myapp = MyForm()
-    myapp.show()
-    sys.exit(app.exec_())
+    def call_play_pause(self):
+        self.server.play_pause()
+	self.runSong()
+        self.iconChange()
+
+    def call_load(self, QtWidget, val = 0):
+	QtWidget.expandItem()
+        self.server.stop()
+        self.iconChange()
+        s = str(QtWidget.text(3))
+        self.pointeur = int(QtWidget.text(4))
+        self.server.load(s)
+        self.server.play_pause()
+	self.runSong()
+
+    def call_next(self):
+        self.server.stop()
+        self.iconChange()
+        if self.random == False:
+            self.pointeur+=1
+            self.server.load(self.songs[self.pointeur]['location'])
+            print self.songs[self.pointeur]['title']
+        else:
+# On est en mode random, donc on fait n'importe quoi.
+            self.pointeur = random.randint(0, self.songs[-1]['id'])
+            self.server.load(self.songs[self.pointeur]['location'])
+            print self.songs[self.pointeur]['title']
+
+        self.server.play_pause()
+	self.runSong()
+
+
+    def call_prev(self):
+        self.server.stop()
+        self.iconChange()
+        if not self.random:
+            self.pointeur-=1
+            self.server.load(self.songs[self.pointeur]['location'])
+        else:
+            self.pointeur = random.randint(0,self.songs[-1]['id'])
+            self.server.load(self.songs[self.pointeur]['location'])
+
+        self.server.play_pause()
+	self.runSong()
+
+    def call_random(self):
+        if self.random:
+            self.random = False
+        else:
+            self.random = True
+    
+    def call_repeat(self):
+        if self.repeat:
+            self.repeat = False
+        else:
+            self.repeat = True
+
+   
+
+    def iconChange(self):
+        u = self.server.is_playing()
+        print u
+        if u:
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.pauseIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.PlayButton.setIcon(icon2)
+            self.ui.PlayButton.setIconSize(QtCore.QSize(30, 30))
+    	else:
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.playIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    	    self.ui.PlayButton.setIcon(icon2)
+            self.ui.PlayButton.setIconSize(QtCore.QSize(30, 30))
+  
+    def runSong(self):
+        self.song_play = Song()
+        self.connect(self.song_play, QtCore.SIGNAL("progressUpdated"),
+        self.updateSongProgress2)
+        self.song_play.start()
+
+    def updateSongProgress(self, min, max, progress):
+        self.ui.SongBar.setMinimum(min)
+        self.ui.SongBar.setMaximum(max)
+        self.ui.SongBar.setValue(progress)
+        self.ui.SongBar.repaint()
+
+    def updateSongProgress2(self):
+        self.ui.SongBar.setMinimum(0)
+        self.ui.SongBar.setMaximum(self.server.get_duration())
+        self.ui.SongBar.setValue(self.server.get_position())
+        self.ui.SongBar.repaint()
+
+
+
+
+class Song(QtCore.QThread):
+    __pyqtSignals__ = ("progressUpdated")
+    def __init__(self):
+        QtCore.QThread.__init__(self)
+        self.min = 0
+        self.max = 10000 
+        self.progress = 0
+	
+    def run(self):
+	for self.progress in range(self.min, self.max):
+            #self.emit(QtCore.SIGNAL("progressUpdated"), self.min,
+            #self.max, self.progress)
+            self.emit(QtCore.SIGNAL("progressUpdated"))
+            time.sleep(0.05)  
+     
+        
+
+app = QtGui.QApplication(sys.argv)
+myapp = MyForm()
+myapp.show()
+sys.exit(app.exec_())
