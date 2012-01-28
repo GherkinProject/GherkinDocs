@@ -36,6 +36,8 @@ class MyForm(QtGui.QMainWindow):
 
         for u in self.songs:
             self.ui.addTrack(u)
+	    self.ui.addAlbum(u)
+	    self.ui.addArtist(u)
 # l'except est present pour les fichiers n'ayant pas de titre.
 
     #loading song into the server
@@ -48,7 +50,7 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.PreviousButton, QtCore.SIGNAL("clicked()"), self.call_prev)
         QtCore.QObject.connect(self.ui.RandomButton, QtCore.SIGNAL("clicked()"), self.call_random)
         QtCore.QObject.connect(self.ui.RepeatButton,QtCore.SIGNAL("clicked()"), self.call_repeat)
-
+#       QtCore.QObject.connect(self.server, QtCore.SIGNAL("Fin_de_lecture"), self.call_next)
 	
 
     def add_entry(self):
@@ -64,16 +66,16 @@ class MyForm(QtGui.QMainWindow):
 
     def call_load(self, QtWidget, val = 0):
         self.server.stop()
-        self.iconChange()
         s = str(QtWidget.text(3))
         self.pointeur = int(QtWidget.text(4))
         self.server.load(s)
         self.server.play_pause()
+	self.iconChange()
 	self.runSong()
 
     def call_next(self):
         self.server.stop()
-        self.iconChange()
+
         if self.random == False:
             self.pointeur+=1
             self.server.load(self.songs[self.pointeur]['location'])
@@ -85,12 +87,13 @@ class MyForm(QtGui.QMainWindow):
             print self.songs[self.pointeur]['title']
 
         self.server.play_pause()
-	self.runSong()
+	self.iconChange()
+	self.runSong()  
 
 
     def call_prev(self):
         self.server.stop()
-        self.iconChange()
+
         if not self.random:
             self.pointeur-=1
             self.server.load(self.songs[self.pointeur]['location'])
@@ -99,7 +102,8 @@ class MyForm(QtGui.QMainWindow):
             self.server.load(self.songs[self.pointeur]['location'])
 
         self.server.play_pause()
-	self.runSong()
+	self.iconChange()
+        self.runSong()
 
     def call_random(self):
         if self.random:
@@ -117,7 +121,7 @@ class MyForm(QtGui.QMainWindow):
 
     def iconChange(self):
         u = self.server.is_playing()
-        print u
+#        print u
         if u:
             icon2 = QtGui.QIcon()
             icon2.addPixmap(QtGui.QPixmap((config.pauseIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -143,10 +147,26 @@ class MyForm(QtGui.QMainWindow):
 
     def updateSongProgress2(self):
         self.ui.SongBar.setMinimum(0)
-        self.ui.SongBar.setMaximum(self.server.get_duration())
-        self.ui.SongBar.setValue(self.server.get_position())
+        try:
+            self.ui.SongBar.setMaximum(self.server.get_duration())
+            self.ui.SongBar.setValue(self.server.get_position())
+        except:
+            pass
         self.ui.SongBar.repaint()
-
+        try:
+            if (self.server.get_position() == self.server.get_duration() and self.server.get_position() > 0):
+                self.call_next()
+                if self.repeat:
+                    self.call_prev()
+                if not self.server.is_playing():
+                    self.server.play_pause()
+                    self.iconChange()
+                else:
+                    self.iconChange()
+            else:
+                pass
+        except:
+            pass
 
 
 
@@ -163,7 +183,7 @@ class Song(QtCore.QThread):
             #self.emit(QtCore.SIGNAL("progressUpdated"), self.min,
             #self.max, self.progress)
             self.emit(QtCore.SIGNAL("progressUpdated"))
-            time.sleep(0.05)  
+            time.sleep(0.2)  
      
         
 
