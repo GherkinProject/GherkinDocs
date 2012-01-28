@@ -78,7 +78,7 @@ class MyForm(QtGui.QMainWindow):
 
     def call_next(self):
         self.server.stop()
-
+        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
         if self.random == False:
             self.pointeur+=1
             self.server.load(self.songs[self.pointeur]['location'])
@@ -92,12 +92,11 @@ class MyForm(QtGui.QMainWindow):
         self.server.play_pause()
         self.iconChange()
         self.runSong()
-        self.ui.AudioTrack.topLevelItem(self.pointeur - 1).setSelected(False)
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
 
     def call_prev(self):
         self.server.stop()
-
+        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
         if not self.random:
             self.pointeur-=1
             self.server.load(self.songs[self.pointeur]['location'])
@@ -109,7 +108,6 @@ class MyForm(QtGui.QMainWindow):
         self.iconChange()
         self.runSong()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
-        self.ui.AudioTrack.topLevelItem(self.pointeur + 1).setSelected(False)
 
     def call_random(self):
         if self.random:
