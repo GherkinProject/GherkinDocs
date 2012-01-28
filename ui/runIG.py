@@ -32,12 +32,12 @@ class MyForm(QtGui.QMainWindow):
 
     #print self.server.system.listMethods()
 
-        self.songs = get_lib()
+        (self.graph, self.songs) = get_lib()
 
-        for u in self.songs:
+        for u in self.songs.values():
             self.ui.addTrack(u)
-	    self.ui.addAlbum(u)
-	    self.ui.addArtist(u)
+            self.ui.addAlbum(u)
+            self.ui.addArtist(u)
 # l'except est present pour les fichiers n'ayant pas de titre.
 
     #loading song into the server
