@@ -81,17 +81,25 @@ class Ui_ProjetGherkin(object):
         self.verticalSlider.setOrientation(QtCore.Qt.Vertical)
         self.verticalSlider.setTickPosition(QtGui.QSlider.TicksBelow)
         self.verticalSlider.setObjectName(_fromUtf8("verticalSlider"))
-        self.gridLayout.addWidget(self.verticalSlider, 11, 3, 1, 1)
+        self.gridLayout.addWidget(self.verticalSlider, 11, 3, 1, 1 )
+
+
+
+
         self.LookingFor = QtGui.QLineEdit(self.centralwidget)
         self.LookingFor.setText(_fromUtf8(""))
         self.LookingFor.setReadOnly(False)
         self.LookingFor.setObjectName(_fromUtf8("LookingFor"))
         self.gridLayout.addWidget(self.LookingFor, 3, 2, 1, 1)
+
+
         self.LookingForNoTouch = QtGui.QLineEdit(self.centralwidget)
         self.LookingForNoTouch.setText(QtGui.QApplication.translate("ProjetGherkin", "Recherche :", None, QtGui.QApplication.UnicodeUTF8))
         self.LookingForNoTouch.setReadOnly(True)
         self.LookingForNoTouch.setObjectName(_fromUtf8("LookingForNoTouch"))
         self.gridLayout.addWidget(self.LookingForNoTouch, 3, 1, 1, 1)
+
+
         self.NextButton = QtGui.QPushButton(self.centralwidget)
         self.NextButton.setText(_fromUtf8(""))
         icon1 = QtGui.QIcon()
@@ -102,10 +110,13 @@ class Ui_ProjetGherkin(object):
         self.NextButton.setDefault(False)
         self.NextButton.setFlat(True)
         self.NextButton.setObjectName(_fromUtf8("NextButton"))
+
+
         self.PlayPN = QtGui.QButtonGroup(ProjetGherkin)
         self.PlayPN.setObjectName(_fromUtf8("PlayPN"))
         self.PlayPN.addButton(self.NextButton)
         self.gridLayout.addWidget(self.NextButton, 9, 3, 1, 1)
+
         self.PlayButton = QtGui.QPushButton(self.centralwidget)
         self.PlayButton.setText(_fromUtf8(""))
         icon2 = QtGui.QIcon()
@@ -116,6 +127,7 @@ class Ui_ProjetGherkin(object):
         self.PlayButton.setObjectName(_fromUtf8("PlayButton"))
         self.PlayPN.addButton(self.PlayButton)
         self.gridLayout.addWidget(self.PlayButton, 8, 3, 1, 1)
+
         self.PreviousButton = QtGui.QPushButton(self.centralwidget)
         self.PreviousButton.setText(_fromUtf8(""))
         icon3 = QtGui.QIcon()
@@ -126,6 +138,7 @@ class Ui_ProjetGherkin(object):
         self.PreviousButton.setObjectName(_fromUtf8("PreviousButton"))
         self.PlayPN.addButton(self.PreviousButton)
         self.gridLayout.addWidget(self.PreviousButton, 7, 3, 1, 1)
+
         self.RepeatButton = QtGui.QPushButton(self.centralwidget)
         self.RepeatButton.setText(_fromUtf8(""))
         icon4 = QtGui.QIcon()
@@ -136,9 +149,14 @@ class Ui_ProjetGherkin(object):
         self.RepeatButton.setObjectName(_fromUtf8("RepeatButton"))
         self.RandomRepeat.addButton(self.RepeatButton)
         self.gridLayout.addWidget(self.RepeatButton, 4, 3, 1, 1)
+
+
         self.SongBar = QtGui.QProgressBar(self.centralwidget)
         self.SongBar.setObjectName(_fromUtf8("SongBar"))
         self.gridLayout.addWidget(self.SongBar, 2, 1, 1, 2)
+	
+
+
         self.label = QtGui.QLabel(self.centralwidget)
         self.label.setText(_fromUtf8(""))
         self.label.setPixmap(QtGui.QPixmap(_fromUtf8(config.gherkinIcon)))
@@ -148,6 +166,7 @@ class Ui_ProjetGherkin(object):
         self.gridLayout.addWidget(self.label, 0, 0, 4, 1)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 10, 3, 1, 1)
+
         ProjetGherkin.setCentralWidget(self.centralwidget)
         self.MenuBarPG = QtGui.QMenuBar(ProjetGherkin)
         self.MenuBarPG.setGeometry(QtCore.QRect(0, 0, 640, 25))
@@ -237,6 +256,7 @@ class Ui_ProjetGherkin(object):
     	item_0 = QtGui.QTreeWidgetItem(self.Playlist)
         self.Playlist.topLevelItem(self.iteratorPlaylist).setText(0, QtGui.QApplication.translate("ProjetGherkin", playlist, None, QtGui.QApplication.UnicodeUTF8))
         self.iteratorPlaylist=1
+
    
 
 if __name__ == "__main__":

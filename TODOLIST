@@ -1,0 +1,30 @@
+Il faut qu'on commence à s'intéresser à la gestion intelligente du projet.
+(Playlist et A*)
+
+Sinon, il faut aussi :
+    
+    Assurer l'affichage des albums, artistes et playlist.
+    Mettre en surbrillance les items de l'arbre après un next/prev
+    Lorsqu'une chanson est finie on lance la suivant (play_next).
+    Si Repeat, on relance la même.
+
+    Modify_db => fait comme create_db mais modifie la db existante. (Attention à la gestion des id et à celles des doublons)
+
+    Rajouter dans les db la gestion des "lignes de métro" comme on les a défini. Puis rajouter un tag "note" qui gère la gestion du nombre d'occurences de lecture (plus la chanson est écoutée volontairement, plus la note est haute. Eventuellement rajouter un bouton + et -, pour modifier la note)
+
+    Ensuite pour la gestion intelligente, on peut faire comme suit :
+
+        On est sur une ligne : On continue dessus   si nbre_alea_tire < 0.5
+                                                    sinon on pondère les notes des chansons. (note = note / sommes_des_notes  ). On retire un nouveau nombre alea entre 0 et 1 et on prend la chanson qui suit.
+
+Idée :        Pour utiliser A*, on définit une chanson d'ouverture et un final. Et le but serait de trouver un chemin entre ces deux chansons qui maximise les notes. Le problème reste qu'il faudrait inventer des notes à deux variables d'entrée (la chanson actuelle et l'hypothetique chanson future). On peut aussi faire une fonction de passage entre deux albums ou deux artistes,ce qui devrait réduire de manière considérable la taille de la matrice de Markov. Je pense que cette idée de
+matrice de Markov d'élements P(x,y) avec x un artiste, y un autre artiste est vraiment pas débile et mérite de s'y intéresser.
+On aurait trivialement 
+P(x,x) = 0.5
+sum sur y de P(x,y) = 1
+Et ensuite on calcule le passage d'un album à un autre, selon les doubles clicks de l'utilisateur et aussi selon les boutons + et -.
+
+
+                                                    
+
+

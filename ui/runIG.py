@@ -3,7 +3,6 @@
 from PyQt4 import QtCore, QtGui
 from testIG import Ui_ProjetGherkin
 import sys
-
 #local lib : loading db
 from load_db import *
 
@@ -49,8 +48,8 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.PreviousButton, QtCore.SIGNAL("clicked()"), self.call_prev)
         QtCore.QObject.connect(self.ui.RandomButton, QtCore.SIGNAL("clicked()"), self.call_random)
         QtCore.QObject.connect(self.ui.RepeatButton,QtCore.SIGNAL("clicked()"), self.call_repeat)
-    #playing song
-    #s.play_pause()
+
+	
 
     def add_entry(self):
         self.ui.lineEdit.selectAll()
@@ -60,8 +59,8 @@ class MyForm(QtGui.QMainWindow):
 
     def call_play_pause(self):
         self.server.play_pause()
+    	self.runSong()
         self.iconChange()
-        self.runProgressBarWorker()
 
     def call_load(self, QtWidget, val = 0):
         self.server.stop()
@@ -70,6 +69,7 @@ class MyForm(QtGui.QMainWindow):
         self.pointeur = int(QtWidget.text(4))
         self.server.load(s)
         self.server.play_pause()
+	self.runSong()
 
     def call_next(self):
         self.server.stop()
@@ -85,6 +85,7 @@ class MyForm(QtGui.QMainWindow):
             print self.songs[self.pointeur]['title']
 
         self.server.play_pause()
+	self.runSong()
 
 
     def call_prev(self):
@@ -98,6 +99,7 @@ class MyForm(QtGui.QMainWindow):
             self.server.load(self.songs[self.pointeur]['location'])
 
         self.server.play_pause()
+	self.runSong()
 
     def call_random(self):
         if self.random:
@@ -115,32 +117,6 @@ class MyForm(QtGui.QMainWindow):
         self.progressBarWorker = Worker()
         self.progressBarWorker.start()
 
-    def pushBar(self, dt):
-        u = self.ui.SongBar.value()
-        self.ui.SongBar.setValue(u + 100*dt/180)#self.server.get_duration())
-        self.ui.SongBar.repaint()
-    
-    #this function is to obtain hours, second, minutes from the duration sent by the server.
-    def convert_ns(self, t):
-        s,ns = divmod(t, 1000000000)
-        m,s = divmod(s, 60)
-        if m < 60:
-            return "%02i:%02i" %(m,s)
-        else:
-            h,m = divmod(m, 60)
-            return "%i:%02i:%02i" %(h,m,s)
-
-      
- #   def pushProgressBar(self):
- #       u = self.server.is_playing()
- #       print u
- #       if u:
- #           time.sleep(config.dt)
- #           self.pushBar(config.dt)
- #           self.pushProgressBar()
- #       else:
- #           pass
-
     def iconChange(self):
         u = self.server.is_playing()
         print u
@@ -155,17 +131,42 @@ class MyForm(QtGui.QMainWindow):
     	    self.ui.PlayButton.setIcon(icon2)
             self.ui.PlayButton.setIconSize(QtCore.QSize(30, 30))
   
-class progressBarWorker(QtCore.QThread):
-    __pyqtSignals__ = ("updateProgressBar")
-    
+    def runSong(self):
+        self.song_play = Song()
+        self.connect(self.song_play, QtCore.SIGNAL("progressUpdated"),
+        self.updateSongProgress2)
+        self.song_play.start()
+
+    def updateSongProgress(self, min, max, progress):
+        self.ui.SongBar.setMinimum(min)
+        self.ui.SongBar.setMaximum(max)
+        self.ui.SongBar.setValue(progress)
+        self.ui.SongBar.repaint()
+
+    def updateSongProgress2(self):
+        self.ui.SongBar.setMinimum(0)
+        self.ui.SongBar.setMaximum(self.server.get_duration())
+        self.ui.SongBar.setValue(self.server.get_position())
+        self.ui.SongBar.repaint()
+
+
+
+
+class Song(QtCore.QThread):
+    __pyqtSignals__ = ("progressUpdated")
     def __init__(self):
         QtCore.QThread.__init__(self)
-    
+        self.min = 0
+        self.max = 10000 
+        self.progress = 0
+	
     def run(self):
-        self.emit(QtCore.SIGNAL("updateProgressBar"))
-        sleep(1)
-    
-        
+	for self.progress in range(self.min, self.max):
+            #self.emit(QtCore.SIGNAL("progressUpdated"), self.min,
+            #self.max, self.progress)
+            self.emit(QtCore.SIGNAL("progressUpdated"))
+            time.sleep(0.05)  
+     
 
 app = QtGui.QApplication(sys.argv)
 myapp = MyForm()

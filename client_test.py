@@ -63,7 +63,7 @@ from time import *
 s = xmlrpclib.ServerProxy("http://localhost:" + str(config.defaultPort))
 
 #just tu show what commands are available
-print s.system.listMethods()
+print s.system.listMethods()	
 
 #getting list of songs
 songs = get_lib()
