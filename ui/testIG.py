@@ -218,15 +218,21 @@ class Ui_ProjetGherkin(object):
     def retranslateUi(self, ProjetGherkin):
         pass
 
-    def addAlbum(self,album):
-        item_0 = QtGui.QTreeWidgetItem(self.Album)
-        self.Album.topLevelItem(self.iteratorAlbum).setText(0, QtGui.QApplication.translate("ProjetGherkin", album, None, QtGui.QApplication.UnicodeUTF8))
-        self.iteratorAlbum+=1
+    def addAlbum(self,u):
+        itemAT=QtGui.QTreeWidgetItem()
+        try:
+            itemAT.setText(0,u['album'])
+        except:
+            itemAT.setText(0,"Unknown")
+        self.Album.addTopLevelItem(itemAT)
 
-    def addArtist(self,artist):
-        item_0 = QtGui.QTreeWidgetItem(self.Artist)
-        self.Artist.topLevelItem(self.iteratorArtist).setText(0, QtGui.QApplication.translate("ProjetGherkin", artist, None, QtGui.QApplication.UnicodeUTF8))
-        self.iteratorArtist+=1
+    def addArtist(self,u):
+        itemAT=QtGui.QTreeWidgetItem()
+        try:
+            itemAT.setText(0,u['artist'])
+        except:
+            itemAT.setText(0,"Unknown")
+        self.Artist.addTopLevelItem(itemAT)
 
     def addTrack(self,u):
 #        item_0 = QtGui.QTreeWidgetItem(self.AudioTrack)
@@ -252,7 +258,7 @@ class Ui_ProjetGherkin(object):
         self.AudioTrack.addTopLevelItem(itemAT)
         
 
-    def addPlaylist(self,playlist):
+    def addPlaylist(self,u):
     	item_0 = QtGui.QTreeWidgetItem(self.Playlist)
         self.Playlist.topLevelItem(self.iteratorPlaylist).setText(0, QtGui.QApplication.translate("ProjetGherkin", playlist, None, QtGui.QApplication.UnicodeUTF8))
         self.iteratorPlaylist=1
