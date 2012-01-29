@@ -5,8 +5,6 @@ Sinon, il faut aussi :
     
     Assurer l'affichage des albums, artistes et playlist.
     Mettre en surbrillance les items de l'arbre après un next/prev
-    Lorsqu'une chanson est finie on lance la suivant (play_next).
-    Si Repeat, on relance la même.
 
     Modify_db => fait comme create_db mais modifie la db existante. (Attention à la gestion des id et à celles des doublons)
 

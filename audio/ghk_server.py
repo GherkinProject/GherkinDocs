@@ -73,7 +73,7 @@ class audio_server:
 
 
 # Create server
-server = SimpleXMLRPCServer(("localhost", config.defaultPort), allow_none=True)
+server = SimpleXMLRPCServer(("localhost", config.defaultPort), logRequests = False, allow_none=True)
 server.register_introspection_functions()
 server.register_instance(audio_server())
 
