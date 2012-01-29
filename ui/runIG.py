@@ -33,7 +33,8 @@ class MyForm(QtGui.QMainWindow):
     #print self.server.system.listMethods()
     #    print get_lib()
         (self.graph, self.songs) = get_lib()
-
+        print self.graph
+        print self.graph.keys()
         for u in self.songs.values():
             self.ui.addTrack(u)
             self.ui.addAlbum(u)
@@ -45,7 +46,7 @@ class MyForm(QtGui.QMainWindow):
         
     
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
-        QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemDoubleClicked(QTreeWidgetItem*,int)"), self.call_load )
+        QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_load )
         QtCore.QObject.connect(self.ui.NextButton, QtCore.SIGNAL("clicked()"), self.call_next)
         QtCore.QObject.connect(self.ui.PreviousButton, QtCore.SIGNAL("clicked()"), self.call_prev)
         QtCore.QObject.connect(self.ui.RandomButton, QtCore.SIGNAL("clicked()"), self.call_random)
