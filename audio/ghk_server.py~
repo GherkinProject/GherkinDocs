@@ -21,6 +21,7 @@ class audio_server:
         self.player = gst.element_factory_make("playbin2", "player")
         fakesink = gst.element_factory_make("fakesink", "fakesink")
         self.player.set_property("video-sink", fakesink)
+        
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self.on_message)
@@ -69,8 +70,13 @@ class audio_server:
         """Return the state of the audio player"""
         return self.playing
 
-    
+    def get_volume(self):
+	"""Return the state of the volume"""
+	return 0
 
+    def set_volume(self, volume):
+	"""Set the volume at the quantity desired by user"""
+	pass
 
 # Create server
 server = SimpleXMLRPCServer(("localhost", config.defaultPort), allow_none=True)
