@@ -24,6 +24,7 @@ class Ui_ProjetGherkin(object):
         self.iteratorAlbum = 0
         self.iteratorAudioTrack = 0
     	self.isPlaying = False   
+        self.id = 4
 
         ProjetGherkin.setObjectName(_fromUtf8("ProjetGherkin"))
         ProjetGherkin.resize(640, 480)
@@ -217,20 +218,20 @@ class Ui_ProjetGherkin(object):
     def retranslateUi(self, ProjetGherkin):
         pass
 
-    def addAlbum(self,u):
+    def addAlbum(self, albumName):
         itemAT=QtGui.QTreeWidgetItem()
         try:
-            itemAT.setText(0,u['album'])
+            itemAT.setText(0, albumName)
         except:
-            itemAT.setText(0,"Unknown")
+            itemAT.setText(0,config.defaultUnknown)
         self.Album.addTopLevelItem(itemAT)
 
-    def addArtist(self,u):
+    def addArtist(self, artistName):
         itemAT=QtGui.QTreeWidgetItem()
         try:
-            itemAT.setText(0,u['artist'])
+            itemAT.setText(0, artistName)
         except:
-            itemAT.setText(0,"Unknown")
+            itemAT.setText(0,config.defaultUnknown)
         self.Artist.addTopLevelItem(itemAT)
 
     def addTrack(self,u):
@@ -240,22 +241,23 @@ class Ui_ProjetGherkin(object):
                
         itemAT=QtGui.QTreeWidgetItem()
         try:
-            itemAT.setText(0,u['title'])
+            itemAT.setText(0, u['title'])
         except:
-            itemAT.setText(0,"Unknown")
+            itemAT.setText(0, config.defaultUnknown)
         try:
-            itemAT.setText(1,u['artist'])
+            itemAT.setText(1, u['artist'])
         except:
-            itemAT.setText(1,"Unknown")
+            itemAT.setText(1, config.defaultUnknown)
         try:
-            itemAT.setText(2,u['album'])
+            itemAT.setText(2, u['album'])
         except:
-            itemAT.setText(2,"Unknown")
+            itemAT.setText(2, config.defaultUnknown)
 
-        itemAT.setText(3,u['location'])
-        itemAT.setText(4,str(u['id']))
+        itemAT.setText(3, u['location'])
+        itemAT.setText(self.id, str(u['id']))
+        #self.AudioTrack.insertTopLevelItem(u['id'], itemAT)
         self.AudioTrack.addTopLevelItem(itemAT)
-        
+ 
 
     def addPlaylist(self,u):
     	item_0 = QtGui.QTreeWidgetItem(self.Playlist)
