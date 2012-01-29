@@ -14,6 +14,12 @@ from SimpleXMLRPCServer import SimpleXMLRPCServer
 #config file
 import config
 
+#logs
+import logging
+import logging.config
+logging.config.fileConfig(config.logLocation + "log.conf")
+log = logging.getLogger(config.logLocation + "ghk_audio_server")
+
 class audio_server:
     def __init__(self):
         self.playing = False
@@ -27,11 +33,12 @@ class audio_server:
     
     def load(self, path):
         """Load a song from the absolution or relative path "path" to the gstreamer audio server"""
-        print path
+        log.debug("Trying to load file " + path)
         if os.path.isfile(path):
             self.player.set_property("uri", "file://" + path)
+            log.info("File " + path + " loaded")
         else:
-            print "bad file path"
+            log.error("Bad pathfile :" + path)
 
     def play_pause(self):
         """Play or pause the file if loaded, if not, do nothing"""
@@ -60,10 +67,11 @@ class audio_server:
         t = message.type
         if t == gst.MESSAGE_EOS:
             self.player.set_state(gst.STATE_NULL)
+            log.info("Reached end of file")
         elif t == gst.MESSAGE_ERROR:
             self.player.set_state(gst.STATE_NULL)
             err, debug = message.parse_error()
-            print "Error: %s" % err, debug
+            log.error("Got gstreamer error : %s" % err, debug)
     
     def is_playing(self):
         """Return the state of the audio player"""

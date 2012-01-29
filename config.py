@@ -14,6 +14,7 @@ dt = 0.5
 
 #icon and locations
 iconLocation = "pictures/"
+logLocation = "log/"
 playIcon = iconLocation + "play.png"
 pauseIcon = iconLocation + "pause.png"
 nextIcon = iconLocation + "forward.png"
