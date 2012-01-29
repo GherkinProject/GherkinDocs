@@ -18,7 +18,7 @@ import config
 import logging
 import logging.config
 logging.config.fileConfig(config.logLocation + "log.conf")
-log = logging.getLogger(config.logLocation + "ghk_audio_server")
+log = logging.getLogger("GhkAudioServer")
 
 class audio_server:
     def __init__(self):
