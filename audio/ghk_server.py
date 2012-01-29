@@ -35,10 +35,17 @@ class audio_server:
         """Load a song from the absolution or relative path "path" to the gstreamer audio server"""
         log.debug("Trying to load file " + path)
         if os.path.isfile(path):
-            self.player.set_property("uri", "file://" + path)
-            log.info("File " + path + " loaded")
+            try:
+                self.player.set_property("uri", "file://" + path)
+            except:
+                log.error("Gstreamer can't load file : " + path)
+                return False
+            else:
+                log.info("File " + path + " loaded")
+                return True
         else:
             log.error("Bad pathfile :" + path)
+            return False
 
     def play_pause(self):
         """Play or pause the file if loaded, if not, do nothing"""
