@@ -100,7 +100,7 @@ class MyForm(QtGui.QMainWindow):
         self.server.stop()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
         if not self.random:
-            if self.pointeur > 0:
+            if self.pointeur > 0
                 self.pointeur-=1
                 self.server.load(self.songs[self.pointeur]['location'])
             else:
@@ -125,7 +125,7 @@ class MyForm(QtGui.QMainWindow):
         else:
             self.random = True
             icon2 = QtGui.QIcon()
-            icon2.addPixmap(QtGui.QPixmap((config.randomOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon2.addPixmap(QtGui.QPixmap((config.randomOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.RandomButton.setIcon(icon2)
             self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
     
