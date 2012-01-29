@@ -5,11 +5,23 @@
 
 #script with arguments
 import sys
+
 #script using system commands
 import os
+
 #script using dom
 from xml.dom.minidom import Document
 from xml.dom import minidom
+
+#local lib
+import config
+
+#logs
+import logging
+import logging.config
+logging.config.fileConfig(config.logLocation + "log.conf")
+log = logging.getLogger("GhkDbManagement")
+
 
 #patch dom to gain space
 def newwritexml(self, writer, indent= '', addindent= '', newl= ''):
@@ -28,8 +40,11 @@ import mutagen
 #local libraries
 import config
 
-def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation):
+def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""
+    if(directory == ""):
+        return False
+    
     id = 0
     doc = Document()
     root = doc.createElement("db")
@@ -55,13 +70,12 @@ def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defau
                         tagValue[i] = doc.createTextNode(audio[i][0].encode("utf-8"))
                         tag[i].appendChild(tagValue[i])
                 except:
-                    print "bad file encoding : " + os.path.join(dirname, f)
-    db = open("db.xml", "w")
-    doc.writexml(db, "\n", "  ")
-    db.close()
-
-if sys.argv[1] == "":
-    print "path of the data base expected"
-else:
-    create_db(sys.argv[1])
-    print "database created at " + config.defaultDbLocation
+                    log.debug("Bad file encoding : " + os.path.join(dirname, f))
+    try:
+        db = open(dbLocation + dbFile, "w")
+        doc.writexml(db, "\n", "  ")
+        db.close()
+    except:
+        log.error("Problem writing database")
+    else:
+        log.info("Database created at " + dbLocation)

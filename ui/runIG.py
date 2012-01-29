@@ -3,6 +3,7 @@
 from PyQt4 import QtCore, QtGui
 from testIG import Ui_ProjetGherkin
 import sys
+
 #local lib : loading db
 from load_db import *
 
@@ -23,8 +24,8 @@ class MyForm(QtGui.QMainWindow):
         self.ui = Ui_ProjetGherkin()
         self.ui.setupUi(self)
         self.pointeur = 0
-        self.random =False
-        self.repeat = False 
+        self.random = False
+        self.repeat = False
     #getting in touch with server
         self.server = xmlrpclib.ServerProxy("http://localhost:" + str(config.defaultPort))
 
@@ -32,14 +33,12 @@ class MyForm(QtGui.QMainWindow):
 
     #print self.server.system.listMethods()
     #    print get_lib()
-        (self.graph, self.songs) = get_lib()
-        print self.graph
-        print self.graph.keys()
-        for u in self.songs.values():
-            self.ui.addTrack(u)
-            self.ui.addAlbum(u)
-            self.ui.addArtist(u)
-# l'except est present pour les fichiers n'ayant pas de titre.
+        (self.artists, self.albums, self.songs) = get_lib()
+        print self.artists
+        print self.albums
+        
+        self.display_all()
+       # l'except est present pour les fichiers n'ayant pas de titre.
 
     #loading song into the server
         self.server.load(self.songs[self.pointeur]['location'])
@@ -47,6 +46,8 @@ class MyForm(QtGui.QMainWindow):
     
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
         QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_load )
+        QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_albums )
+        QtCore.QObject.connect(self.ui.Album, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_tracks )
         QtCore.QObject.connect(self.ui.NextButton, QtCore.SIGNAL("clicked()"), self.call_next)
         QtCore.QObject.connect(self.ui.PreviousButton, QtCore.SIGNAL("clicked()"), self.call_prev)
         QtCore.QObject.connect(self.ui.RandomButton, QtCore.SIGNAL("clicked()"), self.call_random)
@@ -75,6 +76,33 @@ class MyForm(QtGui.QMainWindow):
     	self.iconChange()
         self.runSong()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
+    
+    def display_all(self):
+        self.ui.Artist.clear()
+        self.ui.Album.clear()
+        self.ui.AudioTrack.clear()
+        for artist in self.artists:
+            self.ui.addArtist(artist)
+            for album in self.albums:
+                self.ui.addAlbum(album)
+                for idTrack in self.albums[album]:
+                    self.ui.addTrack(self.songs[idTrack])
+ 
+
+    def call_albums(self, QtWidget, val = 0):
+        #removing elements from the album tree
+        self.ui.Album.clear()
+        self.selectedArtist = str(QtWidget.text(0))
+        for album in self.artists[self.selectedArtist]:
+            self.ui.addAlbum(album)
+    
+    def call_tracks(self, QtWidget, val = 0):
+        #removing elements from the album tree
+        self.ui.AudioTrack.clear()
+        self.selectedAlbum = str(QtWidget.text(0))
+        for idTrack in self.albums[self.selectedAlbum]:
+            self.ui.addTrack(self.songs[idTrack])
+        make_neighbors(self.songs, self.albums[self.selectedAlbum])
 
     def call_next(self):
         self.server.stop()
@@ -151,7 +179,6 @@ class MyForm(QtGui.QMainWindow):
 
     def iconChange(self):
         u = self.server.is_playing()
-#        print u
         if u:
             icon2 = QtGui.QIcon()
             icon2.addPixmap(QtGui.QPixmap((config.pauseIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
