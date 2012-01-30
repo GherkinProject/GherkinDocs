@@ -85,24 +85,31 @@ class MyForm(QtGui.QMainWindow):
             self.ui.addArtist(artist)
             for album in self.albums:
                 self.ui.addAlbum(album)
-                for idTrack in self.albums[album]:
-                    self.ui.addTrack(self.songs[idTrack])
+        #        for idTrack in self.albums[album]:
+        #            self.ui.addTrack(self.songs[idTrack])
  
 
     def call_albums(self, QtWidget, val = 0):
         #removing elements from the album tree
         self.ui.Album.clear()
+        self.ui.AudioTrack.clear()
         self.selectedArtist = str(QtWidget.text(0))
+        self.selectedSongs = set()
         for album in self.artists[self.selectedArtist]:
             self.ui.addAlbum(album)
+            for idTrack in self.albums[album]:
+                self.ui.addTrack(self.songs[idTrack])
+                self.selectedSongs.add(idTrack)
+        make_neighbors(self.songs, self.selectedSongs)
     
     def call_tracks(self, QtWidget, val = 0):
         #removing elements from the album tree
         self.ui.AudioTrack.clear()
         self.selectedAlbum = str(QtWidget.text(0))
+        self.selectedSongs = self.albums[self.selectedAlbum] 
         for idTrack in self.albums[self.selectedAlbum]:
             self.ui.addTrack(self.songs[idTrack])
-        make_neighbors(self.songs, self.albums[self.selectedAlbum])
+        make_neighbors(self.songs, self.selectedSongs)
 
     def call_next(self):
         self.server.stop()

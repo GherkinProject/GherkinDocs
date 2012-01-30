@@ -9,6 +9,11 @@ import xml.etree.ElementTree as ET
 #local libraries
 import config
 
+#logs
+import logging
+import logging.config
+logging.config.fileConfig(config.logLocation + "log.conf")
+log = logging.getLogger("GhkDbManagement")
 
 def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     tree = ET.ElementTree()
@@ -52,34 +57,47 @@ def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile
 
         #first element : id of previous
         #second element : dict ( id : proba )
-    
+    log.info("Database loaded in memeory")
+
     return (artistDict, albumDict, songs)
 
 def make_neighbors(songs, tracks):
     """songs is the tag songs built up, songs is sth like graph[artist][album]"""
     
     def comp(x, y):
-        if 'tracknumber' in set(songs[x].keys()).intersection(set(songs[y].keys())):
-            if songs[x]['tracknumber'] > songs[y]['tracknumber']:
+        if 'artist' in set(songs[x].keys()).intersection(set(songs[y].keys())):
+            if songs[x]['artist'] > songs[y]['artist']:
                 return -1
-            elif songs[x]['tracknumber'] < songs[y]['tracknumber']:
+            elif songs[x]['artist'] < songs[y]['artist']:
                 return +1
             else:
-                return 0
-        elif 'title' in set(songs[x].keys()).intersection(set(songs[y].keys())):
-            if songs[x]['title'] > songs[y]['title']:
-                return -1
-            elif songs[x]['title'] < songs[y]['title']:
-                return +1
-            else:
-                return 0
-        else:    
-            if songs[x]['location'] > songs[y]['location']:
-                return -1
-            elif songs[x]['location'] < songs[y]['location']:
-                return +1
-            else:
-                return 0            
+                if 'album' in set(songs[x].keys()).intersection(set(songs[y].keys())):
+                    if songs[x]['album'] > songs[y]['album']:
+                        return -1
+                    elif songs[x]['album'] < songs[y]['album']:
+                        return +1
+                    else:
+                        if 'tracknumber' in set(songs[x].keys()).intersection(set(songs[y].keys())):
+                            if songs[x]['tracknumber'] > songs[y]['tracknumber']:
+                                return -1
+                            elif songs[x]['tracknumber'] < songs[y]['tracknumber']:
+                                return +1
+                            else:
+                                return 0
+                        elif 'title' in set(songs[x].keys()).intersection(set(songs[y].keys())):
+                            if songs[x]['title'] > songs[y]['title']:
+                                return -1
+                            elif songs[x]['title'] < songs[y]['title']:
+                                return +1
+                            else:
+                                return 0
+                        else:    
+                            if songs[x]['location'] > songs[y]['location']:
+                                return -1
+                            elif songs[x]['location'] < songs[y]['location']:
+                                return +1
+                            else:
+                                return 0            
 
     l = list(tracks) #we have here a list of id's
     l.sort(comp) #we sort them
