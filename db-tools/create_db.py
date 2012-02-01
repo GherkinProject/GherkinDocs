@@ -13,16 +13,6 @@ import os
 from xml.dom.minidom import Document
 from xml.dom import minidom
 
-#local lib
-import config
-
-#logs
-import logging
-import logging.config
-logging.config.fileConfig(config.logLocation + "log.conf")
-log = logging.getLogger("GhkDbManagement")
-
-
 #patch dom to gain space
 def newwritexml(self, writer, indent= '', addindent= '', newl= ''):
     if len(self.childNodes)==1 and self.firstChild.nodeType==3:
@@ -34,11 +24,17 @@ def newwritexml(self, writer, indent= '', addindent= '', newl= ''):
 minidom.Element.oldwritexml= minidom.Element.writexml
 minidom.Element.writexml= newwritexml
 
+#local lib
+import config
+
+#logs
+import logging
+import logging.config
+logging.config.fileConfig(config.logLocation + "log.conf")
+log = logging.getLogger("GhkDbManagement")
+
 #ID3 tag library
 import mutagen
-
-#local libraries
-import config
 
 def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""

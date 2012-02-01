@@ -103,13 +103,15 @@ def make_neighbors(songs, tracks):
     l.sort(comp) #we sort them
     
     #convention : first element : previous to play; second element, dict of to-play elements giving their proba
+    
+    return l
 
-    for i in xrange(len(l)):
-        try:
-            songs[l[i]]["prev"] = l[i-1]
-        except:
-            pass #it is the first element
-        try:
-            songs[l[i]]["next"][l[i+1]] = 1
-        except:
-            pass #it is the last element
+#    for i in xrange(len(l)):
+#        try:
+#            songs[l[i]]["prev"] = l[i-1]
+#        except:
+#            pass #it is the first element
+#        try:
+#            songs[l[i]]["next"][l[i+1]] = 1
+#        except:
+#            pass #it is the last element

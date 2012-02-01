@@ -17,6 +17,9 @@ import random
 #client lib for calling server
 import xmlrpclib
 
+normal = 0
+random = 1
+playlist = 2
 
 class MyForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -24,26 +27,23 @@ class MyForm(QtGui.QMainWindow):
         self.ui = Ui_ProjetGherkin()
         self.ui.setupUi(self)
         self.pointeur = 0
-        self.random = False
-        self.repeat = False
-    #getting in touch with server
+        self.playlist = []
+        self.mode = normal
+        
+        #connection with the server
         self.server = xmlrpclib.ServerProxy("http://localhost:" + str(config.defaultPort))
 
-    #just to show what commands are available
-
-    #print self.server.system.listMethods()
-    #    print get_lib()
         (self.artists, self.albums, self.songs) = get_lib()
-        print self.artists
-        print self.albums
+        #print self.artists
+        #print self.albums
         
         self.display_all()
-       # l'except est present pour les fichiers n'ayant pas de titre.
+        #l'except est present pour les fichiers n'ayant pas de titre.
 
-    #loading song into the server
+        #loading song into the server
         self.server.load(self.songs[self.pointeur]['location'])
         
-    
+        #signal received, functions called
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
         QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_load )
         QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_albums )
@@ -93,39 +93,63 @@ class MyForm(QtGui.QMainWindow):
         #removing elements from the album tree
         self.ui.Album.clear()
         self.ui.AudioTrack.clear()
+
         self.selectedArtist = str(QtWidget.text(0))
         self.selectedSongs = set()
+
         for album in self.artists[self.selectedArtist]:
-            self.ui.addAlbum(album)
             for idTrack in self.albums[album]:
-                self.ui.addTrack(self.songs[idTrack])
                 self.selectedSongs.add(idTrack)
-        make_neighbors(self.songs, self.selectedSongs)
+        
+        self.playlist = make_neighbors(self.songs, self.selectedSongs)
+        self.pointeur = 0
+
+        self.displayedAlbums = set()
+        for idTrack in self.playlist:
+            if self.songs[idTrack]["album"] not in self.displayedAlbums:
+                self.displayedAlbums.add(self.songs[idTrack]["album"])
+                self.ui.addAlbum(self.songs[idTrack]["album"])
+            self.ui.addTrack(self.songs[idTrack])
     
     def call_tracks(self, QtWidget, val = 0):
         #removing elements from the album tree
         self.ui.AudioTrack.clear()
+
         self.selectedAlbum = str(QtWidget.text(0))
         self.selectedSongs = self.albums[self.selectedAlbum] 
-        for idTrack in self.albums[self.selectedAlbum]:
+        
+        self.playlist = make_neighbors(self.songs, self.selectedSongs)
+        self.pointeur = 0
+
+        for idTrack in self.playlist:
             self.ui.addTrack(self.songs[idTrack])
-        make_neighbors(self.songs, self.selectedSongs)
 
     def call_next(self):
         self.server.stop()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
-        if self.random == False:
-            if self.pointeur < self.songs.keys()[-1]:
-                self.pointeur+=1    
-                self.server.load(self.songs[self.pointeur]['location'])
+        if self.mode == normal:
+            if self.pointeur < len(self.playlist) - 1:
+                self.pointeur+=1
+                self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
             else:
                 self.pointeur = 0
-                self.server.load(self.songs[self.pointeur]['location'])
+                self.server.stop()
         else:
-# On est en mode random, donc on fait n'importe quoi.
-            self.pointeur = random.randint(0, self.songs.keys()[-1])
-            self.server.load(self.songs[self.pointeur]['location'])
-            print self.songs[self.pointeur]['title']
+            if self.mode == random:
+                #choosing a random number in the list of possible song
+                posSong = random.randint(0, len(self.songs.keys()))
+                idSong = self.songs.keys()[posSong] 
+            elif self.mode == playlist:
+                idSong = Markovienne(self.proba[self.playlist[self.pointeur]])
+            #adding the song to the playlist
+            self.playlist.append(idSong)
+            
+            #pointing on the new song
+            self.pointeur += 1
+
+            #displaying the track to the playlist
+            self.ui.addTrack(self.songs[self.playlist[-1]])
+            self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
 
         self.server.play_pause()
         self.iconChange()
@@ -153,7 +177,7 @@ class MyForm(QtGui.QMainWindow):
 
     def call_random(self):
         if self.random:
-            self.random = False
+            self.mode = random
             icon2 = QtGui.QIcon()
             icon2.addPixmap(QtGui.QPixmap((config.randomOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.RandomButton.setIcon(icon2)
