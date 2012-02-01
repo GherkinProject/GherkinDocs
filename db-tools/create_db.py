@@ -36,7 +36,7 @@ log = logging.getLogger("GhkDbManagement")
 #ID3 tag library
 import mutagen
 
-def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
+def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""
     if(directory == ""):
         return False
@@ -45,6 +45,8 @@ def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defau
     doc = Document()
     root = doc.createElement("db")
     doc.appendChild(root)
+    
+    #classic loops to check every files in the subdirectories at every level. Possibly long.
     for dirname, dirnames, filenames in os.walk(directory):
         for f in filenames:
             if os.path.splitext(f)[1].lower() in fileExt:
@@ -60,6 +62,8 @@ def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defau
                     location.appendChild(locationValue)
                     tag = dict()
                     tagValue = dict()
+
+                    #for each tag given by mutagen, we add it to our library, useless to add unknow, load_db will do it alone.
                     for i in set(audio.keys()).intersection(tagKept):
                         tag[i] = doc.createElement(i)
                         block.appendChild(tag[i])
@@ -67,6 +71,8 @@ def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defau
                         tag[i].appendChild(tagValue[i])
                 except:
                     log.debug("Bad file encoding : " + os.path.join(dirname, f))
+    
+    #writing the result into "db.xml" (defaultpath)
     try:
         db = open(dbLocation + dbFile, "w")
         doc.writexml(db, "\n", "  ")

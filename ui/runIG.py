@@ -18,6 +18,7 @@ from random import randint
 #client lib for calling server
 import xmlrpclib
 
+#constante mode
 normal = 0
 random = 1
 playlist = 2
@@ -27,22 +28,25 @@ class MyForm(QtGui.QMainWindow):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_ProjetGherkin()
         self.ui.setupUi(self)
+        
+        #they come together
         self.pointeur = 0
         self.playlist = []
+
         self.mode = normal
         self.repeat = False
 
         #connection with the server
         self.server = xmlrpclib.ServerProxy("http://localhost:" + str(config.defaultPort))
-
-        (self.artists, self.albums, self.songs) = get_lib()
-        #print self.artists
-        #print self.albums
         
+        #getting the lib from the xml file
+        (self.artists, self.albums, self.songs) = get_lib()
+        
+        #display artists and albums at launch
         self.display_all()
-        #l'except est present pour les fichiers n'ayant pas de titre.
 
         #loading song into the server
+        #TO BE CHANGE ! id = 0 may not exist !
         self.server.load(self.songs[self.pointeur]['location'])
         
         #signal received, functions called
@@ -64,36 +68,47 @@ class MyForm(QtGui.QMainWindow):
 
     def call_play_pause(self):
         self.server.play_pause()
+
+        #do not forget to work with the other thread
      	self.runSong()
+
+        #displaying the changes
         self.iconChange()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
 
     def call_load(self, QtWidget, val = 0):
+    """When a song is doubleclicked on in the playlist, it calls call_load"""
+        #we have the id of the song clicked on
         idSong = int(QtWidget.text(4))
         
-        #arret de la lecture
+        #stop playing
         self.server.stop()
 
-        #déselection graphique de la chanson
+        #deslect the track in the ui
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
         
-        #on trouve la chanson choisie dans la playlist
+        self.pointeur = 0
+        #looking for the selected track in the playlist
         while self.playlist[self.pointeur] != idSong:
             self.pointeur += 1
 
-        #chargement puis lancement de la musique
+        #loading and playing
         self.server.load(self.songs[idSong]["location"])
         self.server.play_pause()
         
-        #affichage graphique
+        #displaying the changes
     	self.iconChange()
         self.runSong()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
     
     def display_all(self):
+    """display all albums and artists"""
+        #cleaning the lists
         self.ui.Artist.clear()
         self.ui.Album.clear()
         self.ui.AudioTrack.clear()
+        
+        #sorting the artists and albums by name for it to be smarter, and display
         artists = self.artists.keys()
         artists.sort()
         for artist in artists:
@@ -105,34 +120,42 @@ class MyForm(QtGui.QMainWindow):
  
 
     def call_albums(self, QtWidget, val = 0):
+    """When an artist is clicked on..."""
         self.selectedArtist = str(QtWidget.text(0))
         self.selectedSongs = set()
         
+        #adding all the songs to the set
         for album in self.artists[self.selectedArtist]:
             for idTrack in self.albums[album]:
                 self.selectedSongs.add(idTrack)
         
+        #then create a playlist from this set
         self.playlist = make_neighbors(self.songs, self.selectedSongs)
         self.pointeur = 0
-
+        
+        #and update the ui then
         self.update_albums()
     
     def update_albums(self):
         #removing elements from the album tree
         self.ui.Album.clear()
         self.ui.AudioTrack.clear()
-
+        
+        #add them in the order of the playlist, that is to say, alphabetical order for albums
         self.displayedAlbums = set()
         for idTrack in self.playlist:
+            #adding an album if he hasn't already been displayed
             if self.songs[idTrack]["album"] not in self.displayedAlbums:
                 self.displayedAlbums.add(self.songs[idTrack]["album"])
                 self.ui.addAlbum(self.songs[idTrack]["album"])
             self.ui.addTrack(self.songs[idTrack])
     
     def call_tracks(self, QtWidget, val = 0):
+    """When an album is doubleclicked on"""
         self.selectedAlbum = str(QtWidget.text(0))
         self.selectedSongs = self.albums[self.selectedAlbum] 
         
+        #making the playlist from the set of songs
         self.playlist = make_neighbors(self.songs, self.selectedSongs)
         self.pointeur = 0
     
@@ -152,6 +175,8 @@ class MyForm(QtGui.QMainWindow):
         
         self.server.stop()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
+        
+        #few things to do if we are in normal mode... just incrementing the pointeur
         if self.mode == normal:
             if self.pointeur < len(self.playlist) - 1:
                 self.pointeur+=1
@@ -186,16 +211,19 @@ class MyForm(QtGui.QMainWindow):
         return True
 
     def call_prev(self):
+    """When previous button clicked on, convention : go to the end if at the first"""
         self.server.stop()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
         
+        #if we are not at the first element, no problem
         if self.pointeur > 0:
             self.pointeur-=1
             self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
         else:
             self.pointeur = len(self.playlist)-1
             self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
-
+        
+        #erasing the lasts elements in those mode taking into account the user didn't like the music proposed
         if self.mode == playlist or self.mode == random:
             self.playlist.pop(-1)
             self.update_tracks()
@@ -208,13 +236,19 @@ class MyForm(QtGui.QMainWindow):
     def call_random(self):
         if self.mode == random:
             self.mode = random
+
+            #updating ui
             icon2 = QtGui.QIcon()
             icon2.addPixmap(QtGui.QPixmap((config.randomOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.RandomButton.setIcon(icon2)
             self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
         else:
             self.mode = random
+
+            #removing last elements from the playlist for it to be ready for next
             self.playlist = self.playlist[0:self.pointeur+1]
+
+            #updating ui
             self.update_tracks()
             icon2 = QtGui.QIcon()
             icon2.addPixmap(QtGui.QPixmap((config.randomOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -224,12 +258,16 @@ class MyForm(QtGui.QMainWindow):
     def call_repeat(self):
         if self.repeat:
             self.repeat = False
+            
+            #updating ui
             icon2 = QtGui.QIcon()
             icon2.addPixmap(QtGui.QPixmap((config.repeatOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.RepeatButton.setIcon(icon2)
             self.ui.RepeatButton.setIconSize(QtCore.QSize(30,30))
         else:
             self.repeat = True
+
+            #updating ui
             icon2 = QtGui.QIcon()
             icon2.addPixmap(QtGui.QPixmap((config.repeatOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.RepeatButton.setIcon(icon2)
