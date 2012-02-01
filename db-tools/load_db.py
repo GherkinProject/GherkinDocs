@@ -65,46 +65,35 @@ def make_neighbors(songs, tracks):
     """songs is the tag songs built up, songs is sth like graph[artist][album]"""
     
     def comp(x, y):
-        if 'artist' in set(songs[x].keys()).intersection(set(songs[y].keys())):
-            if songs[x]['artist'] > songs[y]['artist']:
-                return -1
-            elif songs[x]['artist'] < songs[y]['artist']:
+        if songs[x]['artist'] > songs[y]['artist']:
+            return +1
+        elif songs[x]['artist'] < songs[y]['artist']:
+            return -1
+        else:
+            if songs[x]['album'] > songs[y]['album']:
                 return +1
+            elif songs[x]['album'] < songs[y]['album']:
+                return -1
             else:
-                if 'album' in set(songs[x].keys()).intersection(set(songs[y].keys())):
-                    if songs[x]['album'] > songs[y]['album']:
-                        return -1
-                    elif songs[x]['album'] < songs[y]['album']:
+                if 'tracknumber' in set(songs[x].keys()).intersection(set(songs[y].keys())) and songs[x]['tracknumber'] != songs[y]['tracknumber']:
+                    if songs[x]['tracknumber'] > songs[y]['tracknumber']:
                         return +1
+                    elif songs[x]['tracknumber'] < songs[y]['tracknumber']:
+                        return -1
                     else:
-                        if 'tracknumber' in set(songs[x].keys()).intersection(set(songs[y].keys())):
-                            if songs[x]['tracknumber'] > songs[y]['tracknumber']:
-                                return -1
-                            elif songs[x]['tracknumber'] < songs[y]['tracknumber']:
-                                return +1
-                            else:
-                                return 0
-                        elif 'title' in set(songs[x].keys()).intersection(set(songs[y].keys())):
-                            if songs[x]['title'] > songs[y]['title']:
-                                return -1
-                            elif songs[x]['title'] < songs[y]['title']:
-                                return +1
-                            else:
-                                return 0
-                        else:    
-                            if songs[x]['location'] > songs[y]['location']:
-                                return -1
-                            elif songs[x]['location'] < songs[y]['location']:
-                                return +1
-                            else:
-                                return 0            
+                        return 0
+                else:
+                    if songs[x]['location'] > songs[y]['location']:
+                        return +1
+                    elif songs[x]['location'] < songs[y]['location']:
+                        return -1
+                    else:
+                        return 0            
 
-    l = list(tracks) #we have here a list of id's
-    l.sort(comp) #we sort them
+    playlist = list(tracks) #we have here a list of id's
+    playlist.sort(comp) #we sort them
     
-    #convention : first element : previous to play; second element, dict of to-play elements giving their proba
-    
-    return l
+    return playlist
 
 #    for i in xrange(len(l)):
 #        try:
