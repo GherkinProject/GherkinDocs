@@ -94,18 +94,20 @@ class MyForm(QtGui.QMainWindow):
         self.ui.Artist.clear()
         self.ui.Album.clear()
         self.ui.AudioTrack.clear()
-        for artist in self.artists:
+        artists = self.artists.keys()
+        artists.sort()
+        for artist in artists:
             self.ui.addArtist(artist)
-            for album in self.albums:
+            albums = list(self.artists[artist])
+            albums.sort()
+            for album in albums:
                 self.ui.addAlbum(album)
-        #        for idTrack in self.albums[album]:
-        #            self.ui.addTrack(self.songs[idTrack])
  
 
     def call_albums(self, QtWidget, val = 0):
         self.selectedArtist = str(QtWidget.text(0))
         self.selectedSongs = set()
-
+        
         for album in self.artists[self.selectedArtist]:
             for idTrack in self.albums[album]:
                 self.selectedSongs.add(idTrack)
