@@ -2,10 +2,10 @@ import random
 
 class Markovienne():
 
-    def __init__(self):
+    def __init__(self, dbName= "ProcessOfMarkov"):
         self.markov = {}
         self.number = {}
-        self.dbName = 'ProcessOfMarkov.ghk'
+        self.dbName = 'dbName'
 # markov fait office de dictionnaire de dictionnaire. 
 # En realite c est une matrice, tel que self.markov de i et j represente la proba de transition de l artiste i a l artiste j
 # nombre[i] enfin recense le nombre de vote/ de load que l on d un artiste a un autre.
@@ -34,7 +34,7 @@ class Markovienne():
         file.close()
 
     def save_Markov(self):
-        """ Sauvegarde les données"""
+        """ Sauvegarde les donnees"""
         file = open(self.dbName, 'w')
         for i in self.markov.keys():
             for j in self.markov[i].keys():
