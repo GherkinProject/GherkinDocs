@@ -209,7 +209,7 @@ class MyForm(QtGui.QMainWindow):
                 posSong = randint(0, len(self.songs))
                 idSong = self.songs.keys()[posSong] 
             elif self.mode == playlist:
-		idSong = self.markovienne.choix_Markov(self.playlist[self.pointeur])
+	        idSong = self.markovienne.choix_Markov(self.playlist[self.pointeur])
             #adding the song to the playlist
             self.playlist.append(idSong)
             
