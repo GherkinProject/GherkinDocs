@@ -23,17 +23,14 @@ def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile
     artistDict = {}
     songs = {}
     for f in tree.findall('file'):
-        #adding songs to the song libs ( with tags )
+        #adding songs to the song libs ( with tags ) with an 'int' id
         id = int(f.get('id'))
         songs[id] = {}
         songs[id]['id'] = id
         for element in f: 
             songs[id][element.tag] = element.text
-        songs[id]["next"] = {}
         
-        #adding songs to the graph ( for next/prev and display )
-        
-        #check if tags exist
+        #check if tags exist if not, putting unknown default value
         if 'artist' in songs[id].keys():
             artist = songs[id]['artist']
         else:
@@ -51,65 +48,45 @@ def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile
             albumDict[album] = set()
 
 
-        #adding id of the song to the graph
+        #creating two dictionaries : artist -> albums: album -> tracks
         artistDict[artist].add(album)
         albumDict[album].add(int(f.get('id')))
 
-        #first element : id of previous
-        #second element : dict ( id : proba )
-    log.info("Database loaded in memeory")
+    log.info("Database loaded in memory")
 
     return (artistDict, albumDict, songs)
 
 def make_neighbors(songs, tracks):
     """songs is the tag songs built up, songs is sth like graph[artist][album]"""
     
+    #comparison function, used to sort tracks to make a decent playlist ( by artists/album/(track|name) )
     def comp(x, y):
-        if 'artist' in set(songs[x].keys()).intersection(set(songs[y].keys())):
-            if songs[x]['artist'] > songs[y]['artist']:
-                return -1
-            elif songs[x]['artist'] < songs[y]['artist']:
+        if songs[x]['artist'] > songs[y]['artist']:
+            return +1
+        elif songs[x]['artist'] < songs[y]['artist']:
+            return -1
+        else:
+            if songs[x]['album'] > songs[y]['album']:
                 return +1
+            elif songs[x]['album'] < songs[y]['album']:
+                return -1
             else:
-                if 'album' in set(songs[x].keys()).intersection(set(songs[y].keys())):
-                    if songs[x]['album'] > songs[y]['album']:
-                        return -1
-                    elif songs[x]['album'] < songs[y]['album']:
+                if 'tracknumber' in set(songs[x].keys()).intersection(set(songs[y].keys())) and songs[x]['tracknumber'] != songs[y]['tracknumber']:
+                    if songs[x]['tracknumber'] > songs[y]['tracknumber']:
                         return +1
+                    elif songs[x]['tracknumber'] < songs[y]['tracknumber']:
+                        return -1
                     else:
-                        if 'tracknumber' in set(songs[x].keys()).intersection(set(songs[y].keys())):
-                            if songs[x]['tracknumber'] > songs[y]['tracknumber']:
-                                return -1
-                            elif songs[x]['tracknumber'] < songs[y]['tracknumber']:
-                                return +1
-                            else:
-                                return 0
-                        elif 'title' in set(songs[x].keys()).intersection(set(songs[y].keys())):
-                            if songs[x]['title'] > songs[y]['title']:
-                                return -1
-                            elif songs[x]['title'] < songs[y]['title']:
-                                return +1
-                            else:
-                                return 0
-                        else:    
-                            if songs[x]['location'] > songs[y]['location']:
-                                return -1
-                            elif songs[x]['location'] < songs[y]['location']:
-                                return +1
-                            else:
-                                return 0            
+                        return 0
+                else:
+                    if songs[x]['location'] > songs[y]['location']:
+                        return +1
+                    elif songs[x]['location'] < songs[y]['location']:
+                        return -1
+                    else:
+                        return 0            
 
-    l = list(tracks) #we have here a list of id's
-    l.sort(comp) #we sort them
+    playlist = list(tracks) #we have here a list of id's
+    playlist.sort(comp) #we sort them
     
-    #convention : first element : previous to play; second element, dict of to-play elements giving their proba
-
-    for i in xrange(len(l)):
-        try:
-            songs[l[i]]["prev"] = l[i-1]
-        except:
-            pass #it is the first element
-        try:
-            songs[l[i]]["next"][l[i+1]] = 1
-        except:
-            pass #it is the last element
+    return playlist

@@ -30,6 +30,7 @@ class Ui_ProjetGherkin(object):
         ProjetGherkin.resize(640, 480)
         ProjetGherkin.setWindowTitle(QtGui.QApplication.translate("ProjetGherkin", "Projet Gherkin", None, QtGui.QApplication.UnicodeUTF8))
         ProjetGherkin.setWindowOpacity(1.0)
+        ProjetGherkin.setWindowIcon(QtGui.QIcon(config.gherkinIcon))
         self.centralwidget = QtGui.QWidget(ProjetGherkin)
         self.centralwidget.setAcceptDrops(False)
         self.centralwidget.setLayoutDirection(QtCore.Qt.LeftToRight)
