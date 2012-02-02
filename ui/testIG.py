@@ -86,11 +86,14 @@ class Ui_ProjetGherkin(object):
         self.LookingFor.setText(_fromUtf8(""))
         self.LookingFor.setReadOnly(False)
         self.LookingFor.setObjectName(_fromUtf8("LookingFor"))
+        self.LookingFor.setPlaceholderText("Recherche")
         self.gridLayout.addWidget(self.LookingFor, 3, 2, 1, 1)
 
 
         self.LookingForNoTouch = QtGui.QLineEdit(self.centralwidget)
-        self.LookingForNoTouch.setText(QtGui.QApplication.translate("ProjetGherkin", "Recherche :", None, QtGui.QApplication.UnicodeUTF8))
+        self.LookingForNoTouch.setText(QtGui.QApplication.translate("ProjetGherkin", "Nom de la chanson", None, QtGui.QApplication.UnicodeUTF8))
+        self.LookingForNoTouch.setAlignment(QtCore.Qt.AlignCenter)
+        
         self.LookingForNoTouch.setReadOnly(True)
         self.LookingForNoTouch.setObjectName(_fromUtf8("LookingForNoTouch"))
         self.gridLayout.addWidget(self.LookingForNoTouch, 3, 1, 1, 1)

@@ -90,7 +90,8 @@ class MyForm(QtGui.QMainWindow):
         except:
             pass
         self.server.load(self.songs[self.playlist[self.pointeur]]["location"])
-
+        self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.pointeur]]["title"])
+        
     def call_play_pause(self):
         self.server.play_pause()
 
