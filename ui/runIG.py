@@ -283,13 +283,16 @@ class MyForm(QtGui.QMainWindow):
             self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
 
     def call_playlist(self):
-	self.mode = playlist
+	if self.mode == playlist:
+       	    self.mode = normal
+	else:
+	    self.mode = playlist
         #removing last elements from the playlist for it to be ready for next
-        self.playlist = self.playlist[0:self.pointeur+1]
+            self.playlist = self.playlist[0:self.pointeur+1]
 	#updating ui
-	self.update_tracks()
+	    self.update_tracks()
 	#save the data of the markovienne into the file 
-	self.markovienne.save_Markov()
+	    self.markovienne.save_Markov()
   
     def call_repeat(self):
         if self.repeat:
