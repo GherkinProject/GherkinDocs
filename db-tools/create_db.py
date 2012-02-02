@@ -50,19 +50,19 @@ def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defa
     for dirname, dirnames, filenames in os.walk(directory):
         for f in filenames:
             if os.path.splitext(f)[1].lower() in fileExt:
+                block = doc.createElement("file")
+                block.setAttribute("id", str(id))
+                id += 1
+                root.appendChild(block)
+                location = doc.createElement("location")
+                block.appendChild(location)
+                locationValue = doc.createTextNode(os.path.join(dirname, f))
+                location.appendChild(locationValue)
+                tag = dict()
+                tagValue = dict()
+                
                 try:    
                     audio = mutagen.File(os.path.join(dirname, f), easy = True)
-                    block = doc.createElement("file")
-                    block.setAttribute("id", str(id))
-                    id += 1
-                    root.appendChild(block)
-                    location = doc.createElement("location")
-                    block.appendChild(location)
-                    locationValue = doc.createTextNode(os.path.join(dirname, f))
-                    location.appendChild(locationValue)
-                    tag = dict()
-                    tagValue = dict()
-
                     #for each tag given by mutagen, we add it to our library, useless to add unknow, load_db will do it alone.
                     for i in set(audio.keys()).intersection(tagKept):
                         tag[i] = doc.createElement(i)
@@ -72,6 +72,9 @@ def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defa
                 except:
                     log.debug("Bad file encoding : " + os.path.join(dirname, f))
     
+    #adding number of tracks to the xml for update to know it
+    root.setAttribute("nbTracks", str(id))
+    
     #writing the result into "db.xml" (defaultpath)
     try:
         db = open(dbLocation + dbFile, "w")
@@ -79,5 +82,58 @@ def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defa
         db.close()
     except:
         log.error("Problem writing database")
+        return False
     else:
         log.info("Database created at " + dbLocation)
+        return True
+
+def update_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
+    """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""
+    if(directory == ""):
+        return False
+     
+    doc = minidom.parse(dbLocation + dbFile)
+    root = doc.documentElement
+    id = int(root.getAttribute("nbTracks"))
+    
+    #classic loops to check every files in the subdirectories at every level. Possibly long.
+    for dirname, dirnames, filenames in os.walk(directory):
+        for f in filenames:
+            if os.path.splitext(f)[1].lower() in fileExt:
+                block = doc.createElement("file")
+                block.setAttribute("id", str(id))
+                id += 1
+                root.appendChild(block)
+                location = doc.createElement("location")
+                block.appendChild(location)
+                locationValue = doc.createTextNode(os.path.join(dirname, f))
+                location.appendChild(locationValue)
+                tag = dict()
+                tagValue = dict()
+                
+                try:    
+                    #for each tag given by mutagen, we add it to our library, useless to add unknow, load_db will do it alone.
+                    audio = mutagen.File(os.path.join(dirname, f), easy = True)
+                    
+                    for i in set(audio.keys()).intersection(tagKept):
+                        tag[i] = doc.createElement(i)
+                        block.appendChild(tag[i])
+                        tagValue[i] = doc.createTextNode(audio[i][0].encode("utf-8"))
+                        tag[i].appendChild(tagValue[i])
+                except:
+                    log.debug("Bad file encoding : " + os.path.join(dirname, f))
+    
+    #adding number of tracks to the xml for update to know it
+    root.setAttribute("nbTracks", str(id))
+
+    #writing the result into "db.xml" (defaultpath)
+    try:
+        db = open(dbLocation + dbFile, "w")
+        doc.writexml(db, "\n", "  ")
+        db.close()
+    except:
+        log.error("Problem writing during updating database")
+        return False
+    else:
+        log.info("Database updated at " + dbLocation)
+        return True
