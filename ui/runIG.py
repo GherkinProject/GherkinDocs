@@ -285,14 +285,26 @@ class MyForm(QtGui.QMainWindow):
     def call_playlist(self):
 	if self.mode == playlist:
        	    self.mode = normal
+
+	    #updating ui
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.playlistOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.PlaylistButton.setIcon(icon2)
+            self.ui.PlaylistButton.setIconSize(QtCore.QSize(30,30))
 	else:
 	    self.mode = playlist
-        #removing last elements from the playlist for it to be ready for next
+            #removing last elements from the playlist for it to be ready for next
             self.playlist = self.playlist[0:self.pointeur+1]
-	#updating ui
-	    self.update_tracks()
-	#save the data of the markovienne into the file 
+	    
+            #save the data of the markovienne into the file 
 	    self.markovienne.save_Markov()
+
+	    #updating ui
+            self.update_tracks()
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.playlistOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.PlaylistButton.setIcon(icon2)
+            self.ui.PlaylistButton.setIconSize(QtCore.QSize(30,30))
   
     def call_repeat(self):
         if self.repeat:
