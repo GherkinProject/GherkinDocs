@@ -5,21 +5,21 @@ class Markovienne():
     def __init__(self, dbName= "ProcessOfMarkov"):
         self.markov = {}
         self.number = {}
-        self.dbName = 'dbName'
+        self.dbName = dbName
 # markov fait office de dictionnaire de dictionnaire. 
-# En realite c est une matrice, tel que self.markov de i et j represente la proba de transition de l artiste i a l artiste j
-# nombre[i] enfin recense le nombre de vote/ de load que l on d un artiste a un autre.
+# En realite c est une matrice, tel que self.markov de i et j represente la proba de transition de l songe i a l songe j
+# nombre[i] enfin recense le nombre de vote/ de load que l on d un songe a un autre.
 # si je passe de twostepfromhell a LOTR jincremente nombre[twostepfromhell]
 
-    def create_Markov(self, artistList):
+    def create_Markov(self, songList):
         """Creer un fichier .ghk avec les proba de transition"""
         file = open(self.dbName, 'w')        
-        for i in artistList:
+        for i in songList:
             self.markov[i] = {}
             self.number[i] = 0.0
-            for j in artistList:
-                self.markov[i][j] = 0.0
-                file.write(i + "$" + j + "$" + str(self.markov[i][j])+ '$' + str(self.number[i])+ '$')
+            for j in songList:
+                self.markov[i][j] = 1.0 / float(len(songList))
+                file.write(str(i) + "$" + str(j) + "$" + str(self.markov[i][j])+ '$' + str(self.number[i])+ '$')
                 file.write('\n')
         file.close()
 
@@ -38,48 +38,31 @@ class Markovienne():
         file = open(self.dbName, 'w')
         for i in self.markov.keys():
             for j in self.markov[i].keys():
-                file.write(i + "$" + j + "$" + str(self.markov[i][j])+ '$' + str(self.number[i])+ '$')
+                file.write(str(i) + "$" + str(j) + "$" + str(self.markov[i][j])+ '$' + str(self.number[i])+ '$')
                 file.write('\n')
         file.close()
 			
-    def vote_Markov(self, artistBeginning, artistEnd):
-        """ Realise le vote du passage entre artistBeginning et artistEnd"""
-        self.number[artistBeginning]+=1
-        for j in self.markov[artistBeginning].keys():
-            if j == artistEnd:
-                self.markov[artistBeginning][j] = (self.markov[artistBeginning][j]*(self.number[artistBeginning]-1)+1)/(self.number[artistBeginning])
+    def vote_Markov(self, songBeginning, songEnd):
+        """ Realise le vote du passage entre songBeginning et songEnd"""
+        self.number[songBeginning]+=1
+        for j in self.markov[songBeginning].keys():
+            if j == songEnd:
+                self.markov[songBeginning][j] = (self.markov[songBeginning][j]*(self.number[songBeginning]-1)+1)/(self.number[songBeginning])
             else:
-                self.markov[artistBeginning][j] *= (self.number[artistBeginning]-1)/(self.number[artistBeginning])
+                self.markov[songBeginning][j] *= (self.number[songBeginning]-1)/(self.number[songBeginning])
         
-    def choix_Markov(self, artist):
-        """ choisi le successeur de l artiste entrain d etre joue"""
+    def choix_Markov(self, idSong):
+        """ Choisit le successeur de song entrain d etre joue"""
         u = random.random() # nombre aleatoire entre 0 et 1
-        for k in self.markov[artist].keys():
-            if self.markov[artist][k] >= u:
-# dans ce cas la chaine de markov nous indique que le prochain artiste sera k
+        for k in self.markov[idSong].keys():
+            if self.markov[idSong][k] >= u:
+# dans ce cas la chaine de markov nous indique que le prochain songe sera k
                 return k
             else:
-# sinon on regarde les autres artistes, en decrementant u. on trouve techniquement qu il y a toujours un k renvoye si u != 1
-                u -= self.markov[artist][k]
+# sinon on regarde les autres songes, en decrementant u. on trouve techniquement qu il y a toujours un k renvoye si u != 1
+                u -= self.markov[idSong][k]
 
 
 
 
 
-L = ["Boris","Gautier","Nico","Plate-voute"]
-U = Markovienne()
-U.create_Markov(L)
-for u in range(15):
-    U.vote_Markov("Gautier","Nico")
-    U.vote_Markov("Nico","Boris")
-for u in range (4):
-    U.vote_Markov("Gautier","Boris")
-    U.vote_Markov("Nico","Gautier")
-
-print U.markov
-
-print U.choix_Markov("Gautier")
-
-U.save_Markov()
-file = open('ProcessOfMarkov.ghk','r')
-print file.read()

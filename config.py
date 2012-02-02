@@ -12,6 +12,7 @@ defaultPort = 1664
 dt = 0.5
 
 #icon and locations
+dbMarkov = "dbMarkov.ghk"
 iconLocation = "pictures/"
 logLocation = "log/"
 defaultDbLocation = "./"

@@ -15,6 +15,9 @@ import config
 import time
 from random import randint
 
+#Markov Process
+from Markov import Markovienne
+
 #client lib for calling server
 import xmlrpclib
 
@@ -35,12 +38,22 @@ class MyForm(QtGui.QMainWindow):
 
         self.mode = normal
         self.repeat = False
+	
+
 
         #connection with the server
         self.server = xmlrpclib.ServerProxy("http://localhost:" + str(config.defaultPort))
         
         #getting the lib from the xml file
         (self.artists, self.albums, self.songs) = get_lib()
+
+	# Markovienne (cf Markov.py)
+
+	self.markovienne = Markovienne(config.dbMarkov)
+	try:
+	    self.markovienne.load_Markov(config.dbMarkov)
+	except:
+ 	    self.markovienne.create_Markov(self.songs.keys())
         
         #display artists and albums at launch
         self.display_all()
@@ -58,6 +71,7 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.PreviousButton, QtCore.SIGNAL("clicked()"), self.call_prev)
         QtCore.QObject.connect(self.ui.RandomButton, QtCore.SIGNAL("clicked()"), self.call_random)
         QtCore.QObject.connect(self.ui.RepeatButton,QtCore.SIGNAL("clicked()"), self.call_repeat)
+	QtCore.QObject.connect(self.ui.PlaylistButton,QtCore.SIGNAL("clicked()"), self.call_playlist)
 #        QtCore.QObject.connect(self.ui.verticalSlider, QtCore.SIGNAL("valueChanged(int)"), self.call_volume )	
 
     def add_entry(self):
@@ -192,7 +206,7 @@ class MyForm(QtGui.QMainWindow):
                 posSong = randint(0, len(self.songs))
                 idSong = self.songs.keys()[posSong] 
             elif self.mode == playlist:
-                idSong = Markovienne(self.proba[self.playlist[self.pointeur]])
+		idSong = self.markovienne.choix_Markov(self.playlist[self.pointeur])
             #adding the song to the playlist
             self.playlist.append(idSong)
             
@@ -254,7 +268,14 @@ class MyForm(QtGui.QMainWindow):
             icon2.addPixmap(QtGui.QPixmap((config.randomOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.RandomButton.setIcon(icon2)
             self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
-    
+
+    def call_playlist(self):
+	self.mode = playlist
+        #removing last elements from the playlist for it to be ready for next
+        self.playlist = self.playlist[0:self.pointeur+1]
+	#updating ui
+	self.update_tracks()
+  
     def call_repeat(self):
         if self.repeat:
             self.repeat = False
