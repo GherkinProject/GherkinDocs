@@ -60,8 +60,11 @@ class MyForm(QtGui.QMainWindow):
 
         #loading song into the server
         #TO BE CHANGE ! id = 0 may not exist !
-        self.server.load(self.songs[self.pointeur]['location'])
+        self.playlist.append(self.songs.keys()[0])
+        self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
         
+        self.update_tracks()
+
         #signal received, functions called
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
         QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_load )
