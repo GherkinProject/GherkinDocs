@@ -1,23 +1,18 @@
 import random
 
-
-
-
-
-
-
 class Markovienne():
 
-    def __init__(self):
+    def __init__(self, dbName= "ProcessOfMarkov"):
         self.markov = {}
         self.number = {}
-        self.dbName = 'ProcessOfMarkov.ghk'
+        self.dbName = 'dbName'
 # markov fait office de dictionnaire de dictionnaire. 
 # En realite c est une matrice, tel que self.markov de i et j represente la proba de transition de l artiste i a l artiste j
 # nombre[i] enfin recense le nombre de vote/ de load que l on d un artiste a un autre.
 # si je passe de twostepfromhell a LOTR jincremente nombre[twostepfromhell]
 
     def create_Markov(self, artistList):
+        """Creer un fichier .ghk avec les proba de transition"""
         file = open(self.dbName, 'w')        
         for i in artistList:
             self.markov[i] = {}
@@ -29,6 +24,7 @@ class Markovienne():
         file.close()
 
     def load_Markov(self, fileName):
+        """ Charge le fichier .ghk contenant les probas de transition"""
         self.dbName = fileName
         file = open(self.dbName, 'r')
         for line in file:
@@ -38,6 +34,7 @@ class Markovienne():
         file.close()
 
     def save_Markov(self):
+        """ Sauvegarde les donnees"""
         file = open(self.dbName, 'w')
         for i in self.markov.keys():
             for j in self.markov[i].keys():
@@ -46,6 +43,7 @@ class Markovienne():
         file.close()
 			
     def vote_Markov(self, artistBeginning, artistEnd):
+        """ Realise le vote du passage entre artistBeginning et artistEnd"""
         self.number[artistBeginning]+=1
         for j in self.markov[artistBeginning].keys():
             if j == artistEnd:
@@ -54,6 +52,7 @@ class Markovienne():
                 self.markov[artistBeginning][j] *= (self.number[artistBeginning]-1)/(self.number[artistBeginning])
         
     def choix_Markov(self, artist):
+        """ choisi le successeur de l artiste entrain d etre joue"""
         u = random.random() # nombre aleatoire entre 0 et 1
         for k in self.markov[artist].keys():
             if self.markov[artist][k] >= u:
@@ -82,5 +81,5 @@ print U.markov
 print U.choix_Markov("Gautier")
 
 U.save_Markov()
-file = open('Markov.ghk','r')
+file = open('ProcessOfMarkov.ghk','r')
 print file.read()
