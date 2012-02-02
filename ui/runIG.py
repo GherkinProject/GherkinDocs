@@ -74,7 +74,7 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.PreviousButton, QtCore.SIGNAL("clicked()"), self.call_prev)
         QtCore.QObject.connect(self.ui.RandomButton, QtCore.SIGNAL("clicked()"), self.call_random)
         QtCore.QObject.connect(self.ui.RepeatButton,QtCore.SIGNAL("clicked()"), self.call_repeat)
-	QtCore.QObject.connect(self.ui.PlaylistButton,QtCore.SIGNAL("clicked()"), self.call_playlist)
+    	QtCore.QObject.connect(self.ui.PlaylistButton,QtCore.SIGNAL("clicked()"), self.call_playlist)
 #        QtCore.QObject.connect(self.ui.verticalSlider, QtCore.SIGNAL("valueChanged(int)"), self.call_volume )	
 
     def add_entry(self):
@@ -82,12 +82,23 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lineEdit.cut()
         self.ui.textEdit.append("")
         self.ui.textEdit.paste()
+    
+    def load(self):
+        #terminate process, if existing
+        try:
+            self.song_play.terminate()
+        except:
+            pass
+        self.server.load(self.songs[self.playlist[self.pointeur]]["location"])
 
     def call_play_pause(self):
         self.server.play_pause()
 
         #do not forget to work with the other thread
-     	self.runSong()
+     	if self.server.is_playing():
+            self.runSong()
+        else:
+            self.song_play.quit()
 
         #displaying the changes
         self.iconChange()
@@ -119,13 +130,8 @@ class MyForm(QtGui.QMainWindow):
             self.pointeur += 1
 
         #loading and playing
-        self.server.load(self.songs[idSong]["location"])
-        self.server.play_pause()
-        
-        #displaying the changes
-    	self.iconChange()
-        self.runSong()
-        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
+        self.load()
+        self.call_play_pause()
     
     def display_all(self):
         """display all albums and artists"""
@@ -207,7 +213,7 @@ class MyForm(QtGui.QMainWindow):
         if self.mode == normal:
             if self.pointeur < len(self.playlist) - 1:
                 self.pointeur+=1
-                self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
+                self.load()
             else:
                 self.pointeur = 0
                 self.server.stop()
@@ -228,13 +234,9 @@ class MyForm(QtGui.QMainWindow):
             print self.pointeur
             #displaying the track to the playlist
             self.ui.addTrack(self.songs[self.playlist[-1]])
-            self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
+            self.load()
 
-        self.server.play_pause()
-        self.iconChange()
-        self.runSong()
-        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
-
+        self.call_play_pause()
         return True
 
     def call_prev(self):
@@ -245,20 +247,17 @@ class MyForm(QtGui.QMainWindow):
         #if we are not at the first element, no problem
         if self.pointeur > 0:
             self.pointeur-=1
-            self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
+            self.load()
         else:
             self.pointeur = len(self.playlist)-1
-            self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
+            self.load()
         
         #erasing the lasts elements in those mode taking into account the user didn't like the music proposed
         if self.mode == playlist or self.mode == random:
             self.playlist.pop(-1)
             self.update_tracks()
         
-        self.server.play_pause()
-        self.iconChange()
-        self.runSong()
-        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
+        self.call_play_pause()
 
     def call_random(self):
         if self.mode == random:
@@ -364,20 +363,14 @@ class MyForm(QtGui.QMainWindow):
         except:
             pass
         self.ui.SongBar.repaint()
-        try:
-            if (self.server.get_position() == self.server.get_duration() and self.server.get_position() > 0):
-                self.call_next()
-                if self.repeat:
-                    self.call_prev()
-                if not self.server.is_playing():
-                    self.server.play_pause()
-                    self.iconChange()
-                else:
-                    self.iconChange()
+        
+        if self.server.get_position() == self.server.get_duration() and self.server.get_position() > 0:
+            if self.repeat:
+                self.server.stop()
+                self.load()
+                self.server.play_pause()
             else:
-                pass
-        except:
-            pass
+                self.call_next()
 
 
 
