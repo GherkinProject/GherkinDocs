@@ -95,7 +95,10 @@ class MyForm(QtGui.QMainWindow):
         self.server.play_pause()
 
         #do not forget to work with the other thread
-     	self.runSong()
+     	if self.server.is_playing():
+            self.runSong()
+        else:
+            self.song_play.quit()
 
         #displaying the changes
         self.iconChange()
@@ -347,20 +350,14 @@ class MyForm(QtGui.QMainWindow):
         except:
             pass
         self.ui.SongBar.repaint()
-        try:
-            if self.server.get_position() == self.server.get_duration() and self.server.get_position() > 0:
-                self.call_next()
-                if self.repeat:
-                    self.call_prev()
-                if not self.server.is_playing():
-                    self.server.play_pause()
-                    self.iconChange()
-                else:
-                    self.iconChange()
+        
+        if self.server.get_position() == self.server.get_duration() and self.server.get_position() > 0:
+            if self.repeat:
+                self.server.stop()
+                self.load()
+                self.server.play_pause()
             else:
-                pass
-        except:
-            pass
+                self.call_next()
 
 
 
