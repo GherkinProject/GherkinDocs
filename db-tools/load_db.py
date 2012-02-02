@@ -9,75 +9,84 @@ import xml.etree.ElementTree as ET
 #local libraries
 import config
 
+#logs
+import logging
+import logging.config
+logging.config.fileConfig(config.logLocation + "log.conf")
+log = logging.getLogger("GhkDbManagement")
 
-def get_lib(dbLocation = config.defaultDbLocation):
+def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     tree = ET.ElementTree()
-    tree.parse(dbLocation)
-    
-    graph = {}
+    tree.parse(dbLocation + dbFile)
+
+    albumDict = {}
+    artistDict = {}
     songs = {}
     for f in tree.findall('file'):
-        #adding songs to the song libs ( with tags )
+        #adding songs to the song libs ( with tags ) with an 'int' id
         id = int(f.get('id'))
         songs[id] = {}
         songs[id]['id'] = id
         for element in f: 
-               songs[id][element.tag] = element.text 
+            songs[id][element.tag] = element.text
         
-        #adding songs to the graph ( for next/prev and display )
-        
-        #check if tags exist
-        if 'artist' in f:
-            artist = f['artist']
+        #check if tags exist if not, putting unknown default value
+        if 'artist' in songs[id].keys():
+            artist = songs[id]['artist']
         else:
             artist = config.defaultUnknown
         
-        if 'album' in f:
-            album = f['album']
+        if 'album' in songs[id].keys():
+            album = songs[id]['album']
         else:
             album = config.defaultUnknown
 
         #adding dict to the graph if not existing
-        if artist not in graph:
-            graph[artist] = {}
-        if album not in graph[artist]:
-            graph[artist][album] = {} 
+        if artist not in artistDict.keys():
+            artistDict[artist] = set()
+        if album not in albumDict.keys():
+            albumDict[album] = set()
 
 
-        #adding id of the song to the graph
-        graph[artist][album][f.get('id')] = []
+        #creating two dictionaries : artist -> albums: album -> tracks
+        artistDict[artist].add(album)
+        albumDict[album].add(int(f.get('id')))
 
-        #first element : id of previous
-        #second element : dict ( id : proba )
+    log.info("Database loaded in memory")
+
+    return (artistDict, albumDict, songs)
+
+def make_neighbors(songs, tracks):
+    """songs is the tag songs built up, songs is sth like graph[artist][album]"""
     
-    return (graph, songs)
-
-def make_neighbors(lib, songs):
-    """lib is the tag lib built up, songs is sth like graph[artist][album]"""
-    
+    #comparison function, used to sort tracks to make a decent playlist ( by artists/album/(track|name) )
     def comp(x, y):
-        if 'tracknumber' in set(lib[x].keys()).intersect(set(lib[y].keys())):
-            if lib[x]['tracknumber'] > lib[y]['tracknumber']:
-                return -1
-            elif lib[x]['tracknumber'] < lib[y]['tracknumber']:
+        if songs[x]['artist'] > songs[y]['artist']:
+            return +1
+        elif songs[x]['artist'] < songs[y]['artist']:
+            return -1
+        else:
+            if songs[x]['album'] > songs[y]['album']:
                 return +1
+            elif songs[x]['album'] < songs[y]['album']:
+                return -1
             else:
-                return 0
- 
-    l = [songs.keys()]
-    l.sort(comp)
+                if 'tracknumber' in set(songs[x].keys()).intersection(set(songs[y].keys())) and songs[x]['tracknumber'] != songs[y]['tracknumber']:
+                    if songs[x]['tracknumber'] > songs[y]['tracknumber']:
+                        return +1
+                    elif songs[x]['tracknumber'] < songs[y]['tracknumber']:
+                        return -1
+                    else:
+                        return 0
+                else:
+                    if songs[x]['location'] > songs[y]['location']:
+                        return +1
+                    elif songs[x]['location'] < songs[y]['location']:
+                        return -1
+                    else:
+                        return 0            
+
+    playlist = list(tracks) #we have here a list of id's
+    playlist.sort(comp) #we sort them
     
-    #convention : first element : previous to play; second element, dict of to-play elements giving their proba
-
-    for i in xrange(len(l)):
-        songs[l[i]][1] = {}
-        try:
-            songs[l[i]][1][l[i+1]] = 1
-        except:
-            pass #it is the last element
-        try:
-            songs[l[i]][0] = l[i-1]
-        except:
-            pass #it is the first element
-
-    return songs
+    return playlist

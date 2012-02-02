@@ -5,8 +5,10 @@
 
 #script with arguments
 import sys
+
 #script using system commands
 import os
+
 #script using dom
 from xml.dom.minidom import Document
 from xml.dom import minidom
@@ -22,18 +24,29 @@ def newwritexml(self, writer, indent= '', addindent= '', newl= ''):
 minidom.Element.oldwritexml= minidom.Element.writexml
 minidom.Element.writexml= newwritexml
 
+#local lib
+import config
+
+#logs
+import logging
+import logging.config
+logging.config.fileConfig(config.logLocation + "log.conf")
+log = logging.getLogger("GhkDbManagement")
+
 #ID3 tag library
 import mutagen
 
-#local libraries
-import config
-
-def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation):
+def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""
+    if(directory == ""):
+        return False
+    
     id = 0
     doc = Document()
     root = doc.createElement("db")
     doc.appendChild(root)
+    
+    #classic loops to check every files in the subdirectories at every level. Possibly long.
     for dirname, dirnames, filenames in os.walk(directory):
         for f in filenames:
             if os.path.splitext(f)[1].lower() in fileExt:
@@ -49,19 +62,22 @@ def create_db(directory, tagKept = config.defaultTagKept, fileExt = config.defau
                     location.appendChild(locationValue)
                     tag = dict()
                     tagValue = dict()
+
+                    #for each tag given by mutagen, we add it to our library, useless to add unknow, load_db will do it alone.
                     for i in set(audio.keys()).intersection(tagKept):
                         tag[i] = doc.createElement(i)
                         block.appendChild(tag[i])
                         tagValue[i] = doc.createTextNode(audio[i][0].encode("utf-8"))
                         tag[i].appendChild(tagValue[i])
                 except:
-                    print "bad file encoding : " + os.path.join(dirname, f)
-    db = open("db.xml", "w")
-    doc.writexml(db, "\n", "  ")
-    db.close()
-
-if sys.argv[1] == "":
-    print "path of the data base expected"
-else:
-    create_db(sys.argv[1])
-    print "database created at " + config.defaultDbLocation
+                    log.debug("Bad file encoding : " + os.path.join(dirname, f))
+    
+    #writing the result into "db.xml" (defaultpath)
+    try:
+        db = open(dbLocation + dbFile, "w")
+        doc.writexml(db, "\n", "  ")
+        db.close()
+    except:
+        log.error("Problem writing database")
+    else:
+        log.info("Database created at " + dbLocation)
