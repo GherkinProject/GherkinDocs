@@ -77,7 +77,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
 
     def call_load(self, QtWidget, val = 0):
-    """When a song is doubleclicked on in the playlist, it calls call_load"""
+        """When a song is doubleclicked on in the playlist, it calls call_load"""
         #we have the id of the song clicked on
         idSong = int(QtWidget.text(4))
         
@@ -102,7 +102,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
     
     def display_all(self):
-    """display all albums and artists"""
+        """display all albums and artists"""
         #cleaning the lists
         self.ui.Artist.clear()
         self.ui.Album.clear()
@@ -120,7 +120,7 @@ class MyForm(QtGui.QMainWindow):
  
 
     def call_albums(self, QtWidget, val = 0):
-    """When an artist is clicked on..."""
+        """When an artist is clicked on..."""
         self.selectedArtist = str(QtWidget.text(0))
         self.selectedSongs = set()
         
@@ -151,7 +151,7 @@ class MyForm(QtGui.QMainWindow):
             self.ui.addTrack(self.songs[idTrack])
     
     def call_tracks(self, QtWidget, val = 0):
-    """When an album is doubleclicked on"""
+        """When an album is doubleclicked on"""
         self.selectedAlbum = str(QtWidget.text(0))
         self.selectedSongs = self.albums[self.selectedAlbum] 
         
@@ -211,7 +211,7 @@ class MyForm(QtGui.QMainWindow):
         return True
 
     def call_prev(self):
-    """When previous button clicked on, convention : go to the end if at the first"""
+        """When previous button clicked on, convention : go to the end if at the first"""
         self.server.stop()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
         
