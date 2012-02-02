@@ -50,13 +50,16 @@ class Markovienne():
     def vote_Markov(self, songBeginning, songEnd):
         """ Realise le vote du passage entre songBeginning et songEnd"""
         self.number[songBeginning]+=1
-        for j in self.markov[songBeginning].keys():
-       	    if j == songEnd:
-                self.markov[songBeginning][j] = (self.markov[songBeginning][j]*(self.number[songBeginning]-1)+1)/(self.number[songBeginning])
-            else:
-                self.markov[songBeginning][j] *= (self.number[songBeginning]-1)/(self.number[songBeginning])
-	if songEnd not in self.markov[songBeginning].keys():
-		self.markov[songBeginning][songEnd] = 1.0 / (self.number[songBeginning])
+	if songBeginning == songEnd:
+	    pass
+	else:
+            for j in self.markov[songBeginning].keys():
+       	    	if j == songEnd:
+                    self.markov[songBeginning][j] = (self.markov[songBeginning][j]*(self.number[songBeginning]-1)+1)/(self.number[songBeginning])
+            	else:
+                    self.markov[songBeginning][j] *= (self.number[songBeginning]-1)/(self.number[songBeginning])
+   	        if songEnd not in self.markov[songBeginning].keys():
+		    self.markov[songBeginning][songEnd] = 1.0 / (self.number[songBeginning])
         
     def choix_Markov(self, idSong):
         """ Choisit le successeur de song entrain d etre joue"""

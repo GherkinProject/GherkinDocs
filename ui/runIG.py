@@ -340,14 +340,27 @@ class MyForm(QtGui.QMainWindow):
         self.ui.SongBar.setMinimum(min)
         self.ui.SongBar.setMaximum(max)
         self.ui.SongBar.setValue(progress)
-	self.ui.SongBar.setFormat(str(progress // 60)+ " : " + str(progress % 60))
         self.ui.SongBar.repaint()
 
     def updateSongProgress2(self):
         self.ui.SongBar.setMinimum(0)
         try:
-            self.ui.SongBar.setMaximum(self.server.get_duration())
-            self.ui.SongBar.setValue(self.server.get_position())
+	    u = self.server.get_position()
+	    v = self.server.get_duration()
+            self.ui.SongBar.setMaximum(v)
+            self.ui.SongBar.setValue(u)
+	    
+	    time = ""
+	    if u % 60 < 10 and v % 60 < 10:
+		time = str(u // 60) + " : " + "0"+str(u % 60) + " / " + str(v // 60) + " : " + "0" + str(v % 60)
+	    elif u % 60 >= 10 and v % 60 < 10:
+		time = str(u // 60) + " : " + str(u % 60) + " / " + str(v // 60) + " : " + "0" + str(v % 60)
+	    elif u % 60 < 10 and v % 60 >= 10:
+		time = str(u // 60) + " : " + "0"+str(u % 60) + " / " + str(v // 60) + " : "  + str(v % 60)
+	    else:
+		time = str(u // 60) + " : " + str(u % 60) + " / " + str(v // 60) + " : " +  str(v % 60)
+	           
+	    self.ui.SongBar.setFormat(time)
         except:
             pass
         self.ui.SongBar.repaint()
