@@ -11,6 +11,9 @@ defaultPort = 1664
 #time
 dt = 0.5
 
+# pruning constant
+epsilon = 0.001
+
 #icon and locations
 dbMarkov = "dbMarkov.ghk"
 iconLocation = "pictures/"
