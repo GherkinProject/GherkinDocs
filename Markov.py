@@ -16,9 +16,10 @@ class Markovienne():
         file = open(self.dbName, 'w')        
         for i in songList:
             self.markov[i] = {}
-            self.number[i] = 0.0
-            for j in songList:
-                self.markov[i][j] = 1.0 / float(len(songList))
+            self.number[i] = 1.0
+	    randIdSong = random.sample(songList, 10)
+            for j in randIdSong:
+                self.markov[i][j] = 1.0 / float(len(randIdSong))
                 file.write(str(i) + "$" + str(j) + "$" + str(self.markov[i][j])+ '$' + str(self.number[i])+ '$')
                 file.write('\n')
         file.close()
@@ -29,8 +30,12 @@ class Markovienne():
         file = open(self.dbName, 'r')
         for line in file:
             u = line.split('$')
-            self.markov[u[0]][u[1]] = u[3]
-            self.number[u[0]] = u[4]
+	    try:
+		self.markov[int(u[0])][int(u[1])] = float(u[2])
+	    except:
+		self.markov[int(u[0])] = {}
+                self.markov[int(u[0])][int(u[1])] = float(u[2])
+            self.number[int(u[0])] = float(u[3])
         file.close()
 
     def save_Markov(self):
@@ -46,14 +51,18 @@ class Markovienne():
         """ Realise le vote du passage entre songBeginning et songEnd"""
         self.number[songBeginning]+=1
         for j in self.markov[songBeginning].keys():
-            if j == songEnd:
+       	    if j == songEnd:
                 self.markov[songBeginning][j] = (self.markov[songBeginning][j]*(self.number[songBeginning]-1)+1)/(self.number[songBeginning])
             else:
                 self.markov[songBeginning][j] *= (self.number[songBeginning]-1)/(self.number[songBeginning])
+	if songEnd not in self.markov[songBeginning].keys():
+		self.markov[songBeginning][songEnd] = 1.0 / (self.number[songBeginning])
         
     def choix_Markov(self, idSong):
         """ Choisit le successeur de song entrain d etre joue"""
         u = random.random() # nombre aleatoire entre 0 et 1
+	print "affichage de des clefs de idSong"
+	print self.markov[idSong].keys()
         for k in self.markov[idSong].keys():
             if self.markov[idSong][k] >= u:
 # dans ce cas la chaine de markov nous indique que le prochain songe sera k
@@ -61,8 +70,23 @@ class Markovienne():
             else:
 # sinon on regarde les autres songes, en decrementant u. on trouve techniquement qu il y a toujours un k renvoye si u != 1
                 u -= self.markov[idSong][k]
+	    return self.markov[idSong].keys()[-1]
+
+    def elagage(self, idSong, epsilon):
+	""" Realise l elagage des probabilites otant ainsi les proba inferieures a epsilon pour les reporter aleatoirement sur une autre chanson"""
+	for k in self.markov[idSong].keys():
+            if self.markov[idSong][k] < epsilon:
+		u = random.sample(self.markov[idSong].keys(), 2)
+		if u[1] != k:
+			self.markov[idSong][u[1]] += self.markov[idSong][k]
+		else:
+			self.markov[idSong][u[0]] += self.markov[idSong][k]
+		self.markov[idSong].pop(k)
 
 
+#U = Markovienne()
+#U.load_Markov("dbMarkov.ghk")
 
+#print U
 
 

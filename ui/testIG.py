@@ -160,6 +160,7 @@ class Ui_ProjetGherkin(object):
 
         self.SongBar = QtGui.QProgressBar(self.centralwidget)
         self.SongBar.setObjectName(_fromUtf8("SongBar"))
+	self.SongBar.setFormat('%v')
         self.gridLayout.addWidget(self.SongBar, 2, 1, 1, 2)
 	
 

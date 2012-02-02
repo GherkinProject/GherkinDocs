@@ -104,8 +104,17 @@ class MyForm(QtGui.QMainWindow):
     def call_load(self, QtWidget, val = 0):
         """When a song is doubleclicked on in the playlist, it calls call_load"""
         #we have the id of the song clicked on
+	idSongNow = self.playlist[self.pointeur]
         idSong = int(QtWidget.text(4))
-        
+
+	#we increase the probabily to go from idSongNow to idSong and decrease the other
+	#we do a pruning of the successors of idSongNow
+	try:
+	    self.markovienne.vote_Markov(idSongNow, idSong)
+	except:
+	    pass
+	self.markovienne.elagage(idSongNow, config.epsilon)        
+
         #stop playing
         self.server.stop()
 
@@ -186,7 +195,8 @@ class MyForm(QtGui.QMainWindow):
         self.ui.AudioTrack.clear()
 
         for idTrack in self.playlist:
-            self.ui.addTrack(self.songs[idTrack])
+            
+		self.ui.addTrack(self.songs[idTrack])
     
  
 
@@ -215,10 +225,10 @@ class MyForm(QtGui.QMainWindow):
 	        idSong = self.markovienne.choix_Markov(self.playlist[self.pointeur])
             #adding the song to the playlist
             self.playlist.append(idSong)
-            
+            print self.playlist
             #pointing on the new song
             self.pointeur += 1
-
+            print self.pointeur
             #displaying the track to the playlist
             self.ui.addTrack(self.songs[self.playlist[-1]])
             self.load()
@@ -274,6 +284,8 @@ class MyForm(QtGui.QMainWindow):
         self.playlist = self.playlist[0:self.pointeur+1]
 	#updating ui
 	self.update_tracks()
+	#save the data of the markovienne into the file 
+	self.markovienne.save_Markov()
   
     def call_repeat(self):
         if self.repeat:
@@ -321,6 +333,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.SongBar.setMinimum(min)
         self.ui.SongBar.setMaximum(max)
         self.ui.SongBar.setValue(progress)
+	self.ui.SongBar.setFormat(str(progress // 60)+ " : " + str(progress % 60))
         self.ui.SongBar.repaint()
 
     def updateSongProgress2(self):
