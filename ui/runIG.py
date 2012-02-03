@@ -70,7 +70,9 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
         QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_load )
         QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*,int)"), self.call_albums )
+        QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_play_albums )
         QtCore.QObject.connect(self.ui.Album, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*,int)"), self.call_tracks )
+        QtCore.QObject.connect(self.ui.Album, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_play_tracks)
         QtCore.QObject.connect(self.ui.NextButton, QtCore.SIGNAL("clicked()"), self.call_next)
         QtCore.QObject.connect(self.ui.PreviousButton, QtCore.SIGNAL("clicked()"), self.call_prev)
         QtCore.QObject.connect(self.ui.RandomButton, QtCore.SIGNAL("clicked()"), self.call_random)
@@ -91,12 +93,13 @@ class MyForm(QtGui.QMainWindow):
             self.song_play.terminate()
         except:
             pass
+        self.server.stop()
         self.server.load(self.songs[self.playlist[self.pointeur]]["location"])
         try:
             self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.pointeur]]["title"])
         except:
             self.ui.LookingForNoTouch.setText("Unknown")
-
+        
     def call_play_pause(self):
         self.server.play_pause()
 
@@ -123,9 +126,6 @@ class MyForm(QtGui.QMainWindow):
 	except:
 	    pass
 	self.markovienne.elagage(idSongNow, config.epsilon)        
-
-        #stop playing
-        self.server.stop()
 
         #deslect the track in the ui
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
@@ -166,8 +166,16 @@ class MyForm(QtGui.QMainWindow):
         #and update the ui then
         self.update_albums()
  
- 
+    def call_play_albums(self, QtWidget):
+        self.call_albums(QtWidget)
+        self.load()
+        self.call_play_pause()
 
+    def call_play_tracks(self, QtWidget):
+        self.call_tracks(QtWidget)
+        self.load()
+        self.call_play_pause()
+    
     def call_albums(self, QtWidget, val = 0):
         """When an artist is clicked on..."""
         self.selectedArtist = str(QtWidget.text(0))
@@ -241,7 +249,6 @@ class MyForm(QtGui.QMainWindow):
     def call_next(self):
         """The function return True if it has found a new song to play, False either"""
         
-        self.server.stop()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
         
         #few things to do if we are in normal mode... just incrementing the pointeur
@@ -276,7 +283,6 @@ class MyForm(QtGui.QMainWindow):
 
     def call_prev(self):
         """When previous button clicked on, convention : go to the end if at the first"""
-        self.server.stop()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
         
         #if we are not at the first element, no problem
@@ -296,7 +302,7 @@ class MyForm(QtGui.QMainWindow):
 
     def call_random(self):
         if self.mode == random:
-            self.mode = random
+            self.mode = normal 
 
             #updating ui
             icon2 = QtGui.QIcon()
@@ -304,6 +310,9 @@ class MyForm(QtGui.QMainWindow):
             self.ui.RandomButton.setIcon(icon2)
             self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
         else:
+            if self.mode == playlist:
+                self.call_playlist()
+
             self.mode = random
 
             #removing last elements from the playlist for it to be ready for next
@@ -327,6 +336,9 @@ class MyForm(QtGui.QMainWindow):
             self.ui.PlaylistButton.setIcon(icon2)
             self.ui.PlaylistButton.setIconSize(QtCore.QSize(30,30))
     	else:
+            if self.mode == random:
+                self.call_random()
+            
             self.mode = playlist
             #removing last elements from the playlist for it to be ready for next
             self.playlist = self.playlist[0:self.pointeur+1]
@@ -415,7 +427,6 @@ class MyForm(QtGui.QMainWindow):
         try:
             if self.server.get_position() == self.server.get_duration() and self.server.get_position() > 0:
                 if self.repeat:
-                    self.server.stop()
                     self.load()
                     self.server.play_pause()
                 else:
