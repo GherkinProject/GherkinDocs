@@ -75,6 +75,7 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.RandomButton, QtCore.SIGNAL("clicked()"), self.call_random)
         QtCore.QObject.connect(self.ui.RepeatButton,QtCore.SIGNAL("clicked()"), self.call_repeat)
     	QtCore.QObject.connect(self.ui.PlaylistButton,QtCore.SIGNAL("clicked()"), self.call_playlist)
+        QtCore.QObject.connect(self.ui.LookingFor, QtCore.SIGNAL("textChanged(QString"), self.call_search)
 #        QtCore.QObject.connect(self.ui.verticalSlider, QtCore.SIGNAL("valueChanged(int)"), self.call_volume )	
 
     def add_entry(self):
@@ -90,8 +91,11 @@ class MyForm(QtGui.QMainWindow):
         except:
             pass
         self.server.load(self.songs[self.playlist[self.pointeur]]["location"])
-        self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.pointeur]]["title"])
-        
+        try:
+            self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.pointeur]]["title"])
+        except:
+            self.ui.LookingForNoTouch.setText("Unknown")
+
     def call_play_pause(self):
         self.server.play_pause()
 
@@ -283,16 +287,17 @@ class MyForm(QtGui.QMainWindow):
             self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
 
     def call_playlist(self):
-	if self.mode == playlist:
+        if self.mode == playlist:
        	    self.mode = normal
-	else:
-	    self.mode = playlist
+        
+        else:
+	        self.mode = playlist
         #removing last elements from the playlist for it to be ready for next
             self.playlist = self.playlist[0:self.pointeur+1]
-	#updating ui
-	    self.update_tracks()
+	    #updating ui
+            self.update_tracks()
 	#save the data of the markovienne into the file 
-	    self.markovienne.save_Markov()
+        self.markovienne.save_Markov()
   
     def call_repeat(self):
         if self.repeat:
@@ -373,6 +378,23 @@ class MyForm(QtGui.QMainWindow):
             else:
                 self.call_next()
 
+    def call_search(self, QString):
+        print "You've called call_search"
+        self.selectSongs = set()
+        for artist in self.artists:
+            for album in self.artists[artist]:
+                for idTrack in self.albums[album]:
+                    b=  self.songs[idTrack]['title'].__contains__(str(QString)) or self.songs[idTrack]['album'].__contains__(str(QString)) or self.songs[idTrack]['artist'].__contains__(str(QString))
+                    print b
+                    if b:
+                        self.selectSongs.add(idTrack)
+         
+        #then create a playlist from this set
+        self.playlist = make_neighbors(self.songs, self.selectedSongs)
+        self.pointeur = 0
+        
+        #and update the ui then
+        self.update_albums()
 
 
 class Song(QtCore.QThread):
