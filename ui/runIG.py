@@ -234,7 +234,6 @@ class MyForm(QtGui.QMainWindow):
         self.ui.AudioTrack.clear()
 
         for idTrack in self.playlist:
-            
 		self.ui.addTrack(self.songs[idTrack])
     
  
