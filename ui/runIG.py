@@ -57,11 +57,12 @@ class MyForm(QtGui.QMainWindow):
         
         #display artists and albums at launch
         self.display_all()
+        self.load()
 
         #loading song into the server
         #TO BE CHANGE ! id = 0 may not exist !
-        self.playlist.append(self.songs.keys()[0])
-        self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
+        #self.playlist.append(self.songs.keys()[0])
+        #self.server.load(self.songs[self.playlist[self.pointeur]]['location'])
         
         self.update_tracks()
 
@@ -148,12 +149,23 @@ class MyForm(QtGui.QMainWindow):
         #sorting the artists and albums by name for it to be smarter, and display
         artists = self.artists.keys()
         artists.sort()
+        self.selectedSongs = set()
         for artist in artists:
             self.ui.addArtist(artist)
             albums = list(self.artists[artist])
             albums.sort()
             for album in albums:
                 self.ui.addAlbum(album)
+                for idTrack in self.albums[album]:
+                    self.selectedSongs.add(idTrack)
+        
+        #then create a playlist from this set
+        self.playlist = make_neighbors(self.songs, self.selectedSongs)
+        self.pointeur = 0
+        
+        #and update the ui then
+        self.update_albums()
+ 
  
 
     def call_albums(self, QtWidget, val = 0):
@@ -395,14 +407,16 @@ class MyForm(QtGui.QMainWindow):
             pass
         self.ui.SongBar.repaint()
         
-        if self.server.get_position() == self.server.get_duration() and self.server.get_position() > 0:
-            if self.repeat:
-                self.server.stop()
-                self.load()
-                self.server.play_pause()
-            else:
-                self.call_next()
-
+        try:
+            if self.server.get_position() == self.server.get_duration() and self.server.get_position() > 0:
+                if self.repeat:
+                    self.server.stop()
+                    self.load()
+                    self.server.play_pause()
+                else:
+                    self.call_next()
+        except:
+            pass
     def call_search(self, QString):
         print "You've called call_search"
         self.selectSongs = set()
@@ -421,8 +435,6 @@ class MyForm(QtGui.QMainWindow):
         self.pointeur = 0
         
         #and update the ui then
-        self.update_albums()
-        self.update_tracks()
         self.update_artists()
 
 
