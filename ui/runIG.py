@@ -46,7 +46,6 @@ class MyForm(QtGui.QMainWindow):
         
         #getting the lib from the xml file
         (self.artists, self.albums, self.songs) = get_lib()
-
 	# Markovienne (cf Markov.py)
 
 	self.markovienne = Markovienne(config.dbMarkov)

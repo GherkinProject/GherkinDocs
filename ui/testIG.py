@@ -17,6 +17,13 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
+tracknumber = 0
+title = 1
+album = 2
+artist = 3
+id = 4
+location = 5
+
 class Ui_ProjetGherkin(object):
     def setupUi(self, ProjetGherkin):
     	self.iteratorPlaylist = 0
@@ -24,7 +31,6 @@ class Ui_ProjetGherkin(object):
         self.iteratorAlbum = 0
         self.iteratorAudioTrack = 0
     	self.isPlaying = False   
-        self.id = 4
 
         ProjetGherkin.setObjectName(_fromUtf8("ProjetGherkin"))
         ProjetGherkin.resize(640, 480)
@@ -63,12 +69,14 @@ class Ui_ProjetGherkin(object):
         self.gridLayout.addWidget(self.RandomButton, 3, 3, 1, 1)
         self.AudioTrack = QtGui.QTreeWidget(self.centralwidget)
         self.AudioTrack.setObjectName(_fromUtf8("AudioTrack"))
-        self.AudioTrack.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Piste", None, QtGui.QApplication.UnicodeUTF8))
-        self.AudioTrack.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        self.AudioTrack.headerItem().setText(1, QtGui.QApplication.translate("ProjetGherkin", "Artiste", None, QtGui.QApplication.UnicodeUTF8))
-        self.AudioTrack.headerItem().setTextAlignment(1, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        self.AudioTrack.headerItem().setText(2, QtGui.QApplication.translate("ProjetGherkin", "Album", None, QtGui.QApplication.UnicodeUTF8))
-        self.AudioTrack.headerItem().setTextAlignment(2, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.AudioTrack.headerItem().setText(tracknumber, QtGui.QApplication.translate("ProjetGherkin", "Piste", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(tracknumber, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.AudioTrack.headerItem().setText(title, QtGui.QApplication.translate("ProjetGherkin", "Titre", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(title, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.AudioTrack.headerItem().setText(artist, QtGui.QApplication.translate("ProjetGherkin", "Artiste", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(artist, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.AudioTrack.headerItem().setText(album, QtGui.QApplication.translate("ProjetGherkin", "Album", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(album, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
 
 
 
@@ -247,20 +255,24 @@ class Ui_ProjetGherkin(object):
                
         itemAT=QtGui.QTreeWidgetItem()
         try:
-            itemAT.setText(0, u['title'])
+            itemAT.setText(tracknumber, str(u['tracknumber']))
         except:
-            itemAT.setText(0, config.defaultUnknown)
+            itemAT.setText(tracknumber, config.defaultUnknown)
         try:
-            itemAT.setText(1, u['artist'])
+            itemAT.setText(title, u['title'])
         except:
-            itemAT.setText(1, config.defaultUnknown)
+            itemAT.setText(title, config.defaultUnknown)
         try:
-            itemAT.setText(2, u['album'])
+            itemAT.setText(artist, u['artist'])
         except:
-            itemAT.setText(2, config.defaultUnknown)
+            itemAT.setText(artist, config.defaultUnknown)
+        try:
+            itemAT.setText(album, u['album'])
+        except:
+            itemAT.setText(album, config.defaultUnknown)
 
-        itemAT.setText(3, u['location'])
-        itemAT.setText(self.id, str(u['id']))
+        itemAT.setText(location, u['location'])
+        itemAT.setText(id, str(u['id']))
         #self.AudioTrack.insertTopLevelItem(u['id'], itemAT)
         self.AudioTrack.addTopLevelItem(itemAT)
  

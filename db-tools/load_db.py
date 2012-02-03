@@ -30,27 +30,26 @@ def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile
         for element in f: 
             songs[id][element.tag] = element.text
         
+        if 'tracknumber' in songs[id].keys():
+            songs[id]['tracknumber'] = int(songs[id]["tracknumber"].split("/")[0])
+
         #check if tags exist if not, putting unknown default value
-        if 'artist' in songs[id].keys():
-            artist = songs[id]['artist']
-        else:
-            artist = config.defaultUnknown
+        if 'artist' not in songs[id].keys():
+            songs[id]['artist'] = config.defaultUnknown
         
-        if 'album' in songs[id].keys():
-            album = songs[id]['album']
-        else:
-            album = config.defaultUnknown
+        if 'album' not in songs[id].keys():
+            songs[id]['album'] = config.defaultUnknown
 
         #adding dict to the graph if not existing
-        if artist not in artistDict.keys():
-            artistDict[artist] = set()
-        if album not in albumDict.keys():
-            albumDict[album] = set()
+        if songs[id]['artist'] not in artistDict.keys():
+            artistDict[songs[id]['artist']] = set()
+        if songs[id]['album'] not in albumDict.keys():
+            albumDict[songs[id]['album']] = set()
 
 
         #creating two dictionaries : artist -> albums: album -> tracks
-        artistDict[artist].add(album)
-        albumDict[album].add(int(f.get('id')))
+        artistDict[songs[id]['artist']].add(songs[id]['album'])
+        albumDict[songs[id]['album']].add(int(f.get('id')))
 
     log.info("Database loaded in memory")
 
@@ -71,14 +70,14 @@ def make_neighbors(songs, tracks):
             elif songs[x]['album'] < songs[y]['album']:
                 return -1
             else:
-                if 'tracknumber' in set(songs[x].keys()).intersection(set(songs[y].keys())) and songs[x]['tracknumber'] != songs[y]['tracknumber']:
+                try:
                     if songs[x]['tracknumber'] > songs[y]['tracknumber']:
                         return +1
                     elif songs[x]['tracknumber'] < songs[y]['tracknumber']:
                         return -1
                     else:
                         return 0
-                else:
+                except:
                     if songs[x]['location'] > songs[y]['location']:
                         return +1
                     elif songs[x]['location'] < songs[y]['location']:
