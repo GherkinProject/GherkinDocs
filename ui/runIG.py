@@ -35,11 +35,11 @@ class MyForm(QtGui.QMainWindow):
         #they come together
         self.pointeur = 0
         self.playlist = []
-
+        
         self.mode = normal
         self.repeat = False
 	
-
+        #saving artists and songs displayed
 
         #connection with the server
         self.server = xmlrpclib.ServerProxy("http://localhost:" + str(config.defaultPort))
@@ -198,18 +198,24 @@ class MyForm(QtGui.QMainWindow):
                 self.displayedAlbums.add(self.songs[idTrack]["album"])
                 self.ui.addAlbum(self.songs[idTrack]["album"])
             self.ui.addTrack(self.songs[idTrack])
+    
     def update_artists(self):
         #removing elements from the artist tree
         self.ui.Artist.clear()
+        self.ui.Album.clear()
         self.ui.AudioTrack.clear()
-
+        
         #add them in the ordre of the playlist => alphabetical order for artists
         self.displayedArtists = set()
+        self.displayedAlbums = set()
         for idTrack in self.playlist:
             #one should be added if not yet displayed
             if self.songs[idTrack]["artist"] not in self.displayedArtists:
                 self.displayedArtists.add(self.songs[idTrack]["artist"])
                 self.ui.addArtist(self.songs[idTrack]["artist"])
+            if self.songs[idTrack]["album"] not in self.displayedAlbums:
+                self.displayedArtists.add(self.songs[idTrack]["album"])
+                self.ui.addAlbum(self.songs[idTrack]["album"])
             self.ui.addTrack(self.songs[idTrack])
 
     def call_tracks(self, QtWidget, val = 0):
