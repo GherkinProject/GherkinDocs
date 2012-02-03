@@ -35,6 +35,7 @@ def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile
                 tracknumber = int(songs[id]["tracknumber"].split("/")[0])
                 songs[id]['tracknumber'] = tracknumber
             except:
+                pass
                 #bad tracknumber value
 
         #check if tags exist if not, putting unknown default value
