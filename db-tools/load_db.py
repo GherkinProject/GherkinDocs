@@ -31,7 +31,11 @@ def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile
             songs[id][element.tag] = element.text
         
         if 'tracknumber' in songs[id].keys():
-            songs[id]['tracknumber'] = int(songs[id]["tracknumber"].split("/")[0])
+            try:
+                tracknumber = int(songs[id]["tracknumber"].split("/")[0])
+                songs[id]['tracknumber'] = tracknumber
+            except:
+                #bad tracknumber value
 
         #check if tags exist if not, putting unknown default value
         if 'artist' not in songs[id].keys():
