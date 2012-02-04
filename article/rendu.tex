@@ -1,0 +1,77 @@
+\documentclass{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{geometry}
+\geometry{scale=0.8, nohead}
+
+\author{Gautier Dakin, Nicolas Ehrhardt, Lucas Plaetvoete}
+\title{Projet Gherkin}
+
+\begin{document}
+\maketitle
+
+\section*{Introduction}
+L'objectif du projet est de réaliser un lecteur audio intelligent. Il part d'un constat simple, nous possèdons tous trois une librairie audio conséquente ; et bien que nous ayons chacun notre préférence pour un lecteur audio, aucun d'entre eux ne nous satisfait pleinement.
+
+Trois axes nous intéresse principalement :
+\begin{itemize}
+\item L'affichage : en effet, nous souhaiterions trouver le meilleur compris entre interface minimalisme, et fonction essentielle. Ceci en s'adaptant à l'environnement de bureau Ubunut basé sur Unity. En cela, nous nous sommes d'abord basé sur l'interface du lecteur par défaut Rhythmbox qui nous paraissait un bon point de départ.
+
+\item L'intelligence : plusieurs grandes sociétés ont travaillés sur la lecture intelligente et la proposition de chanson en lien avec les gouts de l'utilisateur. L'un des objectifs est de trouver des solutions pour proposer un mode de lecture intelligent et ne demandant aucun effort à l'utilisateur.
+
+\item Les performances : le dernier grand axe est la recherche de performances ( c'est-à-dire pourcentage d'utilisation du processeur minimal ). Les performances du serveur audio MPD étant de ce point de vue tout à fait intéressante, nous serions enclin à pousser le développement du projet suivant cette architecture.
+\end{itemize}
+
+\section*{L'interface}
+\subsection*{Orientation du projet}
+Comme sus-mentionné nous avons basé notre interface sur celle du lecteur audio par défaut. Mais un constat s'impose : Aujourd'hui, les écran 16/10 voire 16/9 sont légions et majoritaires ; Ubuntu, à travers unity, à décidé de tirer parti de ce nouvel état de fait pour proposer un menu latéral. Les arguments sont : gain de place, minimalisme. Le principal problème étant que ce menu empiète parfois sur les boutons des applications en plein écran lorsque celui-ci se dévoile.
+
+Pour répondre à cette problèmatique, nous proposons un menu à droite de notre application. Optimisant ainsi la place, et évitant cette gène.
+\subsection*{Développement}
+La librairie PyQt4 sur laquelle se base le lecteur nous a permis de développer rapidemment cette interface. Quelques interrogation demeurent cependant : quid des performances ? Pourrait-on segmenter plus encore le code ?
+
+Nous ne sommes qu'au début de la pleine maitrise de cette librairie. Ainsi, si nous utilisons des "signaux" et des "QThread" il nous faudrait probablement revoir certaines fonctions peut être un peu trop gloutonnes ( néanmoins fonctionnelles ).
+
+\section*{L'intelligence}
+\subsection*{L'idée}
+
+
+\subsection*{Développement}
+
+
+\section*{La gestion de la librairie}
+
+Une petit librairie d'outillage à été créé pour l'occasion. Elle effectue trois taches basiques :
+\begin{itemize}
+\item la création d'un fichier XML recensant les fichier audio d'un dossier et leurs tags.
+\item la mise à jour du fichier XML ( en développement ).
+\item le chargement du fichier XML par l'interface graphique pour l'affichage et l'intelligence.
+\item la création d'une playlist de lecture classique.
+\end{itemize}
+
+\section*{Le serveur}
+
+\subsection*{Description}
+
+Le serveur audio est complètement indépendant de l'interface graphique. Il ne prend en argument que le chemin d'une chanson. On peut ensuite :
+\begin{itemize}
+\item jouer;
+\item mettre en pause,
+\item arrêter,
+\item obtenir le temps de lecture
+\item ottenir la longueur de la chanson jouée.
+\end{itemize}
+
+Celui-ci est basé sur la librairie média d'ubuntu par défaut : Gstreamer. Une fois de plus, il s'agit de se plonger dans la documentation de cette librairie, ce qui est un travail très fastidieux et parfois pénible.
+
+\subsection*{Futur}
+
+Le serveur est pour le moment plutot énergivore, il a besoin d'un certain nombre d'optimisation. En outre, l'on pourrait avoir envie de regrouper l'intelligence dans ce même serveur ( dans une sur-classe ? ) pour permettre le fonctionnemnt de l'application en mode console seulement et gagner en ressources.
+
+\end{document}
