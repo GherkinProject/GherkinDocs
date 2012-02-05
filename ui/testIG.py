@@ -66,7 +66,7 @@ class Ui_ProjetGherkin(object):
         self.RandomRepeat = QtGui.QButtonGroup(ProjetGherkin)
         self.RandomRepeat.setObjectName(_fromUtf8("RandomRepeat"))
         self.RandomRepeat.addButton(self.RandomButton)
-        self.gridLayout.addWidget(self.RandomButton, 3, 3, 1, 1)
+        self.gridLayout.addWidget(self.RandomButton, 4, 3, 1, 1)
         self.AudioTrack = QtGui.QTreeWidget(self.centralwidget)
         self.AudioTrack.setObjectName(_fromUtf8("AudioTrack"))
         self.AudioTrack.headerItem().setText(tracknumber, QtGui.QApplication.translate("ProjetGherkin", "Piste", None, QtGui.QApplication.UnicodeUTF8))
@@ -166,7 +166,7 @@ class Ui_ProjetGherkin(object):
 	self.PlaylistButton.setObjectName(_fromUtf8("PlaylistButton"))
 	self.RandomRepeat.addButton(self.PlaylistButton)
 
-        self.gridLayout.addWidget(self.RepeatButton, 4, 3, 1, 1)
+        self.gridLayout.addWidget(self.RepeatButton, 3, 3, 1, 1)
 	self.gridLayout.addWidget(self.PlaylistButton, 5,3,1,1)
 
         self.SongBar = QtGui.QProgressBar(self.centralwidget)

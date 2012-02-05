@@ -10,7 +10,7 @@
 \usepackage{geometry}
 \geometry{scale=0.8, nohead}
 
-\author{Gautier Dakin, Nicolas Ehrhardt, Lucas Plaetevoet}
+\author{Gautier \bsc{Dakin}, Nicolas \bsc{Ehrhardt}, Lucas \bsc{Plaetevoet}}
 \title{Projet Gherkin}
 
 \begin{document}
@@ -41,8 +41,26 @@ Nous ne sommes qu'au début de la pleine maitrise de cette librairie. Ainsi, si 
 \section*{L'intelligence}
 \subsection*{L'idée}
 
+L'idée de l'intelligence est simple en elle-même. Elle a pour but de mettre des probabilités sur le passage entre deux chansons. Exemple : Vous êtes actuellement entrain d'écouter la "Sonate au Clair de Lune". Théoriquement, la probabilité d'avoir envie d'entendre/écouter "Highway to Hell" après la "Sonate au Clair de Lune" est extrêmement faible (sauf si cela est dans vos habitudes)
+Si, au contraire, après la sonate de Beethoven, l'utilisateur a tendance à écouter le "Requiem" de Mozart, alors la probabilité de passage entre ces deux chansons sera d'autant plus grande.
+
+Cette vision de passage d'une chanson à l'autre entre exactement dans le cadre théorique des chaînes de Markov où l'on a une matrice P tel que $P(x,y)$ représente la probabilité de passage de l'état x à l'état y.
 
 \subsection*{Développement}
+
+On a donc l'idée de représenter les transitions entre deux pistes audio par une chaine de Markov. Reste à savoir comment l'implémenter. Imaginons une bibliothèque moyenne sur un ordinateur. On tourne autour de 4000 ~ 5000 pistes audio. Gérer en permanence une telle matrice est extrêmement lourd, or on recherche en premier la rapidité d'exécution. On développe donc comme suit :
+
+/begin{itemize}
+/item
+On crée un dictionnaire de nom markov, tel que markov[i][j] renvoie la probabilité de passage de i à j.
+/item
+On pondère ces probabilités par un nombre dépendant uniquement de i. Ce choix implique qu'on considère qu'à un temps très élevé, on a théoriquement convergence vers la playlist idéale pour l'utilisateur.
+/item
+Selon certains critères, on décide d'incrémenter ou de décrémenter la probabilité, en gardant le caractère stochastique de markov.
+/item
+Régulièrement, on enregistre le dictionnaire markov sur le disque dur. Enfin d'éviter de revenir au cas de la matrice, les probabilités trop faibles ($ < \epsilon$) sont élaguées c'est-à-dire qu'elles sont suppriméees et rajoutées équiprobablement sur les autres clefs du dictionnaire. Cet élagage permet de réduire le nombre de clefs du dictionnaire et donc de garantir une taille plus faible.
+/end{itemize}
+
 
 
 \section*{La gestion de la librairie}
@@ -64,14 +82,14 @@ Le serveur audio est complètement indépendant de l'interface graphique. Il ne 
 \item jouer;
 \item mettre en pause,
 \item arrêter,
-\item obtenir le temps de lecture
-\item ottenir la longueur de la chanson jouée.
+\item obtenir le temps de lecture,
+\item obtenir la longueur de la chanson jouée.
 \end{itemize}
 
 Celui-ci est basé sur la librairie média d'ubuntu par défaut : Gstreamer. Une fois de plus, il s'agit de se plonger dans la documentation de cette librairie, ce qui est un travail très fastidieux et parfois pénible.
 
 \subsection*{Futur}
 
-Le serveur est pour le moment plutot énergivore, il a besoin d'un certain nombre d'optimisation. En outre, l'on pourrait avoir envie de regrouper l'intelligence dans ce même serveur ( dans une sur-classe ? ) pour permettre le fonctionnemnt de l'application en mode console seulement et gagner en ressources.
+Le serveur est pour le moment plutot énergivore, il a besoin d'un certain nombre d'optimisation. En outre, l'on pourrait avoir envie de regrouper l'intelligence dans ce même serveur ( dans une sur-classe ? ) pour permettre le fonctionnement de l'application en mode console seulement et gagner en ressources.
 
 \end{document}

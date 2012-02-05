@@ -95,7 +95,7 @@ class MyForm(QtGui.QMainWindow):
         self.server.stop()
         self.server.load(self.songs[self.playlist[self.pointeur]]["location"])
         try:
-            self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.pointeur]]["title"])
+            self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.pointeur]]["title"]+" - "+ self.songs[self.playlist[self.pointeur]]['artist'])
         except:
             self.ui.LookingForNoTouch.setText("Unknown")
         
@@ -115,7 +115,7 @@ class MyForm(QtGui.QMainWindow):
     def call_load(self, QtWidget, val = 0):
         """When a song is doubleclicked on in the playlist, it calls call_load"""
         #we have the id of the song clicked on
-	idSongNow = self.playlist[self.pointeur]
+    	idSongNow = self.playlist[self.pointeur]
         idSong = int(QtWidget.text(4))
 
 	#we increase the probabily to go from idSongNow to idSong and decrease the other
@@ -269,10 +269,8 @@ class MyForm(QtGui.QMainWindow):
 	        idSong = self.markovienne.choix_Markov(self.playlist[self.pointeur])
             #adding the song to the playlist
             self.playlist.append(idSong)
-            print self.playlist
             #pointing on the new song
             self.pointeur += 1
-            print self.pointeur
             #displaying the track to the playlist
             self.ui.addTrack(self.songs[self.playlist[-1]])
             self.load()
