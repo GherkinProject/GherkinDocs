@@ -50,16 +50,16 @@ Cette vision de passage d'une chanson à l'autre entre exactement dans le cadre 
 
 On a donc l'idée de représenter les transitions entre deux pistes audio par une chaine de Markov. Reste à savoir comment l'implémenter. Imaginons une bibliothèque moyenne sur un ordinateur. On tourne autour de 4000 ~ 5000 pistes audio. Gérer en permanence une telle matrice est extrêmement lourd, or on recherche en premier la rapidité d'exécution. On développe donc comme suit :
 
-/begin{itemize}
-/item
+\begin{itemize}
+\item
 On crée un dictionnaire de nom markov, tel que markov[i][j] renvoie la probabilité de passage de i à j.
-/item
+\item
 On pondère ces probabilités par un nombre dépendant uniquement de i. Ce choix implique qu'on considère qu'à un temps très élevé, on a théoriquement convergence vers la playlist idéale pour l'utilisateur.
-/item
+\item
 Selon certains critères, on décide d'incrémenter ou de décrémenter la probabilité, en gardant le caractère stochastique de markov.
-/item
+\item
 Régulièrement, on enregistre le dictionnaire markov sur le disque dur. Enfin d'éviter de revenir au cas de la matrice, les probabilités trop faibles ($ < \epsilon$) sont élaguées c'est-à-dire qu'elles sont suppriméees et rajoutées équiprobablement sur les autres clefs du dictionnaire. Cet élagage permet de réduire le nombre de clefs du dictionnaire et donc de garantir une taille plus faible.
-/end{itemize}
+\end{itemize}
 
 
 
