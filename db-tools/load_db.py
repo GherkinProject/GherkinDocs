@@ -39,7 +39,7 @@ def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile
 
         #check if tags exist if not, putting unknown default value
         if 'title' not in songs[id].keys():
-            songs[id]['title'] = songs['location'].split('/')[-1]
+            songs[id]['title'] = songs[id]['location'].split('/')[-1]
         
         if 'artist' not in songs[id].keys():
             songs[id]['artist'] = config.defaultUnknown
