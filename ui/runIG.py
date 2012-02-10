@@ -427,11 +427,15 @@ class MyForm(QtGui.QMainWindow):
                     self.load()
                     self.server.play_pause()
                 else:
+                    try:
+                        self.markovienne.vote_Markov(self.playlist[self.pointeur -1], self.playlist[self.pointeur])
+                    except:
+                        pass
                     self.call_next()
         except:
             pass
+
     def call_search(self, QString):
-        print "You've called call_search"
         self.selectSongs = set()
         for artist in self.artists:
             for album in self.artists[artist]:
