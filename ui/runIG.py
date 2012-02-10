@@ -221,7 +221,7 @@ class MyForm(QtGui.QMainWindow):
                 self.displayedArtists.add(self.songs[idTrack]["artist"])
                 self.ui.addArtist(self.songs[idTrack]["artist"])
             if self.songs[idTrack]["album"] not in self.displayedAlbums:
-                self.displayedArtists.add(self.songs[idTrack]["album"])
+                self.displayedAlbums.add(self.songs[idTrack]["album"])
                 self.ui.addAlbum(self.songs[idTrack]["album"])
             self.ui.addTrack(self.songs[idTrack])
 
@@ -447,7 +447,6 @@ class MyForm(QtGui.QMainWindow):
                     except:
                         pass
         #then create a playlist from this set
-        print self.selectSongs
         self.playlist = make_neighbors(self.songs, self.selectSongs)
         self.pointeur = 0
         

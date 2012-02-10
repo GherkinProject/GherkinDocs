@@ -3,6 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[francais]{babel}
+\usepackage{graphicx}
 \usepackage{lmodern}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -30,11 +31,25 @@ Trois axes nous intéressent principalement :
 
 \section*{L'interface}
 \subsection*{Orientation du projet}
-Comme sus-mentionné nous avons basé notre interface sur celle du lecteur audio par défaut. Mais un constat s'impose : Aujourd'hui, les écran 16/10 voire 16/9 sont légions et majoritaires ; Ubuntu, à travers unity, à décidé de tirer parti de ce nouvel état de fait pour proposer un menu latéral. Les arguments sont : gain de place, minimalisme. Le principal problème étant que ce menu empiète parfois sur les boutons des applications en plein écran lorsque celui-ci se dévoile.
+Comme sus-mentionné nous avons basé notre interface sur celle du lecteur audio par défauti (type Rhythmbox, de sorte à ne pas perturber les habitudes de l'utilisateur). Mais un constat s'impose : Aujourd'hui, les écran 16/10 voire 16/9 sont légions et majoritaires ; Ubuntu, à travers unity, à décidé de tirer parti de ce nouvel état de fait pour proposer un menu latéral. Les arguments sont : gain de place, minimalisme. Le principal problème étant que ce menu empiète parfois sur les boutons des applications en plein écran lorsque celui-ci se dévoile.
 
 Pour répondre à cette problèmatique, nous proposons un menu à droite de notre application. Optimisant ainsi la place, et évitant cette gène.
+
 \subsection*{Développement}
-La librairie PyQt4 sur laquelle se base le lecteur nous a permis de développer rapidemment cette interface. Quelques interrogation demeurent cependant : quid des performances ? Pourrait-on segmenter plus encore le code ?
+La librairie PyQt4 sur laquelle se base le lecteur nous a permis de développer rapidemment cette interface. Le développement de l'interface s'est fait en trois temps :
+\begin{enumerate}
+\item On crée dans un premier temps une première interface graphique grâce à QtDesigner. Cette application permet d'avoir une vision en WYSIWYG de l'interface, et donc d'éviter les erreurs de goûts et de mauvais placement.
+\item On modifie légèrement le code généré par QtDesigner pour rajouter quelques fonctionnalités. (Ex : Gestion des îcones)
+\item On sépare le fichier en deux .py. Un premier contient le code légèrement modifié obtenu via QtDesigner. Le second va gérer toutes les modifications de l'interface graphique, ainsi que la gestion des signaux et slots de Qt. (Ex : l'update de la barre de progression, lié le PlayButton à la fonction play() )
+\end{enumerate}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.3]{interface.png}
+\caption{Interface graphique du lecteur.}
+\end{figure}
+
+Quelques interrogation demeurent cependant : quid des performances ? Pourrait-on segmenter plus encore le code ?
 
 Nous ne sommes qu'au début de la pleine maitrise de cette librairie. Ainsi, si nous utilisons des "signaux" et des "QThread" il nous faudrait probablement revoir certaines fonctions peut être un peu trop gloutonnes ( néanmoins fonctionnelles ).
 
@@ -52,11 +67,13 @@ On a donc l'idée de représenter les transitions entre deux pistes audio par un
 
 \begin{itemize}
 \item
-On crée un dictionnaire de nom markov, tel que markov[i][j] renvoie la probabilité de passage de i à j.
+On crée un dictionnaire de nom markov, tel que markov[i][j] renvoie la probabilité de passage de i à j si elle existe.
 \item
-On pondère ces probabilités par un nombre dépendant uniquement de i. Ce choix implique qu'on considère qu'à un temps très élevé, on a théoriquement convergence vers la playlist idéale pour l'utilisateur.
+On pondère ces probabilités par un nombre dépendant uniquement de i. Ce choix implique qu'on considère qu'à un temps très élevé, on a théoriquement convergence vers la playlist idéale pour l'utilisateur. Cela ne signifie pas pour autant que la playlist devient déterministe. On a juste théoriquement élagué les probabilités très faibles pour ne laisser plus que les probabilités plus importantes. On a donc en théorie une convergence vers un arbre de probabilité plus ou
+moins stable par utilisation de Gherkin.
 \item
-Selon certains critères, on décide d'incrémenter ou de décrémenter la probabilité, en gardant le caractère stochastique de markov.
+Selon certains critères, on décide d'incrémenter ou de décrémenter la probabilité, en gardant le caractère stochastique de markov. On incrémente ainsi la probabilité lorsque l'on réalise l'écoute entière d'un morceau, on incrémente la probabilité entre le morceau précédent et ce morceau. Lorsque l'utilisateur décide de passer une chanson, on abaisse la probabilité de passage entre le morceau précédent et le morceau qui vient d'être sauté. Enfin, on décide
+d'incrémenter la probabilité lorsqu'un morceau est double cliqué, ce qui peut permettre à l'utilisateur de configurer en quelques instants ces playlists.
 \item
 Régulièrement, on enregistre le dictionnaire markov sur le disque dur. Enfin d'éviter de revenir au cas de la matrice, les probabilités trop faibles ($ < \epsilon$) sont élaguées c'est-à-dire qu'elles sont suppriméees et rajoutées équiprobablement sur les autres clefs du dictionnaire. Cet élagage permet de réduire le nombre de clefs du dictionnaire et donc de garantir une taille plus faible.
 \end{itemize}
