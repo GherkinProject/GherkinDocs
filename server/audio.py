@@ -8,9 +8,6 @@ import gst
 #os
 import os
 
-#http server
-from SimpleXMLRPCServer import SimpleXMLRPCServer
-
 #config file
 import config
 
@@ -83,14 +80,3 @@ class audio_server:
     def is_playing(self):
         """Return the state of the audio player"""
         return self.playing
-
-    
-
-
-# Create server
-server = SimpleXMLRPCServer(("localhost", config.defaultPort), logRequests = False, allow_none=True)
-server.register_introspection_functions()
-server.register_instance(audio_server())
-
-# Run the server's main loop
-server.serve_forever()
