@@ -7,9 +7,15 @@ defaultUnknown = 'unknown'
 
 #server port
 defaultPort = 1664
+serverName = "localhost"
 
 #time
 dt = 0.5
+
+#constante mode
+normal = 0
+random = 1
+playlist = 2
 
 # pruning constant
 epsilon = 0.001

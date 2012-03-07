@@ -17,7 +17,7 @@ import logging.config
 logging.config.fileConfig(config.logLocation + "log.conf")
 log = logging.getLogger("GhkAudioServer")
 
-class audio_server:
+class server:
     def __init__(self):
         self.playing = False
         #self.player = gst.Pipeline("player")

@@ -11,20 +11,8 @@ from load_db import *
 #configuration constant
 import config
 
-#config file
-import time
-from random import randint
-
-#Markov Process
-from Markov import Markovienne
-
 #client lib for calling server
 import xmlrpclib
-
-#constante mode
-normal = 0
-random = 1
-playlist = 2
 
 class MyForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -32,31 +20,21 @@ class MyForm(QtGui.QMainWindow):
         self.ui = Ui_ProjetGherkin()
         self.ui.setupUi(self)
         
-        #they come together
-        self.pointeur = 0
-        self.playlist = []
-        
-        self.mode = normal
-        self.repeat = False
-	
-        #saving artists and songs displayed
-
         #connection with the server
-        self.server = xmlrpclib.ServerProxy("http://localhost:" + str(config.defaultPort))
+        self.server = xmlrpclib.ServerProxy("http://" + config.serverName + ":" + str(config.defaultPort))
+          
+        #they come together
+        self.playlist = self.server.get_playlist()
         
+        #saving artists and songs displayed
         #getting the lib from the xml file
-        (self.artists, self.albums, self.songs) = get_lib()
-	# Markovienne (cf Markov.py)
-
-	self.markovienne = Markovienne(config.dbMarkov)
-	try:
-	    self.markovienne.load_Markov(config.dbMarkov)
-	except:
- 	    self.markovienne.create_Markov(self.songs.keys())
-        
+        if config.serverName == "localhost":
+            (self.artists, self.albums, self.songs) = get_lib()
+	
         #display artists and albums at launch
         self.display_all()
-        self.load()
+
+        #self.server.load()
 
         #loading song into the server
         #TO BE CHANGE ! id = 0 may not exist !
@@ -67,7 +45,7 @@ class MyForm(QtGui.QMainWindow):
 
         #signal received, functions called
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
-        QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_load )
+        QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_change )
         QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*,int)"), self.call_albums )
         QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_play_albums )
         QtCore.QObject.connect(self.ui.Album, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*,int)"), self.call_tracks )
@@ -92,12 +70,12 @@ class MyForm(QtGui.QMainWindow):
             self.song_play.terminate()
         except:
             pass
-        self.server.stop()
-        self.server.load(self.songs[self.playlist[self.pointeur]]["location"])
         try:
             self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.pointeur]]["title"]+" - "+ self.songs[self.playlist[self.pointeur]]['artist'])
         except:
             self.ui.LookingForNoTouch.setText("Unknown")
+
+        self.server.load()
         
     def call_play_pause(self):
         self.server.play_pause()
@@ -112,21 +90,12 @@ class MyForm(QtGui.QMainWindow):
         self.iconChange()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
 
-    def call_load(self, QtWidget, val = 0):
-        """When a song is doubleclicked on in the playlist, it calls call_load"""
+    def call_change(self, QtWidget, val = 0):
+        """When a song is doubleclicked on in the playlist"""
         #we have the id of the song clicked on
-    	idSongNow = self.playlist[self.pointeur]
         idSong = int(QtWidget.text(4))
 
-	#we increase the probabily to go from idSongNow to idSong and decrease the other
-	#we do a pruning of the successors of idSongNow
-	try:
-	    self.markovienne.vote_Markov(idSongNow, idSong)
-	except:
-	    pass
-	self.markovienne.elagage(idSongNow, config.epsilon)        
-
-        #deslect the track in the ui
+        #deselect the track in the ui
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
         
         self.pointeur = 0
@@ -135,6 +104,9 @@ class MyForm(QtGui.QMainWindow):
             self.pointeur += 1
 
         #loading and playing
+        self.server.change(self.pointeur)
+        
+        #needs graphical changes
         self.load()
         self.call_play_pause()
     
@@ -160,6 +132,7 @@ class MyForm(QtGui.QMainWindow):
         
         #then create a playlist from this set
         self.playlist = make_neighbors(self.songs, self.selectedSongs)
+        self.server.set_playlist(self.playlist)
         self.pointeur = 0
         
         #and update the ui then
@@ -187,6 +160,7 @@ class MyForm(QtGui.QMainWindow):
         
         #then create a playlist from this set
         self.playlist = make_neighbors(self.songs, self.selectedSongs)
+        self.server.set_playlist(self.playlist)
         self.pointeur = 0
         
         #and update the ui then
@@ -232,6 +206,7 @@ class MyForm(QtGui.QMainWindow):
         
         #making the playlist from the set of songs
         self.playlist = make_neighbors(self.songs, self.selectedSongs)
+        self.server.set_playlist(self.playlist)
         self.pointeur = 0
     
         self.update_tracks()
@@ -247,36 +222,9 @@ class MyForm(QtGui.QMainWindow):
 
     def call_next(self):
         """The function return True if it has found a new song to play, False either"""
-        
+        self.server.set_next()
         self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
-        
-        #few things to do if we are in normal mode... just incrementing the pointeur
-        if self.mode == normal:
-            if self.pointeur < len(self.playlist) - 1:
-                self.pointeur+=1
-                self.load()
-            else:
-                self.pointeur = 0
-                self.server.stop()
-
-                return False
-        else:
-            if self.mode == random:
-                #choosing a random number in the list of possible song
-                posSong = randint(0, len(self.songs))
-                idSong = self.songs.keys()[posSong] 
-            elif self.mode == playlist:
-	        idSong = self.markovienne.choix_Markov(self.playlist[self.pointeur])
-            #adding the song to the playlist
-            self.playlist.append(idSong)
-            #pointing on the new song
-            self.pointeur += 1
-            #displaying the track to the playlist
-            self.ui.addTrack(self.songs[self.playlist[-1]])
-            self.load()
-
-        self.call_play_pause()
-        return True
+        self.server.play_pause()
 
     def call_prev(self):
         """When previous button clicked on, convention : go to the end if at the first"""
@@ -443,6 +391,7 @@ class MyForm(QtGui.QMainWindow):
                         pass
         #then create a playlist from this set
         self.playlist = make_neighbors(self.songs, self.selectSongs)
+        self.server.set_playlist(self.playlist)
         self.pointeur = 0
         
         #and update the ui then
