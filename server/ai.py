@@ -101,7 +101,7 @@ class ai:
 #----------------------------
 
     def change(self, point):
-        """put the pointeur to the point position"""
+        """Lauch song pointed"""
         #change pointeur
         self.set_point(point)
        
@@ -165,6 +165,18 @@ class ai:
 
     def stop(self):
         self.audio.stop()
+
+    def random(self):
+        if self.mode == config.random:
+            self.mode = config.normal
+        
+        elif self.mode == config.playlist:
+            self.mode = random
+            self.Markovienne.save_Markov()
+        
+        else:
+            self.mode = random
+
    
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
