@@ -8,9 +8,6 @@ import gst
 #os
 import os
 
-#http server
-from SimpleXMLRPCServer import SimpleXMLRPCServer
-
 #config file
 import config
 
@@ -20,7 +17,7 @@ import logging.config
 logging.config.fileConfig(config.logLocation + "log.conf")
 log = logging.getLogger("GhkAudioServer")
 
-class audio_server:
+class server:
     def __init__(self):
         self.playing = False
         #self.player = gst.Pipeline("player")
@@ -83,14 +80,3 @@ class audio_server:
     def is_playing(self):
         """Return the state of the audio player"""
         return self.playing
-
-    
-
-
-# Create server
-server = SimpleXMLRPCServer(("localhost", config.defaultPort), logRequests = False, allow_none=True)
-server.register_introspection_functions()
-server.register_instance(audio_server())
-
-# Run the server's main loop
-server.serve_forever()

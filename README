@@ -1,0 +1,50 @@
+Bienvenue sur le projet gherkin;
+
+===============================
+======  Installation  =========
+===============================
+
+Avant toute installation, veuillez vous assurer que les librairies suivantes sont bien installées :
+
+Gestion des tag audio : mutagen.
+La commande :
+$ find /usr/lib -name mutagen*
+devrait renvoyer l'adresse de la librairie si elle existe, rien sinon.
+Page web : http://code.google.com/p/mutagen/downloads/list.
+
+Interface graphique : pyqt :
+Page web : http://www.riverbankcomputing.co.uk/software/pyqt/download
+
+Sous ubuntu, Gstreamer est installée par défaut. S'il ne l'est pas sur votre distribution, celui-ci est nécessaire pour le fonctionnement du lecteur.
+
+Une fois ces librairies installées, et évidemment python, le lecteur devrait être opérationnel sur votre machine.
+
+===============================
+======   Lancement    =========
+===============================
+
+L'interface graphique du lecteur n'étant pas tout à fait terminée, certaines actions nécessitent le lancement en ligne de commande des fichiers :
+
+Pre-lancement :
+
+1. Rendre les fichiers exécutables :
+$ chmod ug+x generate_db.py update_db.py start*
+
+2. Scanner votre librairie :
+$ ./generate_db.py /chemin_absolu_de_votre_librairie_audio
+
+facultatif : ./update_db.py /chemin est sensé ajouter les fichier audio à la librairie, mais le script nécessite bien des ajustements, le développement n'ayant pas été centré sur cette partie. Dans le doute, re-générer la librairie.
+
+Lancement :
+
+1. Lancement du serveur audio :
+$ ./start_audio_server.py &
+
+2. Lancement de l'interface graphique :
+$ ./start_ui.py
+
+===============================
+======   Fermeture    =========
+===============================
+
+Fermer graphiquement le lecteur et ne pas oublier de tuer le processus python du serveur.
