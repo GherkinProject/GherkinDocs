@@ -65,7 +65,14 @@ class MyForm(QtGui.QMainWindow):
         
         self.update_tracks()
 
-        #signal received, functions called
+
+        action = QtGui.QAction(self.ui.PlayButton)
+        action.setShortcut("Ctrl+P")
+#        action.setStatusTip(command.name)
+        QtCore.QObject.connect(action, QtCore.SIGNAL('triggered()'), self.call_play_pause )
+                            
+    
+    #signal received, functions called
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
         QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_load )
         QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*,int)"), self.call_albums )
