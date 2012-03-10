@@ -60,12 +60,24 @@ class server:
 
     def get_position(self):
         """return (int) the current position in the song ( in second )"""
-        return int(self.player.query_position(gst.FORMAT_TIME, None)[0] // 1000000000)
+        if self.is_playing():
+            try:
+                return int(self.player.query_position(gst.FORMAT_TIME, None)[0] // 1000000000)
+            except:
+                return -2
+        else:
+            return -1
 
     def get_duration(self):
         """return (int) the total duration of the song ( in second )"""
-        return int(self.player.query_duration(gst.FORMAT_TIME, None)[0] // 1000000000)
-    
+        if self.is_playing():
+            try:
+                return int(self.player.query_duration(gst.FORMAT_TIME, None)[0] // 1000000000)
+            except:
+                return -2
+        else:
+            return -1
+
     def on_message(self, bus, message):
         """Print message sent by gstreamer"""
         t = message.type

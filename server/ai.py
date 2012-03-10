@@ -173,6 +173,10 @@ class ai:
         elif self.mode == config.playlist:
             self.mode = random
             self.Markovienne.save_Markov()
+
+            #removing last elements from the playlist for it to be ready for next
+            self.playlist = self.playlist[0:self.pointeur+1]
+
         
         else:
             self.mode = random

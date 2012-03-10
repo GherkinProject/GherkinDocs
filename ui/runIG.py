@@ -85,7 +85,6 @@ class MyForm(QtGui.QMainWindow):
 
     def call_play_pause(self):
         self.server.play_pause()
-        self.sync_server()
 
         #do not forget to work with the other thread
      	if self.server.is_playing():
@@ -128,29 +127,19 @@ class MyForm(QtGui.QMainWindow):
         self.call_play_pause()
 
     def call_random(self):
+        self.server.random()
+        self.sync_server()
         if self.mode == random:
-            self.mode = normal 
-
-            #updating ui
-            icon2 = QtGui.QIcon()
-            icon2.addPixmap(QtGui.QPixmap((config.randomOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.ui.RandomButton.setIcon(icon2)
-            self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
-        else:
-            if self.mode == playlist:
-                self.call_playlist()
-
-            self.mode = random
-
-            #removing last elements from the playlist for it to be ready for next
-            self.playlist = self.playlist[0:self.pointeur+1]
-
-            #updating ui
-            self.update_tracks()
             icon2 = QtGui.QIcon()
             icon2.addPixmap(QtGui.QPixmap((config.randomOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.RandomButton.setIcon(icon2)
             self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
+        else:
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.randomOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.RandomButton.setIcon(icon2)
+            self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
+        self.update_tracks()
 
     def call_playlist(self):
         if self.mode == playlist:
@@ -369,15 +358,16 @@ class MyForm(QtGui.QMainWindow):
         self.display_name()
         self.song_play = Song()
         self.ui.SongBar.setMaximum(self.duration)
+        self.ui.SongBar.setMinimum(0)
         self.connect(self.song_play, QtCore.SIGNAL("progressUpdated"), self.updateSongProgress)
         self.song_play.start()
 
     def updateSongProgress(self):
-        self.ui.SongBar.setMinimum(0)
         
         #we sync to server only at the end and the begining
         if ( self.position > self.duration - config.anticipate and self.position > 0 ) or ( self.position > 0 and self.position < config.anticipate ):
             self.sync_server()
+            self.ui.SongBar.setMaximum(self.duration)
             self.display_name()
 
         try:
