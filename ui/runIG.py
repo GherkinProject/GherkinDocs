@@ -71,11 +71,12 @@ class MyForm(QtGui.QMainWindow):
 
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
-#Interface with server
+#Sincing with server
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
-    
+
     def sync_server(self):
+        """Sincing common variables with the server"""
         self.pointeur = self.server.get_point()
         self.playlist = self.server.get_playlist()
         if self.server.is_playing():
@@ -83,8 +84,27 @@ class MyForm(QtGui.QMainWindow):
             self.duration = self.server.get_duration()
         self.date_sync = time.time()
 
+    def apply_changes(self):
+        """Called after every action that changes the song played (next, prev, change)"""
+        try:
+            self.song_play.terminate()
+        except:
+            pass
+        self.server.play_pause()
+        self.sync_server()
+        self.select()
+        self.runSong()
+        self.display_name()
+
+#-------------------------------------------------------------------
+#-------------------------------------------------------------------
+#Interface with signals (clicks)
+#-------------------------------------------------------------------
+#-------------------------------------------------------------------
+
     def call_play_pause(self):
         self.server.play_pause()
+        self.server.sync_server()
 
         #do not forget to work with the other thread
      	if self.server.is_playing():
@@ -121,11 +141,18 @@ class MyForm(QtGui.QMainWindow):
         self.server.prev()
         self.apply_changes()
 
-    def apply_changes(self):
-        self.sync_server()
-        self.display_name()
-        self.call_play_pause()
+    def call_play_albums(self, QtWidget):
+        self.deselect()
+        self.call_albums(QtWidget)
+        self.server.load()
+        self.apply_changes()
 
+    def call_play_tracks(self, QtWidget):
+        self.deselect()
+        self.call_tracks(QtWidget)
+        self.server.load()
+        self.apply_changes()
+   
     def call_random(self):
         self.server.random()
         self.sync_server()
@@ -201,10 +228,12 @@ class MyForm(QtGui.QMainWindow):
 #----------------------------
 
     def set_playlist(self, playlist):
+        """update playlist of ui and server"""
         self.server.set_playlist(playlist)
         self.playlist = playlist
 
     def set_pointeur(self, pointeur):
+        """update pointeur of ui and server"""
         self.server.set_point(pointeur)
         self.pointeur = pointeur
 
@@ -213,16 +242,17 @@ class MyForm(QtGui.QMainWindow):
 #----------------------------
 
     def deselect(self):
-       if self.pointeur != -1:
+        """DEselect element in the tree"""
+        if self.pointeur != -1:
             self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
-    
-    def add_entry(self):
-        self.ui.lineEdit.selectAll()
-        self.ui.lineEdit.cut()
-        self.ui.textEdit.append("")
-        self.ui.textEdit.paste()
-    
+   
+    def select(self):
+        """select element in the tree"""    
+        if self.pointeur != -1:
+            self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
+ 
     def display_name(self):
+        """display name of song currently playing"""
         if self.date_display_name < self.date_sync:
             try:
                 self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.pointeur]]["title"]+" - "+ self.songs[self.playlist[self.pointeur]]['artist'])
@@ -231,7 +261,7 @@ class MyForm(QtGui.QMainWindow):
             self.date_display_name = time.time()
 
     def display_all(self):
-        """display all albums and artists"""
+        """display all albums and artists and set pointeur at the beginning"""
         #cleaning the lists
         self.ui.Artist.clear()
         self.ui.Album.clear()
@@ -257,48 +287,8 @@ class MyForm(QtGui.QMainWindow):
         #and update the ui then
         self.update_albums()
  
-    def call_play_albums(self, QtWidget):
-        self.call_albums(QtWidget)
-        self.display_name()
-        self.call_play_pause()
-
-    def call_play_tracks(self, QtWidget):
-        self.call_tracks(QtWidget)
-        self.display_name()
-        self.call_play_pause()
-    
-    def call_albums(self, QtWidget, val = 0):
-        """When an artist is clicked on..."""
-        self.selectedArtist = str(QtWidget.text(0))
-        self.selectedSongs = set()
-        
-        #adding all the songs to the set
-        for album in self.artists[self.selectedArtist]:
-            for idTrack in self.albums[album]:
-                self.selectedSongs.add(idTrack)
-        
-        #then create a playlist from this set
-        self.set_playlist(make_neighbors(self.songs, self.selectedSongs))
-        self.set_pointeur(0)
-        
-        #and update the ui then
-        self.update_albums()
-    
-    def update_albums(self):
-        #removing elements from the album tree
-        self.ui.Album.clear()
-        self.ui.AudioTrack.clear()
-        
-        #add them in the order of the playlist, that is to say, alphabetical order for albums
-        self.displayedAlbums = set()
-        for idTrack in self.playlist:
-            #adding an album if he hasn't already been displayed
-            if self.songs[idTrack]["album"] not in self.displayedAlbums:
-                self.displayedAlbums.add(self.songs[idTrack]["album"])
-                self.ui.addAlbum(self.songs[idTrack]["album"])
-            self.ui.addTrack(self.songs[idTrack])
-    
     def update_artists(self):
+        """display element in the playlist"""
         #removing elements from the artist tree
         self.ui.Artist.clear()
         self.ui.Album.clear()
@@ -317,7 +307,46 @@ class MyForm(QtGui.QMainWindow):
                 self.ui.addAlbum(self.songs[idTrack]["album"])
             self.ui.addTrack(self.songs[idTrack])
 
-    def call_tracks(self, QtWidget, val = 0):
+    def update_albums(self):
+        """display elements of the playlist"""
+        self.ui.Album.clear()
+        self.ui.AudioTrack.clear()
+        
+        #add them in the order of the playlist, that is to say, alphabetical order for albums
+        self.displayedAlbums = set()
+        for idTrack in self.playlist:
+            #adding an album if he hasn't already been displayed
+            if self.songs[idTrack]["album"] not in self.displayedAlbums:
+                self.displayedAlbums.add(self.songs[idTrack]["album"])
+                self.ui.addAlbum(self.songs[idTrack]["album"])
+            self.ui.addTrack(self.songs[idTrack])
+
+    def update_tracks(self):
+        """display elements of the playlist"""
+        #removing elements from the album tree
+        self.ui.AudioTrack.clear()
+
+        for idTrack in self.playlist:
+		self.ui.addTrack(self.songs[idTrack])
+   
+    def call_albums(self, QtWidget):
+        """When an artist is clicked on..."""
+        self.selectedArtist = str(QtWidget.text(0))
+        self.selectedSongs = set()
+        
+        #adding all the songs to the set
+        for album in self.artists[self.selectedArtist]:
+            for idTrack in self.albums[album]:
+                self.selectedSongs.add(idTrack)
+        
+        #then create a playlist from this set
+        self.set_playlist(make_neighbors(self.songs, self.selectedSongs))
+        self.set_pointeur(0)
+        
+        #and update the ui then
+        self.update_albums()
+  
+    def call_tracks(self, QtWidget):
         """When an album is doubleclicked on"""
         self.selectedAlbum = str(QtWidget.text(0))
         self.selectedSongs = self.albums[self.selectedAlbum] 
@@ -327,14 +356,7 @@ class MyForm(QtGui.QMainWindow):
         self.set_pointeur(0)
     
         self.update_tracks()
-
-    def update_tracks(self):
-        #removing elements from the album tree
-        self.ui.AudioTrack.clear()
-
-        for idTrack in self.playlist:
-		self.ui.addTrack(self.songs[idTrack])
-    
+   
     def iconChange(self):
         u = self.server.is_playing()
         if u:
@@ -363,9 +385,8 @@ class MyForm(QtGui.QMainWindow):
         self.song_play.start()
 
     def updateSongProgress(self):
-        
         #we sync to server only at the end and the begining
-        if ( self.position > self.duration - config.anticipate and self.position > 0 ) or ( self.position > 0 and self.position < config.anticipate ):
+        if self.position > self.duration - config.anticipate or self.position < config.anticipate:
             self.sync_server()
             self.ui.SongBar.setMaximum(self.duration)
             self.display_name()
@@ -396,7 +417,6 @@ class MyForm(QtGui.QMainWindow):
         
         #and update the ui then
         self.update_artists()
-
 
 class Song(QtCore.QThread):
     __pyqtSignals__ = ("progressUpdated")

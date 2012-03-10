@@ -11,7 +11,7 @@ serverName = "localhost"
 
 #time
 dt = 1 
-anticipate = 2
+anticipate = 10 
 
 #constante mode
 normal = 0

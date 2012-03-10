@@ -64,7 +64,7 @@ class server:
             try:
                 return int(self.player.query_position(gst.FORMAT_TIME, None)[0] // 1000000000)
             except:
-                return -2
+                return 0
         else:
             return -1
 
@@ -74,7 +74,7 @@ class server:
             try:
                 return int(self.player.query_duration(gst.FORMAT_TIME, None)[0] // 1000000000)
             except:
-                return -2
+                return 100
         else:
             return -1
 
