@@ -10,7 +10,8 @@ defaultPort = 1664
 serverName = "localhost"
 
 #time
-dt = 0.5
+dt = 1 
+anticipate = 2
 
 #constante mode
 normal = 0
