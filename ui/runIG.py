@@ -17,17 +17,11 @@ import time
 #client lib for calling server
 import xmlrpclib
 
-def give_time(u, v):
-    time = ""
-    if u % 60 < 10 and v % 60 < 10:
-        time = str(u // 60) + " : " + "0"+str(u % 60) + " / " + str(v // 60) + " : " + "0" + str(v % 60)
-    elif u % 60 >= 10 and v % 60 < 10:
-        time = str(u // 60) + " : " + str(u % 60) + " / " + str(v // 60) + " : " + "0" + str(v % 60)
-    elif u % 60 < 10 and v % 60 >= 10:
-        time = str(u // 60) + " : " + "0"+str(u % 60) + " / " + str(v // 60) + " : "  + str(v % 60)
+def give_time(u):
+    if u % 60 < 10:
+        return str(u // 60) + " : " + "0" + str(u % 60)
     else:
-        time = str(u // 60) + " : " + str(u % 60) + " / " + str(v // 60) + " : " +  str(v % 60)
-    return time
+        return str(u // 60) + " : " + str(u % 60)
 
 
 class MyForm(QtGui.QMainWindow):
@@ -366,6 +360,13 @@ class MyForm(QtGui.QMainWindow):
             self.ui.PlayButton.setIconSize(QtCore.QSize(30, 30))
   
     def runSong(self):
+        try:    
+            self.song_play.terminate()
+        except:
+            pass
+
+        self.sync_server()
+        self.display_name()
         self.song_play = Song()
         self.ui.SongBar.setMaximum(self.duration)
         self.connect(self.song_play, QtCore.SIGNAL("progressUpdated"), self.updateSongProgress)
@@ -377,18 +378,16 @@ class MyForm(QtGui.QMainWindow):
         #we sync to server only at the end and the begining
         if ( self.position > self.duration - config.anticipate and self.position > 0 ) or ( self.position > 0 and self.position < config.anticipate ):
             self.sync_server()
+            self.display_name()
 
         try:
             self.position += config.dt 
             self.ui.SongBar.setValue(round(self.position, 0))
-            self.ui.SongBar.setFormat(give_time(self.position, self.duration))
+            self.ui.SongBar.setFormat(give_time(self.position) + " / " + give_time(self.duration))
         except:
             pass
         
         self.ui.SongBar.repaint()
-        
-        #redisplay name if new song
-        self.display_name()
 
     def call_search(self, QString):
         self.selectSongs = set()
@@ -415,7 +414,6 @@ class Song(QtCore.QThread):
         QtCore.QThread.__init__(self)
         self.min = 0
         self.max = 100000
-        self.progress = 0
     def run(self):
         for self.progress in range(self.min, self.max):
             self.emit(QtCore.SIGNAL("progressUpdated"))
