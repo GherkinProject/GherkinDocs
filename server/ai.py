@@ -7,6 +7,9 @@ import audio
 #local lib : loading db
 from load_db import *
 
+#thread
+from threading import Thread
+
 #config file
 import config
 
@@ -192,11 +195,30 @@ class ai:
         self.stop()
         self.audio.load(self.songs[self.playlist[self.point]]["location"])
 
+def run(ai):
+    while True:
+        time.sleep(config.dt)
+        print ai.is_playing()
+        if ai.is_playing():
+            print ai.get_position()
+            print ai.get_duration()
+        if ai.is_playing() and ai.get_position() > ai.get_duration() - config.anticipate:
+            while True:
+                time.sleep(config.dt/10)
+                if ai.get_position() == ai.get_duration():
+                    ai.next()
+                    ai.play_pause()
+                    break
+
+server = ai()
+
+#thread
+running = Thread(target = run, args = (server,))
+running.start()
 
 # Create server
 server = SimpleXMLRPCServer((config.serverName, config.defaultPort), logRequests = False, allow_none=True)
-server.register_introspection_functions()
-server.register_instance(ai())
+server.register_instance(server)
 
 # Run the server's main loop
-server.serve_forever()
+s = Thread(target = server.serve_forever).start() 
