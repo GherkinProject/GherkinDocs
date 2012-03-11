@@ -83,7 +83,6 @@ class MyForm(QtGui.QMainWindow):
         self.deselect()
         self.pointeur = self.server.get_point()
         self.playlist = self.server.get_playlist()
-        self.select()
         if self.server.is_playing():
             self.position = self.server.get_position()
             self.duration = self.server.get_duration()
@@ -139,29 +138,40 @@ class MyForm(QtGui.QMainWindow):
         self.deselect()
         self.server.next()
         self.apply_changes()
+        self.select()
+
+        #perhaps it would be better to update all tracks shown..
+        if self.server.get_mode() != config.normal:
+            self.ui.addTrack(self.songs[self.playlist[self.pointeur]])
+        
+        self.select()
 
     def call_prev(self):
         """When previous button clicked on, convention : go to the end if at the first"""
         self.deselect()
         self.server.prev()
         self.apply_changes()
+        self.select()
 
     def call_play_albums(self, QtWidget):
         self.deselect()
         self.call_albums(QtWidget)
         self.server.load()
         self.apply_changes()
+        self.select()
 
     def call_play_tracks(self, QtWidget):
         self.deselect()
         self.call_tracks(QtWidget)
         self.server.load()
         self.apply_changes()
+        self.select()
    
     def call_random(self):
         self.server.random()
         self.sync_server()
-        if self.mode == random:
+        self.update_tracks()
+        if self.server.get_mode() == config.random:
             icon2 = QtGui.QIcon()
             icon2.addPixmap(QtGui.QPixmap((config.randomOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.RandomButton.setIcon(icon2)
