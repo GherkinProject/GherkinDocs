@@ -32,7 +32,6 @@ class MyForm(QtGui.QMainWindow):
                 
         #connection with the server
         self.server = xmlrpclib.ServerProxy("http://" + config.serverName + ":" + str(config.defaultPort))
-        
 
         self.point = -1
         self.playlist = []
@@ -48,7 +47,7 @@ class MyForm(QtGui.QMainWindow):
         self.date_display_name = -1
         if self.playlist != []:
             self.update_artists()
-            if self.pointeur != -1:
+            if self.point != -1:
                 self.display_name()
                 if self.server.is_playing():
                     self.runSong()
@@ -56,6 +55,10 @@ class MyForm(QtGui.QMainWindow):
             self.display_all()
 
         self.update_tracks()
+
+        #update buttons state
+        self.update_repeat()
+        self.update_playlist()
 
         #signal received, functions called
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
@@ -80,8 +83,7 @@ class MyForm(QtGui.QMainWindow):
 
     def sync_server(self):
         """Sincing common variables with the server"""
-        self.deselect()
-        self.pointeur = self.server.get_point()
+        self.point = self.server.get_point()
         self.playlist = self.server.get_playlist()
         if self.server.is_playing():
             self.position = self.server.get_position()
@@ -94,10 +96,11 @@ class MyForm(QtGui.QMainWindow):
             self.song_play.terminate()
         except:
             pass
+        
         self.server.play_pause()
         self.sync_server()
-        self.select()
         self.runSong()
+        self.iconChange()
         self.display_name()
 
 #-------------------------------------------------------------------
@@ -108,7 +111,7 @@ class MyForm(QtGui.QMainWindow):
 
     def call_play_pause(self):
         self.server.play_pause()
-        self.server.sync_server()
+        self.sync_server()
 
         #do not forget to work with the other thread
      	if self.server.is_playing():
@@ -118,32 +121,30 @@ class MyForm(QtGui.QMainWindow):
 
         #displaying the changes
         self.iconChange()
-        self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
+        self.select()
 
     def call_change(self, QtWidget, val = 0):
         """When a song is doubleclicked on in the playlist"""
         #we have the id of the song clicked on
         idSong = int(QtWidget.text(4))
-        self.pointeur = 0
+        self.point = 0
         #looking for the selected track in the playlist
-        while self.playlist[self.pointeur] != idSong:
-            self.pointeur += 1
+        while self.playlist[self.point] != idSong:
+            self.point += 1
         
         self.deselect()
-        self.server.change(self.pointeur)
+        self.server.change(self.point)
         self.apply_changes()
+        self.select()
 
     def call_next(self):
         """The function return True if it has found a new song to play, False either""" 
         self.deselect()
         self.server.next()
         self.apply_changes()
-        self.select()
-
         #perhaps it would be better to update all tracks shown..
         if self.server.get_mode() != config.normal:
-            self.ui.addTrack(self.songs[self.playlist[self.pointeur]])
-        
+            self.ui.addTrack(self.songs[self.playlist[self.point]])
         self.select()
 
     def call_prev(self):
@@ -170,64 +171,18 @@ class MyForm(QtGui.QMainWindow):
     def call_random(self):
         self.server.random()
         self.sync_server()
-        self.update_tracks()
-        if self.server.get_mode() == config.random:
-            icon2 = QtGui.QIcon()
-            icon2.addPixmap(QtGui.QPixmap((config.randomOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.ui.RandomButton.setIcon(icon2)
-            self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
-        else:
-            icon2 = QtGui.QIcon()
-            icon2.addPixmap(QtGui.QPixmap((config.randomOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.ui.RandomButton.setIcon(icon2)
-            self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
+        self.update_playlist()
         self.update_tracks()
 
     def call_playlist(self):
-        if self.mode == playlist:
-       	    self.mode = normal
-            self.markovienne.save_Markov()
+        self.server.mode_playlist()
+        self.sync_server()
+        self.update_playlist()
+        self.update_tracks()
 
-	    #updating ui
-            icon2 = QtGui.QIcon()
-            icon2.addPixmap(QtGui.QPixmap((config.playlistOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.ui.PlaylistButton.setIcon(icon2)
-            self.ui.PlaylistButton.setIconSize(QtCore.QSize(30,30))
-    	else:
-            if self.mode == random:
-                self.call_random()
-            
-            self.mode = playlist
-            #removing last elements from the playlist for it to be ready for next
-            self.playlist = self.playlist[0:self.pointeur+1]
-	    
-            #save the data of the markovienne into the file 
-    	    self.markovienne.save_Markov()
-
-	    #updating ui
-            self.update_tracks()
-            icon2 = QtGui.QIcon()
-            icon2.addPixmap(QtGui.QPixmap((config.playlistOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.ui.PlaylistButton.setIcon(icon2)
-            self.ui.PlaylistButton.setIconSize(QtCore.QSize(30,30))
-  
     def call_repeat(self):
-        if self.repeat:
-            self.repeat = False
-            
-            #updating ui
-            icon2 = QtGui.QIcon()
-            icon2.addPixmap(QtGui.QPixmap((config.repeatOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.ui.RepeatButton.setIcon(icon2)
-            self.ui.RepeatButton.setIconSize(QtCore.QSize(30,30))
-        else:
-            self.repeat = True
-
-            #updating ui
-            icon2 = QtGui.QIcon()
-            icon2.addPixmap(QtGui.QPixmap((config.repeatOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.ui.RepeatButton.setIcon(icon2)
-            self.ui.RepeatButton.setIconSize(QtCore.QSize(30,30))
+        self.server.mode_repeat()
+        self.update_repeat()
 
     def call_volume(self, int):
         self.server.set_volume(int * 10 / (self.ui.verticalSlider.maximum()-self.ui.verticalSlider.minimum()))
@@ -247,10 +202,10 @@ class MyForm(QtGui.QMainWindow):
         self.server.set_playlist(playlist)
         self.playlist = playlist
 
-    def set_pointeur(self, pointeur):
-        """update pointeur of ui and server"""
-        self.server.set_point(pointeur)
-        self.pointeur = pointeur
+    def set_point(self, point):
+        """update point of ui and server"""
+        self.server.set_point(point)
+        self.point = point
 
 #----------------------------
 #only display methods
@@ -258,25 +213,25 @@ class MyForm(QtGui.QMainWindow):
 
     def deselect(self):
         """DEselect element in the tree"""
-        if self.point != -1:
-            self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
+        if self.point != -1 and self.point < len(self.playlist):
+            self.ui.AudioTrack.topLevelItem(self.point).setSelected(False)
    
     def select(self):
         """select element in the tree"""    
         if self.point != -1:
-            self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
+            self.ui.AudioTrack.topLevelItem(self.point).setSelected(True)
  
     def display_name(self):
         """display name of song currently playing"""
         if self.date_display_name < self.date_sync:
             try:
-                self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.pointeur]]["title"]+" - "+ self.songs[self.playlist[self.pointeur]]['artist'])
+                self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.point]]["title"]+" - "+ self.songs[self.playlist[self.point]]['artist'])
             except:
                 self.ui.LookingForNoTouch.setText("Unknown")
             self.date_display_name = time.time()
 
     def display_all(self):
-        """display all albums and artists and set pointeur at the beginning"""
+        """display all albums and artists and set point at the beginning"""
         #cleaning the lists
         self.ui.Artist.clear()
         self.ui.Album.clear()
@@ -297,7 +252,7 @@ class MyForm(QtGui.QMainWindow):
         
         #then create a playlist from this set
         self.set_playlist(make_neighbors(self.songs, self.selectedSongs))
-        self.set_pointeur(0)
+        self.set_point(0)
         
         #and update the ui then
         self.update_albums()
@@ -356,7 +311,7 @@ class MyForm(QtGui.QMainWindow):
         
         #then create a playlist from this set
         self.set_playlist(make_neighbors(self.songs, self.selectedSongs))
-        self.set_pointeur(0)
+        self.set_point(0)
         
         #and update the ui then
         self.update_albums()
@@ -368,13 +323,12 @@ class MyForm(QtGui.QMainWindow):
         
         #making the playlist from the set of songs
         self.set_playlist(make_neighbors(self.songs, self.selectedSongs))
-        self.set_pointeur(0)
+        self.set_point(0)
     
         self.update_tracks()
    
     def iconChange(self):
-        u = self.server.is_playing()
-        if u:
+        if self.server.is_playing():
             icon2 = QtGui.QIcon()
             icon2.addPixmap(QtGui.QPixmap((config.pauseIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.PlayButton.setIcon(icon2)
@@ -384,7 +338,42 @@ class MyForm(QtGui.QMainWindow):
             icon2.addPixmap(QtGui.QPixmap((config.playIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     	    self.ui.PlayButton.setIcon(icon2)
             self.ui.PlayButton.setIconSize(QtCore.QSize(30, 30))
-  
+
+    def update_playlist(self):
+        if self.server.get_mode() == config.random:
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.randomOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.RandomButton.setIcon(icon2)
+            self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
+        else:
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.randomOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.RandomButton.setIcon(icon2)
+            self.ui.RandomButton.setIconSize(QtCore.QSize(30,30))
+            self.display_name()
+        if self.server.get_mode() == config.playlist:
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.playlistOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.PlaylistButton.setIcon(icon2)
+            self.ui.PlaylistButton.setIconSize(QtCore.QSize(30,30))
+    	else:
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.playlistOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.PlaylistButton.setIcon(icon2)
+            self.ui.PlaylistButton.setIconSize(QtCore.QSize(30,30))
+
+    def update_repeat(self):
+        if not self.server.get_repeat():
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.repeatOffIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.RepeatButton.setIcon(icon2)
+            self.ui.RepeatButton.setIconSize(QtCore.QSize(30,30))
+        else:
+            icon2 = QtGui.QIcon()
+            icon2.addPixmap(QtGui.QPixmap((config.repeatOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.RepeatButton.setIcon(icon2)
+            self.ui.RepeatButton.setIconSize(QtCore.QSize(30,30))
+ 
     def runSong(self):
         try:    
             self.song_play.terminate()
@@ -429,7 +418,7 @@ class MyForm(QtGui.QMainWindow):
                         pass
         #then create a playlist from this set
         self.set_playlist(make_neighbors(self.songs, self.selectSongs))
-        self.set_pointeur(0)
+        self.set_point(0)
         
         #and update the ui then
         self.update_artists()

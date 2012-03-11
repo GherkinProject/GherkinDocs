@@ -39,13 +39,13 @@ class ai:
         #getting library
         (a, b, self.songs) = get_lib()
         
-        #markov chain
-        self.markovienne = Markovienne(config.dbMarkov)
+        #Markov chain
+        self.Markovienne = Markovienne(config.dbMarkov)
 
         try:
-            self.markovienne.load_Markov(config.dbMarkov)
+            self.Markovienne.load_Markov(config.dbMarkov)
         except:
-            self.markovienne.create_Markov(self.songs.keys())
+            self.Markovienne.create_Markov(self.songs.keys())
 
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
@@ -98,6 +98,32 @@ class ai:
         #update hist and point
         self.point = point
         self.hist.append((self.playlist[self.point], time.time()))
+
+    def random(self):
+        if self.mode == config.random:
+            self.mode = config.normal
+        
+        else:
+            if self.mode == config.playlist:
+                self.Markovienne.save_Markov()
+            
+            self.mode = config.random
+
+            #removing last elements from the playlist for it to be ready for next
+            self.playlist = self.playlist[0:self.point+1]
+    
+    def mode_playlist(self):
+        if self.mode == config.playlist:
+            self.mode = config.normal
+        
+        else:
+            self.mode = config.playlist
+
+            #removing last elements from the playlist for it to be ready for next
+            self.playlist = self.playlist[0:self.point+1]
+    
+    def mode_repeat(self):
+        self.repeat = not self.repeat
     
 #----------------------------
 #audio actions
@@ -114,8 +140,8 @@ class ai:
         #>>>>>>>>>>>>>>> why try: ? if no previous song played ? ok but 'if' works too...
         #we have to test if the
         try:
-            self.markovienne.vote_Markov(self.hist[-2][0], self.hist[-1][0])
-            self.markovienne.elagage(self.hist[-2][0], config.epsilon)
+            self.Markovienne.vote_Markov(self.hist[-2][0], self.hist[-1][0])
+            self.Markovienne.elagage(self.hist[-2][0], config.epsilon)
         except:
             pass
 
@@ -123,31 +149,35 @@ class ai:
 
     def next(self):
         #few things to do if we are in normal mode... just incrementing the pointeur
-        if self.mode == config.normal:
-            if self.point < len(self.playlist) - 1:
-                self.set_point(self.point+1)
-                self.load()
-                return True
-            else:
-                self.point = 0
-                self.server.stop()
-                return False
-        else:
-            if self.mode == config.random:
-                #choosing a random number in the list of possible song
-                posSong = randint(0, len(self.songs))
-                idSong = self.songs.keys()[posSong] 
-            elif self.mode == config.playlist:
-                idSong = self.markovienne.choix_Markov(self.playlist[self.point])
-            
-            #adding the song to the playlist
-            self.playlist.append(idSong)
-            
-            #pointing on the new song
-            self.set_point(self.point+1)
-            
-            #loading
+        if self.repeat:
+            self.stop()
             self.load()
+        else:
+            if self.mode == config.normal:
+                if self.point < len(self.playlist) - 1:
+                    self.set_point(self.point+1)
+                    self.load()
+                    return True
+                else:
+                    self.point = 0
+                    self.stop()
+                    return False
+            else:
+                if self.mode == config.random:
+                    #choosing a random number in the list of possible song
+                    posSong = randint(0, len(self.songs))
+                    idSong = self.songs.keys()[posSong] 
+                elif self.mode == config.playlist:
+                    idSong = self.Markovienne.choix_Markov(self.playlist[self.point])
+                
+                #adding the song to the playlist
+                self.playlist.append(idSong)
+                
+                #pointing on the new song
+                self.set_point(self.point+1)
+                
+                #loading
+                self.load()
 
     def prev(self):
         #if we are not at the first element, no problem
@@ -169,19 +199,6 @@ class ai:
     def stop(self):
         self.audio.stop()
 
-    def random(self):
-        if self.mode == config.random:
-            self.mode = config.normal
-        
-        else:
-            if self.mode == config.playlist:
-                self.Markovienne.save_Markov()
-            
-            self.mode = config.random
-
-            #removing last elements from the playlist for it to be ready for next
-            self.playlist = self.playlist[0:self.point+1]
-   
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
 #internal function and methods
