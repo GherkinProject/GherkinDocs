@@ -198,10 +198,6 @@ class ai:
 def run(ai):
     while True:
         time.sleep(config.dt)
-        print ai.is_playing()
-        if ai.is_playing():
-            print ai.get_position()
-            print ai.get_duration()
         if ai.is_playing() and ai.get_position() > ai.get_duration() - config.anticipate:
             while True:
                 time.sleep(config.dt/10)
@@ -211,14 +207,14 @@ def run(ai):
                     break
 
 server = ai()
-
 #thread
 running = Thread(target = run, args = (server,))
+running.setDaemon(True)
 running.start()
 
 # Create server
-server = SimpleXMLRPCServer((config.serverName, config.defaultPort), logRequests = False, allow_none=True)
-server.register_instance(server)
+s = SimpleXMLRPCServer((config.serverName, config.defaultPort), logRequests = False, allow_none=True)
+s.register_instance(server)
 
 # Run the server's main loop
-s = Thread(target = server.serve_forever).start() 
+s.serve_forever() 

@@ -29,10 +29,13 @@ class MyForm(QtGui.QMainWindow):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_ProjetGherkin()
         self.ui.setupUi(self)
-        
+                
         #connection with the server
         self.server = xmlrpclib.ServerProxy("http://" + config.serverName + ":" + str(config.defaultPort))
         
+
+        self.point = -1
+        self.playlist = []
         #sync with the server at the beginning
         self.sync_server()
 
@@ -77,8 +80,10 @@ class MyForm(QtGui.QMainWindow):
 
     def sync_server(self):
         """Sincing common variables with the server"""
+        self.deselect()
         self.pointeur = self.server.get_point()
         self.playlist = self.server.get_playlist()
+        self.select()
         if self.server.is_playing():
             self.position = self.server.get_position()
             self.duration = self.server.get_duration()
@@ -243,12 +248,12 @@ class MyForm(QtGui.QMainWindow):
 
     def deselect(self):
         """DEselect element in the tree"""
-        if self.pointeur != -1:
+        if self.point != -1:
             self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(False)
    
     def select(self):
         """select element in the tree"""    
-        if self.pointeur != -1:
+        if self.point != -1:
             self.ui.AudioTrack.topLevelItem(self.pointeur).setSelected(True)
  
     def display_name(self):
@@ -383,10 +388,11 @@ class MyForm(QtGui.QMainWindow):
         self.ui.SongBar.setMinimum(0)
         self.connect(self.song_play, QtCore.SIGNAL("progressUpdated"), self.updateSongProgress)
         self.song_play.start()
-
+    
     def updateSongProgress(self):
         #we sync to server only at the end and the begining
-        if self.position > self.duration - config.anticipate or self.position < config.anticipate:
+        if self.position > self.duration - config.anticipate:
+            #sync before the end or at the beginning
             self.sync_server()
             self.ui.SongBar.setMaximum(self.duration)
             self.display_name()
