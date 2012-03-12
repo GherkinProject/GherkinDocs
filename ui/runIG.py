@@ -156,6 +156,7 @@ class MyForm(QtGui.QMainWindow):
         self.deselect()
         self.call_albums(QtWidget)
         self.server.load()
+        self.server.play_pause()
         self.apply_changes()
         self.select()
 
@@ -163,6 +164,7 @@ class MyForm(QtGui.QMainWindow):
         self.deselect()
         self.call_tracks(QtWidget)
         self.server.load()
+        self.server.play_pause()
         self.apply_changes()
         self.select()
    
