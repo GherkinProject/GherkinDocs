@@ -32,13 +32,16 @@ class client:
             self.server.next()
         if cmd in "previous":
             self.server.prev()
-        if cmd in "state" or cmd in "display":
+        elif cmd in "state" or cmd in "display":
             r = ""
             if self.server.is_playing():
                 r = r + "> "
             else:
                 r = r + "|| "
-            
+
+            if self.server.get_repeat():
+                r = r + "repeat "
+             
             r = r + self.server.get_name() + " " + give_time(self.server.get_position()) + "/" + give_time(self.server.get_duration()) + " "
 
             if self.server.get_mode() == config.playlist:
@@ -46,11 +49,14 @@ class client:
 
             print r
         
-        if cmd in "repeat":
-            self.server.repeat()
+        elif cmd in "repeat":
+            self.server.mode_repeat()
 
-        if cmd in "ghk" or cmd in "unghk":
+        elif cmd in "ghk" or cmd in "unghk":
             self.server.mode_playlist()
+
+        else:
+            print "Unknown command"
 
 c = client()
 #applying command
