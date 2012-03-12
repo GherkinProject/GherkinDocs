@@ -85,7 +85,7 @@ class MyForm(QtGui.QMainWindow):
         """Sincing common variables with the server"""
         self.point = self.server.get_point()
         self.playlist = self.server.get_playlist()
-        if self.server.is_playing():
+        if self.server.is_loaded():
             self.position = self.server.get_position()
             self.duration = self.server.get_duration()
         self.date_sync = time.time()

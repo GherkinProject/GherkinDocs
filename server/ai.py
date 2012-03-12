@@ -84,6 +84,10 @@ class ai:
         """Return the state of the audio player"""
         return self.audio.is_playing()
 
+    def is_loaded(self):
+        """Return the state of the audio player"""
+        return self.audio.is_loaded()
+
     def get_name(self):
         """Return artist, album, track, name of song played"""
         if self.audio.is_loaded():
