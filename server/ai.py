@@ -83,7 +83,13 @@ class ai:
     def is_playing(self):
         """Return the state of the audio player"""
         return self.audio.is_playing()
- 
+
+    def get_name(self):
+        """Return artist, album, track, name of song played"""
+        if self.audio.is_loaded():
+            return self.songs[self.playlist[self.point]]["artist"] + ", " + self.songs[self.playlist[self.point]]["album"] + ", " + str(self.songs[self.playlist[self.point]]["tracknumber"]) + ", " + self.songs[self.playlist[self.point]]["title"]
+        else:
+            return "No song loaded"
 #----------------------------
 #setters
 #----------------------------
@@ -146,17 +152,20 @@ class ai:
             pass
 
         self.load()
+        self.play_pause()
 
     def next(self):
         #few things to do if we are in normal mode... just incrementing the pointeur
         if self.repeat:
             self.stop()
             self.load()
+            self.play_pause()
         else:
             if self.mode == config.normal:
                 if self.point < len(self.playlist) - 1:
                     self.set_point(self.point+1)
                     self.load()
+                    self.play_pause()
                     return True
                 else:
                     self.point = 0
@@ -178,6 +187,7 @@ class ai:
                 
                 #loading
                 self.load()
+                self.play_pause()
 
     def prev(self):
         #if we are not at the first element, no problem
@@ -187,11 +197,11 @@ class ai:
             self.point = len(self.playlist)-1
             
         self.load()
+        self.play_pause()
         
         #erasing the lasts elements in those mode taking into account the user didn't like the music proposed
         if self.mode == config.playlist or self.mode == config.random:
             self.playlist.pop(-1)
-            self.update_tracks()
         
     def play_pause(self):
         self.audio.play_pause()

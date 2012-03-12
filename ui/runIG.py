@@ -96,8 +96,6 @@ class MyForm(QtGui.QMainWindow):
             self.song_play.terminate()
         except:
             pass
-        
-        self.server.play_pause()
         self.sync_server()
         self.runSong()
         self.iconChange()

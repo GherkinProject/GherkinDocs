@@ -3,6 +3,7 @@
 
 #adding path of audio player to the lib
 import sys
+
 if 'ui/' not in sys.path:
     sys.path.append('ui/')
 

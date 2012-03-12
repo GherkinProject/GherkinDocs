@@ -20,6 +20,7 @@ log = logging.getLogger("GhkAudioServer")
 class server:
     def __init__(self):
         self.playing = False
+        self.loaded = False
         #self.player = gst.Pipeline("player")
         self.player = gst.element_factory_make("playbin2", "player")
         fakesink = gst.element_factory_make("fakesink", "fakesink")
@@ -36,9 +37,11 @@ class server:
                 self.player.set_property("uri", "file://" + path)
             except:
                 log.error("Gstreamer can't load file : " + path)
+                self.loaded = False
                 return False
             else:
                 log.info("File " + path + " loaded")
+                self.loaded = True
                 return True
         else:
             log.error("Bad pathfile :" + path)
@@ -56,11 +59,12 @@ class server:
     def stop(self):
         """De-load the file if loaded, compulsory if wanted to load a new file"""
         self.playing = False
+        self.loaded = False
         self.player.set_state(gst.STATE_NULL)
 
     def get_position(self):
         """return (int) the current position in the song ( in second )"""
-        if self.is_playing():
+        if self.loaded:
             try:
                 return int(self.player.query_position(gst.FORMAT_TIME, None)[0] // 1000000000)
             except:
@@ -70,7 +74,7 @@ class server:
 
     def get_duration(self):
         """return (int) the total duration of the song ( in second )"""
-        if self.is_playing():
+        if self.loaded:
             try:
                 return int(self.player.query_duration(gst.FORMAT_TIME, None)[0] // 1000000000)
             except:
@@ -92,3 +96,6 @@ class server:
     def is_playing(self):
         """Return the state of the audio player"""
         return self.playing
+
+    def is_loaded(self):
+        return self.loaded
