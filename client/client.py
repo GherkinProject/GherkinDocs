@@ -28,9 +28,9 @@ class client:
     def cmd(self, cmd):
         if cmd in "play" or cmd in "pause":
             self.server.play_pause()
-        if cmd in "next":
+        elif cmd in "next":
             self.server.next()
-        if cmd in "previous":
+        elif cmd in "previous":
             self.server.prev()
         elif cmd in "state" or cmd in "display":
             r = ""
