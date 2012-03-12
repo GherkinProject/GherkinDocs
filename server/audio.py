@@ -66,7 +66,7 @@ class server:
         """return (int) the current position in the song ( in second )"""
         if self.loaded:
             try:
-                return int(self.player.query_position(gst.FORMAT_TIME, None)[0] // 1000000000)
+                return round(self.player.query_position(gst.FORMAT_TIME, None)[0] / 1000000000., 1)
             except:
                 return 0
         else:
@@ -76,7 +76,7 @@ class server:
         """return (int) the total duration of the song ( in second )"""
         if self.loaded:
             try:
-                return int(self.player.query_duration(gst.FORMAT_TIME, None)[0] // 1000000000)
+                return round(self.player.query_duration(gst.FORMAT_TIME, None)[0] / 1000000000., 1)
             except:
                 return 100
         else:

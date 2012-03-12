@@ -225,10 +225,10 @@ class ai:
 
 def run(ai):
     while True:
-        time.sleep(config.dt)
-        if ai.is_playing() and ai.get_position() > ai.get_duration() - config.anticipate:
+        time.sleep(config.dtCheck)
+        if ai.is_playing() and ai.get_position() > ai.get_duration() - config.anticipateCheck:
             while True:
-                time.sleep(config.dt/10.)
+                time.sleep(config.dtCheck/10.)
                 if ai.get_position() == ai.get_duration():
                     ai.next()
                     break

@@ -383,23 +383,23 @@ class MyForm(QtGui.QMainWindow):
         self.sync_server()
         self.display_name()
         self.song_play = Song()
-        self.ui.SongBar.setMaximum(self.duration)
+        self.ui.SongBar.setMaximum(int(self.duration*100))
         self.ui.SongBar.setMinimum(0)
         self.connect(self.song_play, QtCore.SIGNAL("progressUpdated"), self.updateSongProgress)
         self.song_play.start()
     
     def updateSongProgress(self):
         #we sync to server only at the end and the begining
-        if self.position > self.duration - config.anticipate or self.position < config.anticipate:
+        if self.position > self.duration - config.anticipateDisplay or self.position < config.anticipateDisplay:
             #sync before the end or at the beginning
             self.sync_server()
-            self.ui.SongBar.setMaximum(self.duration)
+            self.ui.SongBar.setMaximum(int(self.duration*100))
             self.display_name()
 
         try:
-            self.position += config.dt 
-            self.ui.SongBar.setValue(round(self.position, 0))
-            self.ui.SongBar.setFormat(give_time(self.position) + " / " + give_time(self.duration))
+            self.position += config.dtDisplay 
+            self.ui.SongBar.setValue(int(self.position*100))
+            self.ui.SongBar.setFormat(give_time(int(self.position)) + " / " + give_time(int(self.duration)))
         except:
             pass
         
@@ -432,7 +432,7 @@ class Song(QtCore.QThread):
     def run(self):
         for self.progress in range(self.min, self.max):
             self.emit(QtCore.SIGNAL("progressUpdated"))
-            time.sleep(config.dt)  
+            time.sleep(config.dtDisplay)
      
         
 
