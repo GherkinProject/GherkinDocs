@@ -98,4 +98,5 @@ class server:
         return self.playing
 
     def is_loaded(self):
+        """Return if a song is loaded in gstreamer"""
         return self.loaded

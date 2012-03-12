@@ -388,7 +388,7 @@ class MyForm(QtGui.QMainWindow):
     
     def updateSongProgress(self):
         #we sync to server only at the end and the begining
-        if self.position > self.duration - config.anticipate:
+        if self.position > self.duration - config.anticipate or self.position < config.anticipate:
             #sync before the end or at the beginning
             self.sync_server()
             self.ui.SongBar.setMaximum(self.duration)

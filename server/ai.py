@@ -224,10 +224,9 @@ def run(ai):
         time.sleep(config.dt)
         if ai.is_playing() and ai.get_position() > ai.get_duration() - config.anticipate:
             while True:
-                time.sleep(config.dt/10)
+                time.sleep(config.dt/10.)
                 if ai.get_position() == ai.get_duration():
                     ai.next()
-                    ai.play_pause()
                     break
 
 server = ai()
