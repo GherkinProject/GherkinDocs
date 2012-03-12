@@ -392,10 +392,11 @@ class MyForm(QtGui.QMainWindow):
         #we sync to server only at the end and the begining
         if self.position > self.duration - config.anticipateDisplay or self.position < config.anticipateDisplay:
             #sync before the end or at the beginning
+            self.deselect()
             self.sync_server()
             self.ui.SongBar.setMaximum(int(self.duration*100))
+            self.select()
             self.display_name()
-
         try:
             self.position += config.dtDisplay 
             self.ui.SongBar.setValue(int(self.position*100))
@@ -427,10 +428,8 @@ class Song(QtCore.QThread):
     __pyqtSignals__ = ("progressUpdated")
     def __init__(self):
         QtCore.QThread.__init__(self)
-        self.min = 0
-        self.max = 100000
     def run(self):
-        for self.progress in range(self.min, self.max):
+        while True:
             self.emit(QtCore.SIGNAL("progressUpdated"))
             time.sleep(config.dtDisplay)
      
