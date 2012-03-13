@@ -272,8 +272,7 @@ class Ui_ProjetGherkin(object):
             itemAT.setText(album, config.defaultUnknown)
 
         itemAT.setText(location, u['location'])
-        itemAT.setText(id, str(u['id']))
-        #self.AudioTrack.insertTopLevelItem(u['id'], itemAT)
+        itemAT.setText(id, u['id'])
         self.AudioTrack.addTopLevelItem(itemAT)
  
 

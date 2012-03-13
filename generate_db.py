@@ -11,7 +11,8 @@ if 'db-tools/' not in sys.path:
 #running server
 import create_db
 
-try:
-    create_db.gen_xml_db(sys.argv[1])
-except:
-    print "absolute path for library needed"
+
+
+create_db.gen_xml_db(sys.argv[1])
+#except:
+#    print "absolute path for library needed"

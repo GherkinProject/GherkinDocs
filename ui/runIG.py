@@ -124,7 +124,7 @@ class MyForm(QtGui.QMainWindow):
     def call_change(self, QtWidget, val = 0):
         """When a song is doubleclicked on in the playlist"""
         #we have the id of the song clicked on
-        idSong = int(QtWidget.text(4))
+        idSong = QtWidget.text(4)
         self.point = 0
         #looking for the selected track in the playlist
         while self.playlist[self.point] != idSong:

@@ -24,11 +24,11 @@ def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile
     songs = {}
     for f in tree.findall('file'):
         #adding songs to the song libs ( with tags ) with an 'int' id
-        id = int(f.get('id'))
+        id = f.get('id')
         songs[id] = {}
         songs[id]['id'] = id
         for element in f: 
-            songs[id][element.tag] = element.text
+            songs[id][element.tag] = element.get('value')
         
         if 'tracknumber' in songs[id].keys():
             try:
@@ -56,7 +56,7 @@ def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile
 
         #creating two dictionaries : artist -> albums: album -> tracks
         artistDict[songs[id]['artist']].add(songs[id]['album'])
-        albumDict[songs[id]['album']].add(int(f.get('id')))
+        albumDict[songs[id]['album']].add(f.get('id'))
 
     log.info("Database loaded in memory")
 
