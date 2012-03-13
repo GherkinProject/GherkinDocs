@@ -4,7 +4,7 @@
 #standards libraries
 
 #script with arguments
-import sys, re
+import sys
 
 #script using system commands
 import os
@@ -54,7 +54,6 @@ newl=""
 encoding="UTF-8"
 
 # Regular expression to find trailing spaces before a newline
-trails=re.compile(' *\n')
 
 def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""

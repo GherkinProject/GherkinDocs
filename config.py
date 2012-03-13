@@ -11,9 +11,9 @@ serverName = "localhost"
 
 #time
 dtDisplay = 0.2
-dtCheck = 0.5
+dtCheck = 1. 
 anticipateDisplay = .5
-anticipateCheck = 1.
+anticipateCheck = 1.1
 
 #constante mode
 normal = 0
