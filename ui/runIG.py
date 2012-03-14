@@ -89,7 +89,7 @@ class MyForm(QtGui.QMainWindow):
         self.playlist = self.server.get_playlist()
         self.date_sync = time.time()
 
-    def sync_stream(self):
+    def sync_stream(self, reset = False):
         if self.server.is_loaded():
             self.position = self.server.get_position()
             self.duration = self.server.get_duration()
@@ -133,6 +133,7 @@ class MyForm(QtGui.QMainWindow):
         self.deselect()
         self.server.change(self.point)
         self.apply_changes()
+        self.position = 0
         self.select()
 
     def call_next(self):
@@ -140,6 +141,7 @@ class MyForm(QtGui.QMainWindow):
         self.deselect()
         self.server.next()
         self.apply_changes()
+        self.position = 0
         #perhaps it would be better to update all tracks shown..
         if self.server.get_mode() != config.normal:
             self.ui.addTrack(self.songs[self.playlist[self.point]])
@@ -150,6 +152,7 @@ class MyForm(QtGui.QMainWindow):
         self.deselect()
         self.server.prev()
         self.apply_changes()
+        self.position = 0
         self.select()
 
     def call_play_albums(self, QtWidget):
@@ -159,6 +162,7 @@ class MyForm(QtGui.QMainWindow):
         self.server.load()
         self.server.play_pause()
         self.apply_changes()
+        self.position = 0
         self.select()
 
     def call_play_tracks(self, QtWidget):
@@ -168,6 +172,7 @@ class MyForm(QtGui.QMainWindow):
         self.server.load()
         self.server.play_pause()
         self.apply_changes()
+        self.position = 0
         self.select()
    
     def call_random(self):
