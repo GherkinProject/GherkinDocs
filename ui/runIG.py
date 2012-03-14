@@ -61,6 +61,9 @@ class MyForm(QtGui.QMainWindow):
         #update buttons state
         self.update_repeat()
         self.update_playlist()
+        
+        if self.server.is_playing():
+            self.run_stream()
 
         #signal received, functions called
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
@@ -387,7 +390,7 @@ class MyForm(QtGui.QMainWindow):
     
     def updateSongProgress(self):
         #we sync to server only at the end and the begining
-        if self.position > self.duration - config.anticipateDisplay or self.position < config.anticipateDisplay:
+        if int(self.position) % 10 == 0 or self.position > self.duration - config.anticipateDisplay or self.position < config.anticipateDisplay:
             #sync before the end or at the beginning
             self.deselect()
             self.sync_stream()
