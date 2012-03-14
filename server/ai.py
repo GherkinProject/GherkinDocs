@@ -99,15 +99,17 @@ class ai:
 #----------------------------
 
     def set_playlist(self, playlist):
+        """Change playlist"""
         self.playlist = playlist
 
     def set_point(self, point):
         """Change pointeur of playlist position"""
-        assert len(self.playlist) > 0 and point in range(0, len(self.playlist)), "pointeur incorrect"
-        
         #update hist and point
         self.point = point
-        self.hist.append((self.playlist[self.point], time.time()))
+        try:
+            self.hist.append((self.playlist[self.point], time.time()))
+        except:
+            pass
 
     def random(self):
         if self.mode == config.random:

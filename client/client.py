@@ -42,7 +42,7 @@ class client:
             if self.server.get_repeat():
                 r = r + "repeat "
              
-            r = r + self.server.get_name() + " " + give_time(self.server.get_position()) + "/" + give_time(self.server.get_duration()) + " "
+            r = r + self.server.get_name() + " " + give_time(int(self.server.get_position())) + "/" + give_time(int(self.server.get_duration())) + " "
 
             if self.server.get_mode() == config.playlist:
                 r = r + "ghk mode"
@@ -55,9 +55,11 @@ class client:
         elif cmd in "ghk" or cmd in "unghk":
             self.server.mode_playlist()
 
+        elif cmd in "playlist":
+            print self.server.get_playlist()
+        
         else:
             print "Unknown command"
-
 c = client()
 #applying command
 c.cmd(sys.argv[1])
