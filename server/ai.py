@@ -64,7 +64,7 @@ class ai:
         if len(self.playlist) > 0:
             return self.point
         else:
-            return -1
+            return None
     
     def get_mode(self):
         return self.mode

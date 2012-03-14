@@ -53,7 +53,7 @@ class MyForm(QtGui.QMainWindow):
             if self.point != -1:
                 self.display_name()
                 if self.server.is_playing():
-                    self.runSong()
+                    self.run_stream()
         else:
             self.call_all()
             
@@ -94,19 +94,17 @@ class MyForm(QtGui.QMainWindow):
         """Sincing common variables with the server"""
         self.point = self.server.get_point()
         self.playlist = self.server.get_playlist()
+        self.date_sync = time.time()
+
+    def sync_stream(self):
         if self.server.is_loaded():
             self.position = self.server.get_position()
             self.duration = self.server.get_duration()
-        self.date_sync = time.time()
 
     def apply_changes(self):
         """Called after every action that changes the song played (next, prev, change)"""
-        try:
-            self.song_play.terminate()
-        except:
-            pass
         self.sync_server()
-        self.runSong()
+        self.run_stream()
         self.iconChange()
         self.display_name()
 
@@ -122,9 +120,9 @@ class MyForm(QtGui.QMainWindow):
 
         #do not forget to work with the other thread
      	if self.server.is_playing():
-            self.runSong()
+            self.run_stream()
         else:
-            self.song_play.terminate()
+            self.songStream.terminate()
 
         #displaying the changes
         self.iconChange()
@@ -320,7 +318,11 @@ class MyForm(QtGui.QMainWindow):
         self.set_point(-1)
     
         self.update_tracks()
-   
+
+#----------------------------
+#button states
+#----------------------------
+
     def iconChange(self):
         if self.server.is_playing():
             icon2 = QtGui.QIcon()
@@ -366,27 +368,31 @@ class MyForm(QtGui.QMainWindow):
             icon2.addPixmap(QtGui.QPixmap((config.repeatOnIcon)), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.RepeatButton.setIcon(icon2)
             self.ui.RepeatButton.setIconSize(QtCore.QSize(30,30))
- 
-    def runSong(self):
+
+#----------------------------
+#All relevant to song stream
+#----------------------------
+
+    def run_stream(self):
         try:    
-            self.song_play.terminate()
+            self.songStream.terminate()
         except:
             pass
 
-        self.sync_server()
+        self.sync_stream()
         self.display_name()
-        self.song_play = Song()
+        self.songStream = Song()
         self.ui.SongBar.setMaximum(int(self.duration*100))
         self.ui.SongBar.setMinimum(0)
-        self.connect(self.song_play, QtCore.SIGNAL("progressUpdated"), self.updateSongProgress)
-        self.song_play.start()
+        self.connect(self.songStream, QtCore.SIGNAL("progressUpdated"), self.updateSongProgress)
+        self.songStream.start()
     
     def updateSongProgress(self):
         #we sync to server only at the end and the begining
         if self.position > self.duration - config.anticipateDisplay or self.position < config.anticipateDisplay:
             #sync before the end or at the beginning
             self.deselect()
-            self.sync_server()
+            self.sync_stream()
             self.ui.SongBar.setMaximum(int(self.duration*100))
             self.select()
             self.display_name()
