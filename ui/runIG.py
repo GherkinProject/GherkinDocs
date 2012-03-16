@@ -223,12 +223,18 @@ class MyForm(QtGui.QMainWindow):
     def deselect(self):
         """DEselect element in the tree"""
         if self.point != -1 and self.point < len(self.playlist):
-            self.ui.AudioTrack.topLevelItem(self.point).setSelected(False)
+            try:
+                self.ui.AudioTrack.topLevelItem(self.point).setSelected(False)
+            except:
+                pass
    
     def select(self):
         """select element in the tree"""    
         if self.point != -1:
-            self.ui.AudioTrack.topLevelItem(self.point).setSelected(True)
+            try:
+                self.ui.AudioTrack.topLevelItem(self.point).setSelected(True)
+            except:
+                pass
  
     def display_name(self):
         """display name of song currently playing"""
