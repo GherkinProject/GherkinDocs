@@ -236,12 +236,18 @@ class MyForm(QtGui.QMainWindow):
     def deselect(self):
         """DEselect element in the tree"""
         if self.point != -1 and self.point < len(self.playlist):
-            self.ui.AudioTrack.topLevelItem(self.point).setSelected(False)
+            try:
+                self.ui.AudioTrack.topLevelItem(self.point).setSelected(False)
+            except:
+                pass
    
     def select(self):
         """select element in the tree"""    
         if self.point != -1:
-            self.ui.AudioTrack.topLevelItem(self.point).setSelected(True)
+            try:
+                self.ui.AudioTrack.topLevelItem(self.point).setSelected(True)
+            except:
+                pass
  
     def display_name(self):
         """display name of song currently playing"""
@@ -413,26 +419,10 @@ class MyForm(QtGui.QMainWindow):
             self.ui.SongBar.setMaximum(int(self.duration*100))
             self.select()
             self.display_name()
-        try:
-<<<<<<< HEAD
-            self.position += config.dtDisplay 
-            self.ui.SongBar.setValue(int(self.position*100))
-            self.ui.SongBar.setFormat(give_time(int(self.position)) + " / " + give_time(int(self.duration)))
-=======
-            if self.server.get_position() == self.server.get_duration() and self.server.get_position() > 0:
-                if self.repeat:
-                    self.load()
-                    self.server.play_pause()
-                else:
-                    try:
-                        self.markovienne.vote_Markov(self.playlist[self.pointeur -1], self.playlist[self.pointeur])
-                    except:
-                        pass
-                    self.call_next()
->>>>>>> master
-        except:
-            pass
         
+        self.position += config.dtDisplay 
+        self.ui.SongBar.setValue(int(self.position*100))
+        self.ui.SongBar.setFormat(give_time(int(self.position)) + " / " + give_time(int(self.duration)))
         self.ui.SongBar.repaint()
 
     def call_search(self, QString):
