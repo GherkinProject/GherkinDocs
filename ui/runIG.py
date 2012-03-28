@@ -69,7 +69,14 @@ class MyForm(QtGui.QMainWindow):
         if self.server.is_playing():
             self.run_stream()
 
-        #signal received, functions called
+
+        action = QtGui.QAction(self.ui.PlayButton)
+        action.setShortcut("Ctrl+P")
+#        action.setStatusTip(command.name)
+        QtCore.QObject.connect(action, QtCore.SIGNAL('triggered()'), self.call_play_pause )
+                            
+    
+    #signal received, functions called
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
         QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_change )
         QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*,int)"), self.call_albums )
@@ -407,9 +414,22 @@ class MyForm(QtGui.QMainWindow):
             self.select()
             self.display_name()
         try:
+<<<<<<< HEAD
             self.position += config.dtDisplay 
             self.ui.SongBar.setValue(int(self.position*100))
             self.ui.SongBar.setFormat(give_time(int(self.position)) + " / " + give_time(int(self.duration)))
+=======
+            if self.server.get_position() == self.server.get_duration() and self.server.get_position() > 0:
+                if self.repeat:
+                    self.load()
+                    self.server.play_pause()
+                else:
+                    try:
+                        self.markovienne.vote_Markov(self.playlist[self.pointeur -1], self.playlist[self.pointeur])
+                    except:
+                        pass
+                    self.call_next()
+>>>>>>> master
         except:
             pass
         
