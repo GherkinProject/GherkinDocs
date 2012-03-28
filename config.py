@@ -7,7 +7,7 @@ defaultUnknown = 'unknown'
 
 #server port
 defaultPort = 1664
-serverName = "localhost"
+serverName = "10.204.200.200"
 
 
 #time
@@ -30,6 +30,7 @@ iconLocation = "pictures/"
 logLocation = "log/"
 defaultDbLocation = "./"
 defaultDbFile = "db.xml"
+defaultDbFileImported = "dbImported.xml"
 playIcon = iconLocation + "play.png"
 pauseIcon = iconLocation + "pause.png"
 nextIcon = iconLocation + "forward.png"

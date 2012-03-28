@@ -21,6 +21,7 @@ from random import randint
 from Markov import Markovienne
 
 #http server
+import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 
 class ai:
@@ -66,6 +67,10 @@ class ai:
         else:
             return None
     
+    def get_db(self):
+        with open(config.defaultDbLocation + config.defaultDbFile, "rb") as handle:
+            return xmlrpclib.Binary(handle.read())
+
     def get_mode(self):
         return self.mode
 

@@ -38,15 +38,16 @@ class MyForm(QtGui.QMainWindow):
         #sync with the server at the beginning
         self.sync_server()
         self.iconChange()
+        
+        #downloading db from server
+        self.get_db()
 
         #saving artists and songs displayed
         #getting the lib from the xml file
         if config.serverName == "localhost":
             (self.artists, self.albums, self.songs) = get_lib()
         else:
-            #self.artists = self.server.get_artists()
-            #self.albums = self.server.get_albums()
-            self.songs = self.server.get_songs()
+            (self.artists, self.albums, self.songs) = get_lib(dbFile = config.defaultDbFileImported)
 
         #display artists and albums at launch, if server is playing, display current infos
         
@@ -96,6 +97,10 @@ class MyForm(QtGui.QMainWindow):
 #Sincing with server
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
+    
+    def get_db(self):
+        with open(config.defaultDbLocation + config.defaultDbFileImported, 'wb') as handle:
+            handle.write(self.server.get_db().data)
 
     def sync_server(self):
         """Sincing common variables with the server"""
