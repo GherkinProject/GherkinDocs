@@ -91,7 +91,7 @@ def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defa
     #writing the result into "db.xml" (defaultpath)
     try:
         db = open(dbLocation + dbFile, "w")
-        doc.writexml(db, "\n", indent)
+        doc.writexml(db, newl, indent)
         db.close()
     except:
         log.error("Problem writing database")
@@ -146,11 +146,11 @@ def update_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.d
     #writing the result into "db.xml" (defaultpath)
     try:
         #pretreatment
-        prettyXML = doc.toprettyxml(indent, newl, encoding)
-        prettyXML= prettyXML.replace('><','>\n<')
+        #prettyXML = doc.toprettyxml(indent, newl, encoding)
+        #prettyXML= prettyXML.replace('><','>\n<')
         
         db = open(dbLocation + dbFile, "w")
-        db.write(prettyXML)
+        doc.writexml(db, newl, indent)
         db.close()
     except:
         log.error("Problem writing during updating database")

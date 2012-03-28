@@ -43,7 +43,11 @@ class MyForm(QtGui.QMainWindow):
         #getting the lib from the xml file
         if config.serverName == "localhost":
             (self.artists, self.albums, self.songs) = get_lib()
-	
+        else:
+            #self.artists = self.server.get_artists()
+            #self.albums = self.server.get_albums()
+            self.songs = self.server.get_songs()
+
         #display artists and albums at launch, if server is playing, display current infos
         
         self.date_display_name = -1
@@ -96,6 +100,9 @@ class MyForm(QtGui.QMainWindow):
         if self.server.is_loaded():
             self.position = self.server.get_position()
             self.duration = self.server.get_duration()
+            return True
+        else:
+            return False
 
     def apply_changes(self):
         """Called after every action that changes the song played (next, prev, change)"""
@@ -112,8 +119,6 @@ class MyForm(QtGui.QMainWindow):
 
     def call_play_pause(self):
         self.server.play_pause()
-        self.sync_server()
-
         #do not forget to work with the other thread
      	if self.server.is_playing():
             self.run_stream()
@@ -379,8 +384,11 @@ class MyForm(QtGui.QMainWindow):
             self.songStream.terminate()
         except:
             pass
+       
+        #do not launch songbar if not synchronised
+        while not self.sync_stream():
+            pass
 
-        self.sync_stream()
         self.display_name()
         self.songStream = Song()
         self.ui.SongBar.setMaximum(int(self.duration*100))
@@ -393,6 +401,7 @@ class MyForm(QtGui.QMainWindow):
         if int(self.position) % 10 == 0 or self.position > self.duration - config.anticipateDisplay or self.position < config.anticipateDisplay:
             #sync before the end or at the beginning
             self.deselect()
+            self.sync_server()
             self.sync_stream()
             self.ui.SongBar.setMaximum(int(self.duration*100))
             self.select()
