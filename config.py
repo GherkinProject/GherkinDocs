@@ -9,7 +9,6 @@ defaultUnknown = 'unknown'
 defaultPort = 1664
 serverName = "10.204.200.238"
 
-
 #time
 dtDisplay = 0.2
 dtCheck = 1. 
