@@ -7,7 +7,7 @@ defaultUnknown = 'unknown'
 
 #server port
 defaultPort = 1664
-serverName = "10.204.200.200"
+serverName = "10.204.200.238"
 
 
 #time
@@ -39,6 +39,6 @@ randomOnIcon = iconLocation + "random3.png"
 randomOffIcon = iconLocation + "random.png"
 repeatOnIcon = iconLocation + "repeat3.png"
 repeatOffIcon = iconLocation + "repeat.png"
-gherkinIcon = iconLocation + "gherkin.png"
+gherkinIcon = iconLocation + "gherkin.xpm"
 playlistOffIcon = iconLocation + "plus.png"
 playlistOnIcon = iconLocation + "plus2.png"
