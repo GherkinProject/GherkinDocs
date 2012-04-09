@@ -7,7 +7,7 @@ defaultUnknown = 'unknown'
 
 #server port
 defaultPort = 1664
-serverName = "192.168.0.16"
+serverName = "localhost"
 
 
 #time
