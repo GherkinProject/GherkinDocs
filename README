@@ -14,6 +14,7 @@ Page web : http://code.google.com/p/mutagen/downloads/list.
 
 Interface graphique : pyqt :
 Page web : http://www.riverbankcomputing.co.uk/software/pyqt/download
+Commande ubuntu : sudo apt-get install python-qt4
 
 Sous ubuntu, Gstreamer est installée par défaut. S'il ne l'est pas sur votre distribution, celui-ci est nécessaire pour le fonctionnement du lecteur.
 
