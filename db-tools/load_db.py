@@ -16,6 +16,7 @@ logging.config.fileConfig(config.logLocation + "log.conf")
 log = logging.getLogger("GhkDbManagement")
 
 def get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
+    """Load songs dict from xml file"""
     tree = ET.ElementTree()
     tree.parse(dbLocation + dbFile)
 
