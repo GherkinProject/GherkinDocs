@@ -45,16 +45,40 @@ class Ui_ProjetGherkin(object):
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        
+        # Album        
+
         self.Album = QtGui.QTreeWidget(self.centralwidget)
         self.Album.setObjectName(_fromUtf8("Albums"))
         self.Album.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Albums", None, QtGui.QApplication.UnicodeUTF8))
         self.Album.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
         self.gridLayout.addWidget(self.Album, 4, 2, 5 , 1)
+        self.Album.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        
+        #Artist        
+
         self.Artist = QtGui.QTreeWidget(self.centralwidget)
         self.Artist.setObjectName(_fromUtf8("Artists"))
         self.Artist.headerItem().setText(0, QtGui.QApplication.translate("ProjetGherkin", "Artistes", None, QtGui.QApplication.UnicodeUTF8))
         self.Artist.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
         self.gridLayout.addWidget(self.Artist, 4, 1, 5, 1)
+        self.Artist.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+
+        #AudioTrack        
+
+        self.AudioTrack = QtGui.QTreeWidget(self.centralwidget)
+        self.AudioTrack.setObjectName(_fromUtf8("AudioTrack"))
+        self.AudioTrack.headerItem().setText(tracknumber, QtGui.QApplication.translate("ProjetGherkin", "Piste", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(tracknumber, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.AudioTrack.headerItem().setText(title, QtGui.QApplication.translate("ProjetGherkin", "Titre", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(title, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.AudioTrack.headerItem().setText(artist, QtGui.QApplication.translate("ProjetGherkin", "Artiste", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(artist, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.AudioTrack.headerItem().setText(album, QtGui.QApplication.translate("ProjetGherkin", "Album", None, QtGui.QApplication.UnicodeUTF8))
+        self.AudioTrack.headerItem().setTextAlignment(album, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.AudioTrack.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+
+
         self.RandomButton = QtGui.QPushButton(self.centralwidget)
         self.RandomButton.setText(_fromUtf8(""))
         icon = QtGui.QIcon()
@@ -67,18 +91,7 @@ class Ui_ProjetGherkin(object):
         self.RandomRepeat.setObjectName(_fromUtf8("RandomRepeat"))
         self.RandomRepeat.addButton(self.RandomButton)
         self.gridLayout.addWidget(self.RandomButton, 4, 3, 1, 1)
-        self.AudioTrack = QtGui.QTreeWidget(self.centralwidget)
-        self.AudioTrack.setObjectName(_fromUtf8("AudioTrack"))
-        self.AudioTrack.headerItem().setText(tracknumber, QtGui.QApplication.translate("ProjetGherkin", "Piste", None, QtGui.QApplication.UnicodeUTF8))
-        self.AudioTrack.headerItem().setTextAlignment(tracknumber, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        self.AudioTrack.headerItem().setText(title, QtGui.QApplication.translate("ProjetGherkin", "Titre", None, QtGui.QApplication.UnicodeUTF8))
-        self.AudioTrack.headerItem().setTextAlignment(title, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        self.AudioTrack.headerItem().setText(artist, QtGui.QApplication.translate("ProjetGherkin", "Artiste", None, QtGui.QApplication.UnicodeUTF8))
-        self.AudioTrack.headerItem().setTextAlignment(artist, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        self.AudioTrack.headerItem().setText(album, QtGui.QApplication.translate("ProjetGherkin", "Album", None, QtGui.QApplication.UnicodeUTF8))
-        self.AudioTrack.headerItem().setTextAlignment(album, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-
-
+        
 
         self.gridLayout.addWidget(self.AudioTrack, 9, 1, 5, 2)
         self.verticalSlider = QtGui.QSlider(self.centralwidget)
@@ -98,11 +111,16 @@ class Ui_ProjetGherkin(object):
         self.gridLayout.addWidget(self.LookingFor, 3, 2, 1, 1)
 
 
-        self.LookingForNoTouch = QtGui.QLineEdit(self.centralwidget)
-        self.LookingForNoTouch.setText(QtGui.QApplication.translate("ProjetGherkin", "Nom de la chanson", None, QtGui.QApplication.UnicodeUTF8))
-        self.LookingForNoTouch.setAlignment(QtCore.Qt.AlignCenter)
-        self.LookingForNoTouch.setReadOnly(True)
-        self.LookingForNoTouch.setObjectName(_fromUtf8("LookingForNoTouch"))
+        #self.LookingForNoTouch = QtGui.QLineEdit(self.centralwidget)
+        #self.LookingForNoTouch.setText(QtGui.QApplication.translate("ProjetGherkin", "Nom de la chanson", None, QtGui.QApplication.UnicodeUTF8))
+        #self.LookingForNoTouch.setAlignment(QtCore.Qt.AlignCenter)
+        #self.LookingForNoTouch.setReadOnly(True)
+        #self.LookingForNoTouch.setObjectName(_fromUtf8("LookingForNoTouch"))
+
+        self.LookingForNoTouch = QtGui.QCommandLinkButton(self.centralwidget)
+        self.LookingForNoTouch.setCheckable(True)
+        self.LookingForNoTouch.setText(QtGui.QApplication.translate("ProjetGherkin", "Pas de titre en cours", None, QtGui.QApplication.UnicodeUTF8))
+        self.LookingForNoTouch.setObjectName(_fromUtf8("SongName"))
         self.gridLayout.addWidget(self.LookingForNoTouch, 3, 1, 1, 1)
 
 
