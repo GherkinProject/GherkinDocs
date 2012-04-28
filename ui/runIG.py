@@ -63,7 +63,6 @@ class MyForm(QtGui.QMainWindow):
             self.fetch = False
             self.selectedSongs = self.playlist
             self.display_all()
-            self.display_tracks()
             if self.point != -1:
                 self.display_name()
                 if self.server.is_playing():
@@ -86,7 +85,7 @@ class MyForm(QtGui.QMainWindow):
         action.setShortcut("Ctrl+P")
         #action.setStatusTip(command.name)
         QtCore.QObject.connect(action, QtCore.SIGNAL('triggered()'), self.call_play_pause )
-                            
+        
         #signal received, functions called
         
         #By song
@@ -97,11 +96,13 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.Album, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*,int)"), self.call_tracks_before )
         QtCore.QObject.connect(self.ui.Album, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_play_tracks)
         QtCore.QObject.connect(self.ui.Album, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.call_right )
+        QtCore.QObject.connect(self.ui.Album.header(), QtCore.SIGNAL("sectionClicked(int)"), self.call_all_albums )
         #By artist
         QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*,int)"), self.call_albums_before )
         QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_play_albums )
         QtCore.QObject.connect(self.ui.Artist, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.call_right )
-                
+        QtCore.QObject.connect(self.ui.Artist.header(), QtCore.SIGNAL("sectionClicked(int)"), self.display_all )
+         
         #Buttons
         QtCore.QObject.connect(self.ui.PlayButton, QtCore.SIGNAL("clicked()"), self.call_play_pause )
         QtCore.QObject.connect(self.ui.NextButton, QtCore.SIGNAL("clicked()"), self.call_next)
@@ -184,7 +185,7 @@ class MyForm(QtGui.QMainWindow):
             if idSong in self.playlist:
                 self.point = 0
                 for i in range(len(self.playlist)):
-                    if playlist[i] == idSong:
+                    if self.playlist[i] == idSong:
                         self.point = i
             #if not, adding at the end
             else:
@@ -322,17 +323,17 @@ class MyForm(QtGui.QMainWindow):
         self.select()
 
     def call_albums_before(self, QtWidget):
-        if self.right:
+        if not self.fetch and self.right:
             self.call_add_albums(QtWidget)
             self.right = False
-        else:
+        elif self.fetch:
             self.call_add_albums(QtWidget)
 
     def call_tracks_before(self, QtWidget):
-        if self.right:
+        if not self.fetch and self.right:
             self.call_add_tracks(QtWidget)
             self.right = False
-        else:
+        elif self.fetch:
             self.call_add_tracks(QtWidget)
 
     def call_track(self, QtWidget):
@@ -340,7 +341,14 @@ class MyForm(QtGui.QMainWindow):
             self.call_add_track(QtWidget)
             self.right = False
 
-    def call_add_albums(self, QtWidget):
+    def call_all_albums(self):
+        try:
+            self.call_add_albums()
+        except:
+            #selectArtist == None : do nothing
+            pass
+
+    def call_add_albums(self, QtWidget = None):
         """Adding self.selectedSongs in playlist after interaction with an artist"""
         self.deselect()
         #select songs and display them
@@ -422,9 +430,11 @@ class MyForm(QtGui.QMainWindow):
             self.selectedSongs = [song]
             self.clean_display_playlist()            
  
-    def call_albums(self, QtWidget, displayed = True):
+    def call_albums(self, QtWidget = None, displayed = True):
         """When an artist is clicked on..."""
-        self.selectedArtist = str(QtWidget.text(0))
+        #if we just want to see all available albums
+        if QtWidget != None:
+            self.selectedArtist = str(QtWidget.text(0))
         self.selectedSongs = set()
         
         #adding all the songs to the set

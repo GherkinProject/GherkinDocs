@@ -54,6 +54,7 @@ class Ui_ProjetGherkin(object):
         self.Album.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
         self.gridLayout.addWidget(self.Album, 4, 2, 5 , 1)
         self.Album.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.Album.header().setClickable(True)
         
         #Artist        
 
@@ -63,6 +64,7 @@ class Ui_ProjetGherkin(object):
         self.Artist.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
         self.gridLayout.addWidget(self.Artist, 4, 1, 5, 1)
         self.Artist.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.Artist.header().setClickable(True)
 
         #AudioTrack        
 
