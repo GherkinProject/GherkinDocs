@@ -10,7 +10,9 @@ import sys
 from load_db import *
 
 #configuration constant
-import config
+from conf2 import *
+config = cfgData()
+config.make_from_data('example.cfg')
 
 #time for progress bar
 import time
