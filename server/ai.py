@@ -15,7 +15,7 @@ from conf2 import *
 config = cfgData()
 config.make_from_data('example.cfg')
 
-print config.playlist
+
 
 #config file
 import time

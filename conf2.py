@@ -51,7 +51,7 @@ class cfgData():
 		self.playlistOnIcon = config.get('location', 'playlistOnIcon',0)
 	def make_from_data(self, name):
 		config = read_config(name)
-		self = make_config(config)
+		self.attribution(config)
 		
 
 
