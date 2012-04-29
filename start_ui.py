@@ -12,4 +12,4 @@ if 'db-tools/' not in sys.path:
     sys.path.append('db-tools/')
 
 #running server
-import runIG
+import run
