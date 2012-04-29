@@ -50,11 +50,16 @@ class MyForm(QtGui.QMainWindow):
         #saving artists and songs displayed
         #getting the lib from the xml file
         if config.serverName == "localhost":
-            (self.artists, self.albums, self.songs) = get_lib()
+            (self.artistsBase, self.albumsBase, self.songsBase) = get_lib()
         else:
             #downloading db from server
             self.get_db()
-            (self.artists, self.albums, self.songs) = get_lib(dbFile = config.defaultDbFileImported)
+            (self.artistsBase, self.albumsBase, self.songsBase) = get_lib(dbFile = config.defaultDbFileImported)
+
+        #self.artists,albums,songs can possibly change because of 'looking for'
+        self.artists = dict(self.artistsBase)
+        self.albums = dict(self.albumsBase)
+        self.songs = dict(self.songsBase)
 
 
         #display artists and albums at launch, if server is playing, display current infos
@@ -204,7 +209,7 @@ class MyForm(QtGui.QMainWindow):
             #if not, adding at the end
             else:
                 self.point = len(self.playlist)
-                self.set_playlist(self.playlist + [str(idSong)])
+                self.add_playlist([str(idSong)])
 
         self.server.change(self.point)
         self.apply_changes()
@@ -269,6 +274,18 @@ class MyForm(QtGui.QMainWindow):
         """update playlist of ui and server"""
         self.server.set_playlist(playlist)
         self.playlist = playlist
+    
+    def add_playlist(self, newSongs):
+        """update playlist, adding newSongs"""
+        try:
+            jump = max(0, self.point - config.keepPlaylist)
+            prev = self.playlist[jump:self.point+1]
+        except:
+            self.point, jump = 0, 0
+            prev = []
+            
+        self.set_playlist(prev + newSongs)
+        self.set_point(self.point - jump)
 
     def set_point(self, point):
         """update point of ui and server"""
@@ -305,7 +322,7 @@ class MyForm(QtGui.QMainWindow):
         """display name of song currently playing"""
         if self.date_display_name < self.date_sync:
             try:
-                self.ui.LookingForNoTouch.setText(self.songs[self.playlist[self.point]]["title"]+" - "+ self.songs[self.playlist[self.point]]['artist'])
+                self.ui.LookingForNoTouch.setText(self.songsBase[self.playlist[self.point]]["title"]+" - "+ self.songsBase[self.playlist[self.point]]['artist'])
             except:
                 self.ui.LookingForNoTouch.setText("Unknown")
             self.date_display_name = time.time()
@@ -378,7 +395,7 @@ class MyForm(QtGui.QMainWindow):
             self.call_albums(QtWidget)
             #could have done it cleverer (updating the playlist if some selected songs are already in the playlist)
             if self.point >= 0:
-                self.set_playlist(self.playlist[:self.point+1] + self.selectedSongs)
+                self.add_playlist(self.selectedSongs)
             else:
                 self.set_point(0)
                 self.set_playlist(self.selectedSongs)
@@ -399,7 +416,7 @@ class MyForm(QtGui.QMainWindow):
             self.call_tracks(QtWidget)
             #could have done it cleverer (updating the playlist if some selected songs are already in the playlist)
             if self.point >= 0:
-                self.set_playlist(self.playlist[:self.point+1] + self.selectedSongs)
+                self.add_playlist(self.selectedSongs)
             else:
                 self.set_point(0)
                 self.set_playlist(self.selectedSongs)
@@ -459,9 +476,9 @@ class MyForm(QtGui.QMainWindow):
         
         #adding all the songs to the set
         for album in self.artists[self.selectedArtist]:
-            for idTrack in self.albums[album]:
-                if self.fetch or (idTrack in self.playlist):
-                    self.selectedSongs.add(idTrack)
+            for idSong in self.albums[album]:
+                if self.fetch or (idSong in self.playlist):
+                    self.selectedSongs.add(idSong)
        
         if displayed:
             #sorting them
@@ -491,29 +508,36 @@ class MyForm(QtGui.QMainWindow):
         
         #add them in the order of the playlist, that is to say, alphabetical order for albums
         self.displayedAlbums = set()
-        for idTrack in self.selectedSongs:
-            #adding an album if he hasn't already been displayed
-            if self.songs[idTrack]["album"] not in self.displayedAlbums:
-                self.displayedAlbums.add(self.songs[idTrack]["album"])
-                self.ui.addAlbum(self.songs[idTrack]["album"])
-            self.ui.addTrack(self.songs[idTrack])
+        for idSong in self.selectedSongs:
+            if idSong in self.songs.keys():
+                #adding an album if he hasn't already been displayed
+                if self.songs[idSong]["album"] not in self.displayedAlbums:
+                    self.displayedAlbums.add(self.songs[idSong]["album"])
+                    self.ui.addAlbum(self.songs[idSong]["album"])
+                self.ui.addTrack(self.songs[idSong])
+            else:
+                pass
 
     def display_tracks(self):
         """display elements of the playlist"""
         #removing elements from the album tree
         self.ui.AudioTrack.clear()
 
-        for idTrack in self.selectedSongs:
-            self.ui.addTrack(self.songs[idTrack])
+        for idSong in self.selectedSongs:
+            if idSong in self.songs.keys():
+                self.ui.addTrack(self.songs[idSong])
+            else:
+                pass
 
     def call_all(self):
         """display all the songs (for clicks)"""
         self.display_all()
          
         #then create a playlist from this set
-        self.set_playlist(self.selectedSongs)
-        self.set_point(0)
-        self.display_tracks()  
+        if self.fetch:
+            self.add_playlist(self.selectedSongs)
+        else:
+            self.display_tracks()  
 
    
     def display_all(self):
@@ -528,19 +552,22 @@ class MyForm(QtGui.QMainWindow):
             self.selectedSongs = self.playlist
             #Only display what is in the playlist in the order of the playlist for album and artist
         else:
-            self.selectedSongs = make_neighbors(self.songs, self.songs.keys())
+            self.selectedSongs = make_neighbors(self.songs, set(self.songs.keys()))
             #display all
 
         self.displayedArtists = set()
         self.displayedAlbums = set()         
         for idSong in self.selectedSongs:
-            if self.songs[idSong]['artist'] not in self.displayedArtists:
-                self.displayedArtists.add(self.songs[idSong]['artist'])
-                self.ui.addArtist(self.songs[idSong]['artist'])
-            if self.songs[idSong]['album'] not in self.displayedAlbums:
-                self.displayedAlbums.add(self.songs[idSong]['album'])
-                self.ui.addAlbum(self.songs[idSong]['album'])
-            self.ui.addTrack(self.songs[idSong])
+            if idSong in self.songs.keys():
+                if self.songs[idSong]['artist'] not in self.displayedArtists:
+                    self.displayedArtists.add(self.songs[idSong]['artist'])
+                    self.ui.addArtist(self.songs[idSong]['artist'])
+                if self.songs[idSong]['album'] not in self.displayedAlbums:
+                    self.displayedAlbums.add(self.songs[idSong]['album'])
+                    self.ui.addAlbum(self.songs[idSong]['album'])
+                self.ui.addTrack(self.songs[idSong])
+            else:
+                pass
 
 #----------------------------
 #button states
@@ -550,7 +577,7 @@ class MyForm(QtGui.QMainWindow):
         self.deselect()
         self.fetch = not self.fetch
         self.display_fetch()
-        self.display_all()
+        self.call_all()
         self.select()
     
     def display_fetch(self):
@@ -645,22 +672,48 @@ class MyForm(QtGui.QMainWindow):
         self.ui.SongBar.repaint()
 
     def call_search(self, QString):
-        self.selectedSongs = set()
-        for artist in self.artists:
-            for album in self.artists[artist]:
-                for idTrack in self.albums[album]:
-                    try:
-                        b=self.songs[idTrack]['title'].__contains__(str(QString)) or  self.songs[idTrack]['album'].__contains__(str(QString)) or self.songs[idTrack]['artist'].__contains__(str(QString))
-                        if b:
-                            self.selectedSongs.add(idTrack)
-                    except:
-                        pass
-        #then create a playlist from this set
-        self.set_playlist(make_neighbors(self.songs, self.selectedSongs))
-        self.set_point(0)
+        search = str(QString)
         
-        #and update the ui then
-        self.display_albums()
+        if search == "":
+            self.artists = dict(self.artistsBase)
+            self.albums = dict(self.albumsBase)
+            self.songs = dict(self.songsBase)
+        else:
+            self.artists = dict()
+            self.albums = dict()
+            self.songs = dict()
+            
+            for artist in self.artistsBase.keys():
+                if search in artist:
+                    self.artists[artist] = set(self.artistsBase[artist])
+                
+                for album in self.artistsBase[artist]:
+                    if search in artist or search in album:
+                        self.albums[album] = set(self.albumsBase[album])
+                    
+                    if search in album:
+                        if self.artists.has_key(artist):
+                            self.artists[artist].add(album)
+                        else:
+                            self.artists[artist] = set([album])
+
+                    for idSong in self.albumsBase[album]:
+                        if search in artist or search in album or search in self.songsBase[idSong]['title']:
+                            self.songs[idSong] = self.songsBase[idSong]
+
+                        if search in self.songsBase[idSong]['title']:
+                            if self.artists.has_key(artist):
+                                self.artists[artist].add(album)
+                            else:
+                                self.artists[artist] = set([album])
+                            
+                            if self.albums.has_key(album):
+                                self.albums[album].add(idSong)
+                            else:
+                                self.albums[album] = set([idSong])
+             
+        self.call_all()
+        
 
 class Song(QtCore.QThread):
     __pyqtSignals__ = ("progressUpdated")
