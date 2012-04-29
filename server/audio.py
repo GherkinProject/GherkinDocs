@@ -11,7 +11,7 @@ import os
 #config file
 from conf2 import *
 config = cfgData()
-config.make_from_data('example.cfg')
+config.make_from_data('cfgData.cfg')
 #logs
 import logging
 import logging.config

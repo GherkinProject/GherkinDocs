@@ -84,7 +84,7 @@ def default(config):
 	config.set('pruning', 'constante', '0.001')
 
 	config.add_section('location')
-	config.set('location', 'cfg', 'example.cfg')
+	config.set('location', 'cfg', 'cfgData.cfg')
 	config.set('location', 'Markov', 'dbMarkov.ghk')
 	config.set('location', 'pictures', 'pictures/')
 	config.set('location', 'log', 'log/')
