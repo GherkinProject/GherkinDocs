@@ -2,8 +2,10 @@
 #!/usr/bin/python -d
 
 #config constant
-import config
 
+from conf2 import *
+config = cfgData()
+config.make_from_data('cfgData.cfg')
 #script with arguments
 import sys
 
