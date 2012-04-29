@@ -12,8 +12,7 @@ from time import *
 #configuration constant
 from conf2 import *
 config = cfgData()
-config.make_from_data('example.cfg')
-
+config.make_from_data('cfgData.cfg')
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
