@@ -15,6 +15,9 @@ dtCheck = 1.
 anticipateDisplay = 2.
 anticipateCheck = 1.1
 
+#playlist
+keepPlaylist = 6
+
 #constante mode
 normal = 0
 random = 1
