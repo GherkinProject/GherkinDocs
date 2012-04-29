@@ -10,7 +10,10 @@ from PyQt4 import QtCore, QtGui
 from time import *
 
 #configuration constant
-import config
+
+from conf2 import *
+config = cfgData()
+config.make_from_data('cfgData.cfg')
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
