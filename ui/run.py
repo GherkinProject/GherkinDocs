@@ -645,18 +645,18 @@ class MyForm(QtGui.QMainWindow):
         self.ui.SongBar.repaint()
 
     def call_search(self, QString):
-        self.selectSongs = set()
+        self.selectedSongs = set()
         for artist in self.artists:
             for album in self.artists[artist]:
                 for idTrack in self.albums[album]:
                     try:
                         b=self.songs[idTrack]['title'].__contains__(str(QString)) or  self.songs[idTrack]['album'].__contains__(str(QString)) or self.songs[idTrack]['artist'].__contains__(str(QString))
                         if b:
-                            self.selectSongs.add(idTrack)
+                            self.selectedSongs.add(idTrack)
                     except:
                         pass
         #then create a playlist from this set
-        self.set_playlist(make_neighbors(self.songs, self.selectSongs))
+        self.set_playlist(make_neighbors(self.songs, self.selectedSongs))
         self.set_point(0)
         
         #and update the ui then
