@@ -99,6 +99,12 @@ class ai:
             return self.songs[self.playlist[self.point]]["artist"] + ", " + self.songs[self.playlist[self.point]]["album"] + ", " + str(self.songs[self.playlist[self.point]]["tracknumber"]) + ", " + self.songs[self.playlist[self.point]]["title"]
         else:
             return "No song loaded"
+
+    def update_db(self, path):
+        """Update the db according to the given path"""
+        #modifier le fichier config
+        update_db()
+
 #----------------------------
 #setters
 #----------------------------

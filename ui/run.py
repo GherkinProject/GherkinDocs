@@ -2,6 +2,8 @@
  
 from PyQt4 import QtCore, QtGui
 from display import Ui_ProjetGherkin
+from dbbrowser import Browser_Window
+
 import sys
 
 #local lib : loading db
@@ -27,7 +29,7 @@ class MyForm(QtGui.QMainWindow):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_ProjetGherkin()
         self.ui.setupUi(self)
-        
+        self.Browser = Browser_Window()
         #self.ui.AudioTrack.mousePressEvent = mousePressEvent        
  
         #connection with the server
@@ -86,6 +88,10 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(action, QtCore.SIGNAL('triggered()'), self.call_play_pause )
         
         #signal received, functions called
+
+        # Menu
+
+        QtCore.QObject.connect(self.ui.actionImporter_Dossier, QtCore.SIGNAL("triggered()"), self.open_browser)
         
         #By song
         QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*,int)"), self.call_track )
@@ -115,7 +121,11 @@ class MyForm(QtGui.QMainWindow):
         
         #./! fetch mode
         QtCore.QObject.connect(self.ui.LookingForNoTouch, QtCore.SIGNAL("clicked()"), self.call_fetch)
-        #QtCore.QObject.connect(self.ui.verticalSlider, QtCore.SIGNAL("valueChanged(int)"), self.call_volume )	
+        #QtCore.QObject.connect(self.ui.verticalSlider, QtCore.SIGNAL("valueChanged(int)"), self.call_volume )
+
+        # Browser Window
+
+        QtCore.QObject.connect(self.Browser.select_path, QtCore.SIGNAL("clicked()"), self.send_path)	
     
     def call_right(self):
         self.right = True
@@ -125,6 +135,10 @@ class MyForm(QtGui.QMainWindow):
 #Sincing with server
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
+    def send_path(self):
+#        self.server.update_db(str(self.Browser.dest_path_edit.text()))   
+        print str(self.Browser.dest_path_edit.text())
+        self.Browser.close()    
     
     def get_db(self):
         """Import DB from server"""
@@ -235,6 +249,12 @@ class MyForm(QtGui.QMainWindow):
     def call_volume(self, int):
         self.server.set_volume(int * 10 / (self.ui.verticalSlider.maximum()-self.ui.verticalSlider.minimum()))
 
+
+    def open_browser(self):
+        self.Browser.setWindowModality(QtCore.Qt.ApplicationModal)
+        # appel de la deuxième fenêtre
+        self.Browser.set_path()
+        self.Browser.show()
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
 #UI methods
