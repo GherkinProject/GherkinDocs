@@ -123,6 +123,7 @@ class Ui_ProjetGherkin(object):
         self.LookingForNoTouch.setCheckable(True)
         self.LookingForNoTouch.setText(QtGui.QApplication.translate("ProjetGherkin", "Pas de titre en cours", None, QtGui.QApplication.UnicodeUTF8))
         self.LookingForNoTouch.setObjectName(_fromUtf8("SongName"))
+        self.LookingForNoTouch.setHorizontalPolicy(QSizePolicy.Minimum)
         self.gridLayout.addWidget(self.LookingForNoTouch, 3, 1, 1, 1)
 
 

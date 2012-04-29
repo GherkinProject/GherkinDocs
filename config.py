@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import ConfigParser
 
 class cfgData():
@@ -124,7 +123,6 @@ def make_config(config):
 	return cfg
 
 
-=======
 #file for constant definition
 
 #list of working extensions :
@@ -171,4 +169,3 @@ repeatOffIcon = iconLocation + "repeat.png"
 gherkinIcon = iconLocation + "gherkin.xpm"
 playlistOffIcon = iconLocation + "plus.png"
 playlistOnIcon = iconLocation + "plus2.png"
->>>>>>> dcfdda995acf9d85ff1289b0f3c53be1109051c8
