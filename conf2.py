@@ -32,6 +32,7 @@ class cfgData():
 		self.epsilon = config.getfloat('pruning','constante')
 
 		#icon and locations
+		self.cfg = config.get('location','cfg')
 		self.dbMarkov = config.get('location','Markov')
 		self.iconLocation = config.get('location','pictures')
 		self.logLocation = config.get('location','log')
@@ -83,6 +84,7 @@ def default(config):
 	config.set('pruning', 'constante', '0.001')
 
 	config.add_section('location')
+	config.set('location', 'cfg', 'example.cfg')
 	config.set('location', 'Markov', 'dbMarkov.ghk')
 	config.set('location', 'pictures', 'pictures/')
 	config.set('location', 'log', 'log/')
