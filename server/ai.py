@@ -11,7 +11,11 @@ from load_db import *
 from threading import Thread
 
 #config file
-import config
+from conf2 import *
+config = cfgData()
+config.make_from_data('example.cfg')
+
+print config.playlist
 
 #config file
 import time
@@ -23,6 +27,8 @@ from Markov import Markovienne
 #http server
 import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer
+
+
 
 class ai:
     def __init__(self):
