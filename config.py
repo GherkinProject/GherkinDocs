@@ -109,7 +109,8 @@ class cfg_data:
 		self.config.set('location', 'playlistOnIcon', '%(pictures)splus2.png')
     
     	def set(self, section, name, value):
-        	self.config.set(section, name, value)
+        	"""Modify constant in file and in instance"""
+            	self.config.set(section, name, value)
         	self.write()
         	self.__init__(self.fileName)
 
