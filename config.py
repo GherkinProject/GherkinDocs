@@ -1,128 +1,116 @@
 import ConfigParser
 
-class cfgData():
-	def attribution(self, config):
-		self.defaultFileExt = set(config.get('extension', 'file'))
-		self.defaultTagKept = set(config.get('extension', 'tag'))
-		self.defaultUnknown = config.get('extension', 'unk')
+class cfg_data:
+	def __init__(self, fileName):
+		self.fileName = fileName		
+		self.config = ConfigParser.ConfigParser()
 
+		#loading file				
+		self.config.read(fileName)
 
-		#server port
-		self.defaultPort = config.getint('server', 'port')
-		self.serverName = config.get('server', 'name')
+		#================================================
+		# Loading constants
+		#================================================
 
-		#time
-		self.dtDisplay = config.getfloat('time', 'display')
-		self.dtCheck = config.getfloat('time', 'check')
-		self.anticipateDisplay = config.getfloat('time', 'anticipateDisplay')
-		self.anticipateCheck = config.getfloat('time', 'anticipateCheck')
+		try:
+			#extensions
+			self.defaultFileExt = set(self.config.get('extension', 'file'))
+			self.defaultTagKept = set(self.config.get('extension', 'tag'))
+			self.defaultUnknown = self.config.get('extension', 'unk')
 
-	
-	
+			#server port
+			self.defaultPort = self.config.getint('server', 'port')
+			self.serverName = self.config.get('server', 'name')
 
-		#constante mode
-		self.normal = config.getint('constante','normal')
-		self.random = config.getint('constante','random')
-		self.playlist = config.getint('constante','playlist')
-		self.keepPlaylist = config.getint('constante','keepPlaylist')
+			#time
+			self.dtDisplay = self.config.getfloat('time', 'display')
+			self.dtCheck = self.config.getfloat('time', 'check')
+			self.anticipateDisplay = self.config.getfloat('time', 'anticipateDisplay')
+			self.anticipateCheck = self.config.getfloat('time', 'anticipateCheck')
 
+			#constante mode
+			self.normal = self.config.getint('constante','normal')
+			self.random = self.config.getint('constante','random')
+			self.playlist = self.config.getint('constante','playlist')
+			self.keepPlaylist = self.config.getint('constante','keepPlaylist')
 
+			# pruning constant
+			self.epsilon = self.config.getfloat('pruning','constante')
 
-		# pruning constant
-		self.epsilon = config.getfloat('pruning','constante')
-
-		#icon and locations
-		self.cfg = config.get('location','cfg')
-		self.dbMarkov = config.get('location','Markov')
-		self.iconLocation = config.get('location','pictures')
-		self.logLocation = config.get('location','log')
-		self.defaultDbLocation = config.get('location','DbLoc')
-		self.defaultDbFile = config.get('location','DbFile')
-		self.defaultDbFileImported = config.get('location','DbFileImported')
-		self.playIcon = config.get('location', 'playIcon',0)
-		self.pauseIcon = config.get('location', 'pauseIcon',0)
-		self.nextIcon = config.get('location', 'nextIcon',0)
-		self.prevIcon = config.get('location', 'prevIcon',0)
-		self.randomOnIcon = config.get('location', 'randomOnIcon',0)
-		self.randomOffIcon = config.get('location', 'randomOffIcon',0)
-		self.repeatOnIcon = config.get('location', 'repeatOnIcon',0)
-		self.repeatOffIcon = config.get('location', 'repeatOffIcon',0)
-		self.gherkinIcon = config.get('location', 'gherkinIcon',0)
-		self.playlistOffIcon = config.get('location', 'playlistOffIcon',0)
-		self.playlistOnIcon = config.get('location', 'playlistOnIcon',0)
-	def make_from_data(self, name):
-		config = read_config(name)
-		self.attribution(config)
+			#icon and locations
+			self.cfg = self.config.get('location','cfg')
+			self.dbMarkov = self.config.get('location','Markov')
+			self.iconLocation = self.config.get('location','pictures')
+			self.logLocation = self.config.get('location','log')
+			self.defaultDbLocation = self.config.get('location','DbLoc')
+			self.defaultDbFile = self.config.get('location','DbFile')
+			self.defaultDbFileImported = self.config.get('location','DbFileImported')
+			self.playIcon = self.config.get('location', 'playIcon',0)
+			self.pauseIcon = self.config.get('location', 'pauseIcon',0)
+			self.nextIcon = self.config.get('location', 'nextIcon',0)
+			self.prevIcon = self.config.get('location', 'prevIcon',0)
+			self.randomOnIcon = self.config.get('location', 'randomOnIcon',0)
+			self.randomOffIcon = self.config.get('location', 'randomOffIcon',0)
+			self.repeatOnIcon = self.config.get('location', 'repeatOnIcon',0)
+			self.repeatOffIcon = self.config.get('location', 'repeatOffIcon',0)
+			self.gherkinIcon = self.config.get('location', 'gherkinIcon',0)
+			self.playlistOffIcon = self.config.get('location', 'playlistOffIcon',0)
+			self.playlistOnIcon = self.config.get('location', 'playlistOnIcon',0)
+		except:
+			#if no file was created, creates it
+			self.reset()
+			self.overwrite()
+			self.__init__(fileName)
 		
+	def reset(self):
+		"""Reset Gherkin to Default configuration"""
+		self.config.add_section('extension')
+		self.config.set('extension', 'file', '{".mp3", ".ogg", ".flac"}')
+		self.config.set('extension', 'tag', '{"artist", "album", "title", "date", "tracknumber", "genre"}')
+		self.config.set('extension', 'unk', 'unknown')
 
+		self.config.add_section('server')
+		self.config.set('server', 'port', '1664')
+		self.config.set('server', 'name', 'localhost')
 
+		self.config.add_section('time')
+		self.config.set('time', 'display', '0.2')
+		self.config.set('time', 'check', '1.0')
+		self.config.set('time', 'anticipateDisplay', '2.')
+		self.config.set('time', 'anticipateCheck', '1.1')
 
-def default(config):
-	"""Default configuration for Gherkin"""
-	config.add_section('extension')
-	config.set('extension', 'file', '{".mp3", ".ogg", ".flac"}')
-	config.set('extension', 'tag', '{"artist", "album", "title", "date", "tracknumber", "genre"}')
-	config.set('extension', 'unk', 'unknown')
+		self.config.add_section('constante')
+		self.config.set('constante', 'normal', '0')
+		self.config.set('constante', 'random', '1')
+		self.config.set('constante', 'playlist', '2')
+		self.config.set('constante', 'keepPlaylist', '6')
 
-	config.add_section('server')
-	config.set('server', 'port', '1664')
-	config.set('server', 'name', 'localhost')
+		self.config.add_section('pruning')
+		self.config.set('pruning', 'constante', '0.001')
 
-	config.add_section('time')
-	config.set('time', 'display', '0.2')
-	config.set('time', 'check', '1.0')
-	config.set('time', 'anticipateDisplay', '2.')
-	config.set('time', 'anticipateCheck', '1.1')
+		self.config.add_section('location')
+		self.config.set('location', 'cfg', 'cfgData.cfg')
+		self.config.set('location', 'Markov', 'dbMarkov.ghk')
+		self.config.set('location', 'pictures', 'pictures/')
+		self.config.set('location', 'log', 'log/')
+		self.config.set('location', 'DbLoc', './')
+		self.config.set('location', 'DbFile', 'db.xml')
+		self.config.set('location', 'DbFileImported', 'dbImported.xml')
+		self.config.set('location', 'playIcon', '%(pictures)splay.png')
+		self.config.set('location', 'pauseIcon', '%(pictures)spause.png')
+		self.config.set('location', 'nextIcon', '%(pictures)sforward.png')
+		self.config.set('location', 'prevIcon', '%(pictures)sbackward.png')
+		self.config.set('location', 'randomOnIcon', '%(pictures)srandom2.png')
+		self.config.set('location', 'randomOffIcon', '%(pictures)srandom.png')
+		self.config.set('location', 'repeatOnIcon', '%(pictures)srepeat2.png')
+		self.config.set('location', 'repeatOffIcon', '%(pictures)srepeat.png')
+		self.config.set('location', 'gherkinIcon', '%(pictures)sgherkin.xpm')
+		self.config.set('location', 'playlistOffIcon', '%(pictures)splus.png')
+		self.config.set('location', 'playlistOnIcon', '%(pictures)splus2.png')
 
-	config.add_section('constante')
-	config.set('constante', 'normal', '0')
-	config.set('constante', 'random', '1')
-	config.set('constante', 'playlist', '2')
-	config.set('constante', 'keepPlaylist', '6')
+	def overwrite(self):
+	    """Write the actual configuration in the file "name" """
+	    with open(self.fileName, 'wb') as configfile:
+		self.config.write(configfile)
 
-	config.add_section('pruning')
-	config.set('pruning', 'constante', '0.001')
-
-	config.add_section('location')
-	config.set('location', 'cfg', 'cfgData.cfg')
-	config.set('location', 'Markov', 'dbMarkov.ghk')
-	config.set('location', 'pictures', 'pictures/')
-	config.set('location', 'log', 'log/')
-	config.set('location', 'DbLoc', './')
-	config.set('location', 'DbFile', 'db.xml')
-	config.set('location', 'DbFileImported', 'dbImported.xml')
-	config.set('location', 'playIcon', '%(pictures)splay.png')
-	config.set('location', 'pauseIcon', '%(pictures)spause.png')
-	config.set('location', 'nextIcon', '%(pictures)sforward.png')
-	config.set('location', 'prevIcon', '%(pictures)sbackward.png')
-	config.set('location', 'randomOnIcon', '%(pictures)srandom2.png')
-	config.set('location', 'randomOffIcon', '%(pictures)srandom.png')
-	config.set('location', 'repeatOnIcon', '%(pictures)srepeat2.png')
-	config.set('location', 'repeatOffIcon', '%(pictures)srepeat.png')
-	config.set('location', 'gherkinIcon', '%(pictures)sgherkin.xpm')
-	config.set('location', 'playlistOffIcon', '%(pictures)splus.png')
-	config.set('location', 'playlistOnIcon', '%(pictures)splus2.png')
-
-
-
-def write_config(config, name):
-    """Write the actual configuration in the file "name" """
-    with open(name, 'wb') as configfile:
-        config.write(configfile)
-
-def read_config(name):
-    """ Read the configuration file and store it into config."""
-    config = ConfigParser.ConfigParser()
-    config.read(name)
-    # print config.get('location', 'Markov') # Normal mode
-    # print config.get('location', 'playlistOnIcon', 0) #Interpolation
-    return config
-
-def make_config(config):
-	""" Create a cfgData and give it the constant written in the config """
-	cfg = cfgData()
-	cfg.attribution(config)
-	return cfg
-
-config = cfgData()
-config.make_from_data('config.cfg')
+config = cfg_data('config.cfg')
