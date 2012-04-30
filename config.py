@@ -59,7 +59,7 @@ class cfg_data:
 		except:
 			#if no file was created, creates it
 			self.reset()
-			self.overwrite()
+			self.write()
 			self.__init__(fileName)
 		
 	def reset(self):
@@ -107,8 +107,13 @@ class cfg_data:
 		self.config.set('location', 'gherkinIcon', '%(pictures)sgherkin.xpm')
 		self.config.set('location', 'playlistOffIcon', '%(pictures)splus.png')
 		self.config.set('location', 'playlistOnIcon', '%(pictures)splus2.png')
+    
+    	def set(self, section, name, value):
+        	self.config.set(section, name, value)
+        	self.write()
+        	self.__init__(self.fileName)
 
-	def overwrite(self):
+	def write(self):
 	    """Write the actual configuration in the file "name" """
 	    with open(self.fileName, 'wb') as configfile:
 		self.config.write(configfile)
