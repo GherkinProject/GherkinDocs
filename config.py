@@ -32,6 +32,7 @@ class cfgData():
 		self.epsilon = config.getfloat('pruning','constante')
 
 		#icon and locations
+		self.cfg = config.get('location','cfg')
 		self.dbMarkov = config.get('location','Markov')
 		self.iconLocation = config.get('location','pictures')
 		self.logLocation = config.get('location','log')
@@ -51,7 +52,7 @@ class cfgData():
 		self.playlistOnIcon = config.get('location', 'playlistOnIcon',0)
 	def make_from_data(self, name):
 		config = read_config(name)
-		self = make_config(config)
+		self.attribution(config)
 		
 
 
@@ -83,15 +84,16 @@ def default(config):
 	config.set('pruning', 'constante', '0.001')
 
 	config.add_section('location')
+	config.set('location', 'cfg', 'cfgData.cfg')
 	config.set('location', 'Markov', 'dbMarkov.ghk')
 	config.set('location', 'pictures', 'pictures/')
 	config.set('location', 'log', 'log/')
 	config.set('location', 'DbLoc', './')
 	config.set('location', 'DbFile', 'db.xml')
 	config.set('location', 'DbFileImported', 'dbImported.xml')
-	config.set('location', 'playIcon', '%(pictures)s play.png')
-	config.set('location', 'pauseIcon', '%(pictures)s pause.png')
-	config.set('location', 'nextIcon', '%(pictures)s forward.png')
+	config.set('location', 'playIcon', '%(pictures)splay.png')
+	config.set('location', 'pauseIcon', '%(pictures)spause.png')
+	config.set('location', 'nextIcon', '%(pictures)sforward.png')
 	config.set('location', 'prevIcon', '%(pictures)sbackward.png')
 	config.set('location', 'randomOnIcon', '%(pictures)srandom2.png')
 	config.set('location', 'randomOffIcon', '%(pictures)srandom.png')
@@ -123,51 +125,4 @@ def make_config(config):
 	return cfg
 
 config = cfgData()
-config.make_from_name('example.cfg')
-
-#file for constant definition
-
-#list of working extensions :
-defaultFileExt = {".mp3", ".ogg", ".flac"}
-defaultTagKept = {"artist", "album", "title", "date", "tracknumber", "genre"}
-defaultUnknown = 'unknown'
-
-#server port
-defaultPort = 1664
-serverName = "localhost"
-
-#time
-dtDisplay = 0.2
-dtCheck = 1. 
-anticipateDisplay = 2.
-anticipateCheck = 1.1
-
-#playlist
-keepPlaylist = 6
-
-#constante mode
-normal = 0
-random = 1
-playlist = 2
-
-# pruning constant
-epsilon = 0.001
-
-#icon and locations
-dbMarkov = "dbMarkov.ghk"
-iconLocation = "pictures/"
-logLocation = "log/"
-defaultDbLocation = "./"
-defaultDbFile = "db.xml"
-defaultDbFileImported = "dbImported.xml"
-playIcon = iconLocation + "play.png"
-pauseIcon = iconLocation + "pause.png"
-nextIcon = iconLocation + "forward.png"
-prevIcon = iconLocation + "backward.png"
-randomOnIcon = iconLocation + "random2.png"
-randomOffIcon = iconLocation + "random.png"
-repeatOnIcon = iconLocation + "repeat2.png"
-repeatOffIcon = iconLocation + "repeat.png"
-gherkinIcon = iconLocation + "gherkin.xpm"
-playlistOffIcon = iconLocation + "plus.png"
-playlistOnIcon = iconLocation + "plus2.png"
+config.make_from_data('config.cfg')

@@ -7,9 +7,7 @@
 import xml.etree.ElementTree as ET
 
 #local libraries
-from conf2 import *
-config = cfgData()
-config.make_from_data('cfgData.cfg')
+from config import *
 
 #logs
 import logging

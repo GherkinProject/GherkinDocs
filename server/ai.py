@@ -11,11 +11,7 @@ from load_db import *
 from threading import Thread
 
 #config file
-from conf2 import *
-config = cfgData()
-config.make_from_data('cfgData.cfg')
-
-
+from config import *
 
 #config file
 import time

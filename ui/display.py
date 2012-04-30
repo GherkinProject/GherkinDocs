@@ -10,9 +10,8 @@ from PyQt4 import QtCore, QtGui
 from time import *
 
 #configuration constant
-from conf2 import *
-config = cfgData()
-config.make_from_data('cfgData.cfg')
+from config import *
+
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -124,7 +123,6 @@ class Ui_ProjetGherkin(object):
         self.LookingForNoTouch.setCheckable(True)
         self.LookingForNoTouch.setText(QtGui.QApplication.translate("ProjetGherkin", "Pas de titre en cours", None, QtGui.QApplication.UnicodeUTF8))
         self.LookingForNoTouch.setObjectName(_fromUtf8("SongName"))
-        self.LookingForNoTouch.setHorizontalPolicy(QSizePolicy.Minimum)
         self.gridLayout.addWidget(self.LookingForNoTouch, 3, 1, 1, 1)
 
 
