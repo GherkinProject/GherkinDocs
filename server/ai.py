@@ -6,14 +6,17 @@ import audio
 
 #local lib : loading db
 from load_db import *
+import create_db
 
 #thread
 from threading import Thread
 
 #config file
+import ConfigParser
 from conf2 import *
 config = cfgData()
 config.make_from_data('cfgData.cfg')
+cfgParse = read_config('cfgData.cfg')
 
 
 
@@ -108,8 +111,11 @@ class ai:
 
     def update_db(self, path):
         """Update the db according to the given path"""
-        #modifier le fichier config
-        update_db()
+        #cfgParse.set('location','DbLoc', %(path)s)
+        write_config(cfgParse, 'cfgData.cfg')
+        config.make_from_data('cfgData.cfg')
+        print path
+        create_db.update_xml_db(path)
 
 #----------------------------
 #setters

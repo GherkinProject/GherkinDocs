@@ -3,6 +3,7 @@
 from PyQt4 import QtCore, QtGui
 from display import Ui_ProjetGherkin
 from dbbrowser import Browser_Window
+from server_window import server_window
 
 import sys
 
@@ -32,6 +33,9 @@ class MyForm(QtGui.QMainWindow):
         self.ui = Ui_ProjetGherkin()
         self.ui.setupUi(self)
         self.Browser = Browser_Window()
+        self.Dialog = QtGui.QDialog()
+        self.Server_Window= server_window()
+        self.Server_Window.setup_server_window(self.Dialog)
         #self.ui.AudioTrack.mousePressEvent = mousePressEvent        
  
         #connection with the server
@@ -99,6 +103,7 @@ class MyForm(QtGui.QMainWindow):
         # Menu
 
         QtCore.QObject.connect(self.ui.actionImporter_Dossier, QtCore.SIGNAL("triggered()"), self.open_browser)
+        QtCore.QObject.connect(self.ui.actionChercher_Serveur, QtCore.SIGNAL("triggered()"), self.open_server_window)
         
         #By song
         QtCore.QObject.connect(self.ui.AudioTrack, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*,int)"), self.call_track )
@@ -132,7 +137,12 @@ class MyForm(QtGui.QMainWindow):
 
         # Browser Window
 
-        QtCore.QObject.connect(self.Browser.select_path, QtCore.SIGNAL("clicked()"), self.send_path)	
+        QtCore.QObject.connect(self.Browser.select_path, QtCore.SIGNAL("clicked()"), self.send_path)
+
+        # Server Window
+
+        QtCore.QObject.connect(self.Dialog, QtCore.SIGNAL("accepted()"), self.change_server)
+        QtCore.QObject.connect(self.Server_Window.radioButton, QtCore.SIGNAL("toggled(bool)"), self.lf_server)
     
     def call_right(self):
         self.right = True
@@ -143,9 +153,37 @@ class MyForm(QtGui.QMainWindow):
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
     def send_path(self):
-#        self.server.update_db(str(self.Browser.dest_path_edit.text()))   
-        print str(self.Browser.dest_path_edit.text())
-        self.Browser.close()    
+        self.server.update_db(str(self.Browser.dest_path_edit.text())) 
+	#getting the lib from the xml file
+        if config.serverName == "localhost":
+            (self.artistsBase, self.albumsBase, self.songsBase) = get_lib()
+        else:
+            #downloading db from server
+            self.get_db()
+            (self.artistsBase, self.albumsBase, self.songsBase) = get_lib(dbFile = config.defaultDbFileImported)  
+     #   print str(self.Browser.dest_path_edit.text())
+        self.Browser.close()   
+
+    def change_server(self):
+        """Change the server to the one indicated in the Dialog box"""
+        U = str(self.Server_Window.lineEdit.text())
+        self.server.switch(U)
+
+    def lf_server(self):
+        """Look for new server"""
+        if bool:
+            for i in range (256):
+                for j in range(2):
+                    for k in range(6):
+                        for l in range(256):
+                            Z = str(l)+"."+str(k)+"."+str(j)+"."+str(i)
+                            # Compute Z which represents the server adress
+#                            if self.server.exists(Z):
+                            if l == 40 and i == 21:
+                                self.Server_Window.add_server(Z)
+
+
+
     
     def get_db(self):
         """Import DB from server"""
@@ -262,6 +300,10 @@ class MyForm(QtGui.QMainWindow):
         # appel de la deuxième fenêtre
         self.Browser.set_path()
         self.Browser.show()
+
+    def open_server_window(self):
+        self.Dialog.show()
+        
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
 #UI methods
