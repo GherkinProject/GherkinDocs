@@ -3,9 +3,8 @@
 
 #config constant
 
-from conf2 import *
-config = cfgData()
-config.make_from_data('cfgData.cfg')
+from config import *
+
 #script with arguments
 import sys
 

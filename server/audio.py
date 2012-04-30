@@ -9,9 +9,8 @@ import gst
 import os
 
 #config file
-from conf2 import *
-config = cfgData()
-config.make_from_data('cfgData.cfg')
+from config import *
+
 #logs
 import logging
 import logging.config

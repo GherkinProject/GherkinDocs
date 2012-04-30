@@ -12,6 +12,7 @@ import create_db
 from threading import Thread
 
 #config file
+<<<<<<< HEAD
 import ConfigParser
 from conf2 import *
 config = cfgData()
@@ -19,6 +20,9 @@ config.make_from_data('cfgData.cfg')
 cfgParse = read_config('cfgData.cfg')
 
 
+=======
+from config import *
+>>>>>>> e35d2eff8c958e2b646c9df86de29f6dcf1a5916
 
 #config file
 import time
