@@ -128,7 +128,7 @@ class ai:
         #update hist and point
         self.point = point
         try:
-            self.hist.append((self.playlist[self.point], time.time()))
+            self.hist.append((self.playlist[self.point], time()))
         except:
             pass
 
@@ -251,7 +251,7 @@ def run(ai):
         sleep(config.dtCheck)
         if ai.is_playing() and ai.get_position() > ai.get_duration() - config.anticipateCheck:
             while True:
-                time.sleep(config.dtCheck/10.)
+                sleep(config.dtCheck/10.)
                 if ai.get_position() == ai.get_duration():
                     ai.next()
                     break
