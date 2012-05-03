@@ -9,6 +9,9 @@ import sys
 #script using system commands
 import os
 
+#time lin
+from time import *
+
 #thread
 from threading import Thread
 
@@ -103,7 +106,7 @@ def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defa
         log.info("Database created at " + dbLocation)
         return True
 
-def update_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
+def update_xml_db(directory, lastUpdate = [], tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""
     if(directory == ""):
         return False
@@ -160,6 +163,7 @@ def update_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.d
         return False
     else:
         log.info("Database updated at " + dbLocation)
+        lastUpdate[0] = time()
         return True
 
 def thread_update_db(directory):
