@@ -97,7 +97,7 @@ def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defa
     #writing the result into "db.xml" (defaultpath)
     try:
         db = open(dbLocation + dbFile, "w")
-        doc.writexml(db)
+        doc.writexml(db, indent, newl)
         db.close()
     except:
         log.error("Problem writing database")
@@ -106,7 +106,7 @@ def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defa
         log.info("Database created at " + dbLocation)
         return True
 
-def update_xml_db(directory, lastUpdate = [], tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
+def update_xml_db(directory, lastUpdate = [0], tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""
     if(directory == ""):
         return False
@@ -154,9 +154,19 @@ def update_xml_db(directory, lastUpdate = [], tagKept = config.defaultTagKept, f
         #pretreatment
         #prettyXML = doc.toprettyxml(indent, newl, encoding)
         #prettyXML= prettyXML.replace('><','>\n<')
-        
+    
+    #Removes all TEXT_NODES in parameter nodes
+        for node in root.childNodes:
+            if node.nodeType == node.TEXT_NODE:
+                node.data = ''
+            for othernode in node.childNodes:
+                if othernode.nodeType == othernode.TEXT_NODE:
+                    othernode.data = ''
+
+        root.normalize()
+
         db = open(dbLocation + dbFile, "w")
-        doc.writexml(db)
+        doc.writexml(db, indent, newl)
         db.close()
     except:
         log.error("Problem writing during updating database")
