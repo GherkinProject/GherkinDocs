@@ -56,7 +56,7 @@ def md5Checksum(filePath):
     return m.hexdigest()
 
 indent=""
-newl=""
+newl="\n"
 encoding="UTF-8"
 
 # Regular expression to find trailing spaces before a newline
@@ -97,7 +97,7 @@ def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defa
     #writing the result into "db.xml" (defaultpath)
     try:
         db = open(dbLocation + dbFile, "w")
-        doc.writexml(db, newl, indent)
+        doc.writexml(db)
         db.close()
     except:
         log.error("Problem writing database")
@@ -156,7 +156,7 @@ def update_xml_db(directory, lastUpdate = [], tagKept = config.defaultTagKept, f
         #prettyXML= prettyXML.replace('><','>\n<')
         
         db = open(dbLocation + dbFile, "w")
-        doc.writexml(db, newl, indent)
+        doc.writexml(db)
         db.close()
     except:
         log.error("Problem writing during updating database")

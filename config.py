@@ -1,4 +1,5 @@
 import ConfigParser
+import json
 
 class cfg_data:
 	def __init__(self, fileName):
@@ -14,8 +15,8 @@ class cfg_data:
 
 		try:
 			#extensions
-			self.defaultFileExt = set(self.config.get('extension', 'file'))
-			self.defaultTagKept = set(self.config.get('extension', 'tag'))
+			self.defaultFileExt = set(json.loads(self.config.get('extension', 'file')))
+			self.defaultTagKept = set(json.loads(self.config.get('extension', 'tag')))
 			self.defaultUnknown = self.config.get('extension', 'unk')
 
 			#server port
@@ -65,8 +66,8 @@ class cfg_data:
 	def reset(self):
 		"""Reset Gherkin to Default configuration"""
 		self.config.add_section('extension')
-		self.config.set('extension', 'file', '{".mp3", ".ogg", ".flac"}')
-		self.config.set('extension', 'tag', '{"artist", "album", "title", "date", "tracknumber", "genre"}')
+		self.config.set('extension', 'file', json.dumps([".mp3", ".ogg", ".flac"]))
+		self.config.set('extension', 'tag', json.dumps(["artist", "album", "title", "date", "tracknumber", "genre"]))
 		self.config.set('extension', 'unk', 'unknown')
 
 		self.config.add_section('server')
