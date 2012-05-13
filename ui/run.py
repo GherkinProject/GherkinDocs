@@ -589,11 +589,11 @@ class MyForm(QtGui.QMainWindow):
         self.ui.AudioTrack.clear()
 
         #sorting the artists and albums by name for it to be smarter, and display
-        if not self.fetch:
-            self.selectedSongs = self.playlist
+        #if not self.fetch:
+            #self.selectedSongs = self.playlist
             #Only display what is in the playlist in the order of the playlist for album and artist
-        else:
-            self.selectedSongs = make_neighbors(self.songs, set(self.songs.keys()))
+        #else:
+        self.selectedSongs = make_neighbors(self.songs, set(self.songs.keys()))
             #display all
 
         self.displayedArtists = set()
@@ -610,6 +610,15 @@ class MyForm(QtGui.QMainWindow):
             else:
                 pass
 
+	for idSong in self.playlist:
+            if idSong in self.songs.keys():
+                
+                self.Playlist_Window.addTrack(self.songs[idSong])
+            else:
+                pass
+
+	
+
 #----------------------------
 #button states
 #----------------------------
@@ -617,7 +626,8 @@ class MyForm(QtGui.QMainWindow):
     def call_fetch(self):
         self.deselect()
         if self.fetch:
-        # Was un fetch mode... not anymore. Display window
+        # Was in fetch mode... not anymore. Display window
+	    self.Playlist_Window.treeWidget.clear()
             self.Widget.show()
         else:
             self.Widget.hide()
