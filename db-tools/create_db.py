@@ -9,6 +9,9 @@ import sys
 #script using system commands
 import os
 
+#thread
+from threading import Thread
+
 #script using dom
 from xml.dom.minidom import Document
 from xml.dom import minidom
@@ -25,7 +28,7 @@ def newwritexml(self, writer, indent= '', addindent= '', newl= ''):
 #minidom.Element.writexml= newwritexml
 
 #local lib
-import config
+from config import *
 
 #logs
 import logging
@@ -158,3 +161,19 @@ def update_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.d
     else:
         log.info("Database updated at " + dbLocation)
         return True
+
+def thread_update_db(directory):
+    """Launch thread of updating db not to freeze other python script"""
+    thread_that(update_xml_db, (directory,))
+
+def thread_create_db(directory):
+    """Launch thread of updating db not to freeze other python script"""
+    thread_that(creat_xml_db, (directory,))
+
+def thread_that(function, arguments):
+    """Explicit name"""
+    running = Thread(target = function, args = arguments)
+    running.setDaemon(True)
+    running.start()
+
+

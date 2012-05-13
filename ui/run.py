@@ -51,15 +51,9 @@ class MyForm(QtGui.QMainWindow):
         self.sync_server()
         self.iconChange()
         
-        #saving artists and songs displayed
-        #getting the lib from the xml file
-        if config.serverName == "localhost":
-            (self.artistsBase, self.albumsBase, self.songsBase) = get_lib()
-        else:
-            #downloading db from server
-            self.get_db()
-            (self.artistsBase, self.albumsBase, self.songsBase) = get_lib(dbFile = config.defaultDbFileImported)
-
+        #get self.songsBase, self.artistsBase, self.albumsBase
+        self.get_lib()
+        
         #self.artists,albums,songs can possibly change because of 'looking for'
         self.artists = dict(self.artistsBase)
         self.albums = dict(self.albumsBase)
@@ -150,16 +144,21 @@ class MyForm(QtGui.QMainWindow):
 #Sincing with server
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
-    def send_path(self):
-        self.server.update_db(str(self.Browser.dest_path_edit.text())) 
-	#getting the lib from the xml file
+    def get_lib(self):
+        """Getting the lib from the xml file"""
         if config.serverName == "localhost":
             (self.artistsBase, self.albumsBase, self.songsBase) = get_lib()
         else:
             #downloading db from server
-            self.get_db()
-            (self.artistsBase, self.albumsBase, self.songsBase) = get_lib(dbFile = config.defaultDbFileImported)  
-     #   print str(self.Browser.dest_path_edit.text())
+            with open(config.defaultDbLocation + config.defaultDbFileImported, 'wb') as handle:
+                handle.write(self.server.get_db().data)
+            
+            (self.artistsBase, self.albumsBase, self.songsBase) = get_lib(dbFile = config.defaultDbFileImported)
+
+
+    def send_path(self):
+        """Send db path to server"""
+        self.server.update_db(str(self.Browser.dest_path_edit.text())) 
         self.Browser.close()   
 
     def change_server(self):
@@ -179,14 +178,6 @@ class MyForm(QtGui.QMainWindow):
 #                            if self.server.exists(Z):
                             if l == 40 and i == 21:
                                 self.Server_Window.add_server(Z)
-
-
-
-    
-    def get_db(self):
-        """Import DB from server"""
-        with open(config.defaultDbLocation + config.defaultDbFileImported, 'wb') as handle:
-            handle.write(self.server.get_db().data)
 
     def sync_server(self):
         """Sincing common variables with the server"""

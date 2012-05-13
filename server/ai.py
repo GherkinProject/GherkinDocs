@@ -14,7 +14,8 @@ from threading import Thread
 #config file
 from config import *
 
-import time
+#config file
+from time import *
 from random import randint
 
 #Markov Process
@@ -40,7 +41,7 @@ class ai:
         self.repeat = False
 
         #getting library
-        (a, b, self.songs) = get_lib()
+        self.get_lib()
         
         #Markov chain
         self.Markovienne = Markovienne(config.dbMarkov)
@@ -105,11 +106,15 @@ class ai:
     def update_db(self, path):
         """Update the db according to the given path"""
         #cfgParse.set('location','DbLoc', %(path)s)
-        write_config(cfgParse, 'cfgData.cfg')
-        config.make_from_data('cfgData.cfg')
-        print path
-        create_db.update_xml_db(path)
+        updatingDb = create_db.thread_update_db(path)
 
+    def thread_update_db(self):
+        pass
+
+    def get_lib(self):
+        (a, b, self.songs) = get_lib()
+        self.lib_loaded = time()
+        
 #----------------------------
 #setters
 #----------------------------
@@ -123,7 +128,7 @@ class ai:
         #update hist and point
         self.point = point
         try:
-            self.hist.append((self.playlist[self.point], time.time()))
+            self.hist.append((self.playlist[self.point], time()))
         except:
             pass
 
@@ -243,10 +248,10 @@ class ai:
 
 def run(ai):
     while True:
-        time.sleep(config.dtCheck)
+        sleep(config.dtCheck)
         if ai.is_playing() and ai.get_position() > ai.get_duration() - config.anticipateCheck:
             while True:
-                time.sleep(config.dtCheck/10.)
+                sleep(config.dtCheck/10.)
                 if ai.get_position() == ai.get_duration():
                     ai.next()
                     break
