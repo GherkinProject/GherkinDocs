@@ -106,14 +106,14 @@ class ai:
     def update_db(self, path):
         """Update the db according to the given path"""
         #cfgParse.set('location','DbLoc', %(path)s)
-        updatingDb = create_db.thread_update_db(path)
+        create_db.thread_update_db(path, self.lastUpdate)
 
     def thread_update_db(self):
         pass
 
     def get_lib(self):
         (a, b, self.songs) = get_lib()
-        self.lib_loaded = time()
+        self.lastUpdate = time()
         
 #----------------------------
 #setters
@@ -251,7 +251,6 @@ def run(ai):
         sleep(config.dtCheck)
         if ai.is_playing() and ai.get_position() > ai.get_duration() - config.anticipateCheck:
             while True:
-                sleep(config.dtCheck/10.)
                 if ai.get_position() == ai.get_duration():
                     ai.next()
                     break

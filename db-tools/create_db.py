@@ -9,6 +9,9 @@ import sys
 #script using system commands
 import os
 
+#time lin
+from time import *
+
 #thread
 from threading import Thread
 
@@ -19,13 +22,13 @@ from xml.dom import minidom
 #patch dom to gain space
 def newwritexml(self, writer, indent= '', addindent= '', newl= ''):
     if len(self.childNodes)==1 and self.firstChild.nodeType==3:
-        writer.write(indent)
+        #writer.write(indent)
         self.oldwritexml(writer) # cancel extra whitespace
-        writer.write(newl)
+        #writer.write(newl)
     else:
         self.oldwritexml(writer, indent, addindent, newl)
-#minidom.Element.oldwritexml= minidom.Element.writexml
-#minidom.Element.writexml= newwritexml
+oldwritexml = minidom.Element.writexml
+writexml = newwritexml
 
 #local lib
 from config import *
@@ -53,7 +56,7 @@ def md5Checksum(filePath):
     return m.hexdigest()
 
 indent=""
-newl=""
+newl="\n"
 encoding="UTF-8"
 
 # Regular expression to find trailing spaces before a newline
@@ -94,7 +97,7 @@ def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defa
     #writing the result into "db.xml" (defaultpath)
     try:
         db = open(dbLocation + dbFile, "w")
-        doc.writexml(db, newl, indent)
+        doc.writexml(db, indent = indent, newl = newl)
         db.close()
     except:
         log.error("Problem writing database")
@@ -103,7 +106,9 @@ def gen_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defa
         log.info("Database created at " + dbLocation)
         return True
 
-def update_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
+
+
+def update_xml_db(directory, lastUpdate = [0], tagKept = config.defaultTagKept, fileExt = config.defaultFileExt, dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     """create xml database (location : dbLocation) with tag in tagKept, for the files in the directory with the extension in defaultFileExt"""
     if(directory == ""):
         return False
@@ -152,14 +157,26 @@ def update_xml_db(directory, tagKept = config.defaultTagKept, fileExt = config.d
         #prettyXML = doc.toprettyxml(indent, newl, encoding)
         #prettyXML= prettyXML.replace('><','>\n<')
         
+        #Removes all TEXT_NODES in parameter nodes
+        for node in root.childNodes:
+            if node.nodeType == node.TEXT_NODE:
+                node.data = ''
+            else:
+                for othernode in node.childNodes:
+                    if othernode.nodeType == othernode.TEXT_NODE:
+                        othernode.data = ''
+    
+        root.normalize()
+    
         db = open(dbLocation + dbFile, "w")
-        doc.writexml(db, newl, indent)
+        doc.writexml(db, indent = indent, newl = newl)
         db.close()
     except:
         log.error("Problem writing during updating database")
         return False
     else:
         log.info("Database updated at " + dbLocation)
+        lastUpdate[0] = time()
         return True
 
 def thread_update_db(directory):
@@ -175,5 +192,3 @@ def thread_that(function, arguments):
     running = Thread(target = function, args = arguments)
     running.setDaemon(True)
     running.start()
-
-
