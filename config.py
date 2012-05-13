@@ -90,7 +90,7 @@ class cfg_data:
 		self.config.set('pruning', 'constante', '0.001')
 
 		self.config.add_section('location')
-		self.config.set('location', 'cfg', 'cfgData.cfg')
+		self.config.set('location', 'cfg', 'config.cfg')
 		self.config.set('location', 'Markov', 'dbMarkov.ghk')
 		self.config.set('location', 'pictures', 'pictures/')
 		self.config.set('location', 'log', 'log/')
