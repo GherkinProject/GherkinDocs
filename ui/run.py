@@ -4,6 +4,8 @@ from PyQt4 import QtCore, QtGui
 from display import Ui_ProjetGherkin
 from dbbrowser import Browser_Window
 from server_window import server_window
+from playlistwidget import playlist_window
+
 
 import sys
 
@@ -34,6 +36,11 @@ class MyForm(QtGui.QMainWindow):
         self.Dialog = QtGui.QDialog()
         self.Server_Window= server_window()
         self.Server_Window.setup_server_window(self.Dialog)
+        self.Widget = QtGui.QWidget()
+        self.Playlist_Window = playlist_window()
+        self.Playlist_Window.setup_playlist_window(self.Widget)
+
+
         #self.ui.AudioTrack.mousePressEvent = mousePressEvent        
  
         #connection with the server
@@ -124,7 +131,7 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.LookingFor, QtCore.SIGNAL("textEdited(QString)"), self.call_search)
         
         #./! fetch mode
-        QtCore.QObject.connect(self.ui.LookingForNoTouch, QtCore.SIGNAL("clicked()"), self.call_fetch)
+        QtCore.QObject.connect(self.ui.LookingForNoTouch, QtCore.SIGNAL("clicked()"), self.call_fetch)  
         #QtCore.QObject.connect(self.ui.verticalSlider, QtCore.SIGNAL("valueChanged(int)"), self.call_volume )
 
         # Browser Window
@@ -292,6 +299,7 @@ class MyForm(QtGui.QMainWindow):
 
     def open_server_window(self):
         self.Dialog.show()
+
         
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
@@ -554,11 +562,11 @@ class MyForm(QtGui.QMainWindow):
     def display_tracks(self):
         """display elements of the playlist"""
         #removing elements from the album tree
-        self.ui.AudioTrack.clear()
-
+        #self.ui.AudioTrack.clear()
+        self.Playlist_Window.treeWidget.clear()
         for idSong in self.selectedSongs:
             if idSong in self.songs.keys():
-                self.ui.addTrack(self.songs[idSong])
+                self.Playlist_Window.addTrack(self.songs[idSong])
             else:
                 pass
 
@@ -608,9 +616,18 @@ class MyForm(QtGui.QMainWindow):
 
     def call_fetch(self):
         self.deselect()
+        if self.fetch:
+        # Was un fetch mode... not anymore. Display window
+            self.Widget.show()
+        else:
+            self.Widget.hide()
         self.fetch = not self.fetch
         self.display_fetch()
+
+
         self.call_all()
+
+
         self.select()
     
     def display_fetch(self):
