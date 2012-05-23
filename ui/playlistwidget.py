@@ -34,14 +34,15 @@ class playlist_window(object):
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
 
         # Creation of the tree widget that should contain the actual playlist.
-        self.treeWidget = QtGui.QTreeWidget(Form)
-        self.treeWidget.setGeometry(QtCore.QRect(10, 10, 311, 401))
-        self.treeWidget.setObjectName(_fromUtf8("treeWidget"))
+        self.Playlist = QtGui.QTreeWidget(Form)
+        self.Playlist.setGeometry(QtCore.QRect(10, 10, 311, 401))
+        self.Playlist.setObjectName(_fromUtf8("Playlist"))
+        self.Playlist.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         
-        self.treeWidget.headerItem().setText(0, QtGui.QApplication.translate("Playlist", "Titre", None, QtGui.QApplication.UnicodeUTF8))
-        self.treeWidget.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
-        self.treeWidget.headerItem().setText(1, QtGui.QApplication.translate("Playlist", "Artiste", None, QtGui.QApplication.UnicodeUTF8))
-        self.treeWidget.headerItem().setTextAlignment(1, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.Playlist.headerItem().setText(0, QtGui.QApplication.translate("Playlist", "Titre", None, QtGui.QApplication.UnicodeUTF8))
+        self.Playlist.headerItem().setTextAlignment(0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
+        self.Playlist.headerItem().setText(1, QtGui.QApplication.translate("Playlist", "Artiste", None, QtGui.QApplication.UnicodeUTF8))
+        self.Playlist.headerItem().setTextAlignment(1, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter|QtCore.Qt.AlignCenter)
        
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -63,7 +64,7 @@ class playlist_window(object):
 
         itemAT.setText(2, u['location'])
         itemAT.setText(3, u['id'])
-        self.treeWidget.addTopLevelItem(itemAT)
+        self.Playlist.addTopLevelItem(itemAT)
 
 
 if __name__ == "__main__":
