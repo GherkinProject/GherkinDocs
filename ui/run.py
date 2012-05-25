@@ -339,9 +339,10 @@ class MyForm(QtGui.QMainWindow):
         """DEselect element in the Ui and Playlist tree"""
         if self.point in range(len(self.playlist)):
             if self.playlist[self.point] in self.selectedSongs: 
-                if self.selected != None:
+                try:    
                     self.Ui.AudioTrack.topLevelItem(self.selected).setSelected(False)
-            
+                except:
+                    pass
             if not self.fetch:
                 try:
                     self.Playlist_Window.Playlist.topLevelItem(self.selected).setSelected(False)
