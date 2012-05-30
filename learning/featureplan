@@ -1,0 +1,13 @@
+lx : Loudness
+psp: PerceptualSpread
+psh: PerceptualSharpness
+ss: SpectralSlope
+sv: SpectralVariation
+sd: SpectralDecrease
+sf: SpectralFlatness
+sss: SpectralShapeStatistics
+mfcc: MFCC blockSize=512 stepSize=256 CepsNbCoeffs=11
+lpc: LPC LPCNbCoeffs=3
+obsi: OBSI
+obsir: OBSIR
+am: AmplitudeModulation blockSize=30720 stepSize=15360
