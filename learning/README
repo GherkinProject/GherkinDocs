@@ -1,0 +1,9 @@
+WARNING :
+Script will analyse ALL files in *db.xml*
+
+Method :
+generate dirs.txt :
+python list_files.py
+
+make constant.csv file :
+sh clear_data dirs.txt
