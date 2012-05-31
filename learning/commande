@@ -1,2 +1,0 @@
-#!/bin/sh
-yaafe -c featureplan -r 44100 -i dirs.txt.old -b .

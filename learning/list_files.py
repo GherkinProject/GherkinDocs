@@ -26,5 +26,3 @@ def get_dirs2file(dbLocation = config.defaultDbLocation, dbFile = config.default
         f.writelines(["%s\n" % item for item in dirs])
 
 get_dirs2file()
-print 'done'
-
