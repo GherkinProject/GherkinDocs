@@ -6,4 +6,12 @@ generate dirs.txt :
 python list_files.py
 
 make constant.csv file :
-sh clear_data dirs.txt
+sh clear_data dirs.txt # fonctionne que dalle
+
+you should rather do:
+sh commande
+
+then:
+treat_data2.py
+
+here you go !
