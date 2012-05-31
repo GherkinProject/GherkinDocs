@@ -4,7 +4,7 @@
 while read line
 do
 YAAFE_PATH=/usr/local/yaafe_extensions LD_LIBRARY_PATH=/usr/local/lib PYTHONPATH=/usr/local/python_packages yaafe.py -r 44100 -c featureplan -i "$line" -b data/
-./treat_data.py data/"$line"
-rm data/"$line".*
+python treat_data.py data"$line"
+rm data"$line".*
 done < $1
 echo "done";
