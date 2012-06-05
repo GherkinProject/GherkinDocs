@@ -13,7 +13,7 @@ import sys
 from load_db import *
 
 #configuration constant
-from config import *
+from configUi import *
 
 #time for progress bar
 import time
@@ -158,7 +158,7 @@ class MyForm(QtGui.QMainWindow):
     def get_lib(self):
         """Getting the lib from the xml file"""
         if config.serverName == "localhost":
-            (self.artistsBase, self.albumsBase, self.songsBase) = get_lib()
+            (self.artistsBase, self.albumsBase, self.songsBase) = get_lib(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile)
         else:
             #downloading db from server
             with open(config.defaultDbLocation + config.defaultDbFileImported, 'wb') as handle:
@@ -639,7 +639,7 @@ class MyForm(QtGui.QMainWindow):
         #removing elements from the playlist tree
         self.Playlist_Window.Playlist.clear()
         for idSong in self.playlist:
-            self.Playlist_Window.addTrack(self.songs[idSong])
+            self.Playlist_Window.addTrack(self.songsBase[idSong])
         self.select()
 
     def clean_button_playlist(self): 

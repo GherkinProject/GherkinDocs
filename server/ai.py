@@ -12,7 +12,7 @@ import create_db
 from threading import Thread
 
 #config file
-from config import *
+from configServer import *
 
 #config file
 from time import *

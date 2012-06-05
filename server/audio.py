@@ -9,7 +9,7 @@ import gst
 import os
 
 #config file
-from config import *
+from configServer import *
 
 #logs
 import logging

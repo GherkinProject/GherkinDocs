@@ -7,7 +7,7 @@
 import xml.etree.ElementTree as ET
 
 #local libraries
-from config import *
+from configServer import *
 
 #logs
 import logging

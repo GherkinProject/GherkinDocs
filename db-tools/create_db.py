@@ -31,7 +31,7 @@ oldwritexml = minidom.Element.writexml
 writexml = newwritexml
 
 #local lib
-from config import *
+from configServer import *
 
 #logs
 import logging
