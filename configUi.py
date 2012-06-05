@@ -17,6 +17,7 @@ class cfg_ui:
 			#server port
 			self.defaultPort = self.config.getint('server', 'port')
 			self.serverName = self.config.get('server', 'name')
+			self.defaultUnknown = self.config.get('extension', 'unk')
 
 			#time
 			self.dtDisplay = self.config.getfloat('time', 'display')
@@ -56,6 +57,9 @@ class cfg_ui:
 		self.config.add_section('server')
 		self.config.set('server', 'port', '1664')
 		self.config.set('server', 'name', 'localhost')
+
+		self.config.add_section('extension')
+		self.config.set('extension', 'unk', 'unknown')
 
 		self.config.add_section('time')
 		self.config.set('time', 'display', '0.2')
