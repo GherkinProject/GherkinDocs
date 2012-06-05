@@ -236,6 +236,12 @@ class ai:
     def stop(self):
         self.audio.stop()
 
+    def get_volume(self):
+        return self.audio.get_volume()
+
+    def set_volume(self, vol):
+        self.audio.set_volume(vol)
+
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
 #internal function and methods

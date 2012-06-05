@@ -25,10 +25,12 @@ class server:
         self.player = gst.element_factory_make("playbin2", "player")
         fakesink = gst.element_factory_make("fakesink", "fakesink")
         self.player.set_property("video-sink", fakesink)
+        
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self.on_message)
-    
+
+ 
     def load(self, path):
         """Load a song from the absolution or relative path "path" to the gstreamer audio server"""
         log.debug("Trying to load file " + path)
@@ -81,6 +83,12 @@ class server:
                 return 100
         else:
             return -1
+   
+    def set_volume(self, vol):
+        self.player.set_property("volume", vol) 
+
+    def get_volume(self):
+        return self.player.get_property("volume")
 
     def on_message(self, bus, message):
         """Print message sent by gstreamer"""
