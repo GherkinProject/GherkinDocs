@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 
 #local libraries
 from config import *
+import codecs
 
 def get_dirs(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     """Load songs dirs from xml file"""
@@ -22,9 +23,8 @@ def get_dirs(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFil
 
 def get_dirs2file(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):
     dirs = get_dirs(dbLocation, dbFile)
-    with open('dirs.txt', 'w') as f: 
-        f.writelines(["%s\n" % item.decode('unicode-escape') for item in dirs])
-
+    with codecs.open('dirs.txt', 'w', 'utf-8') as f: 
+        f.writelines(["%s\n" % item for item in dirs])
 
 
 
