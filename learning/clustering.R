@@ -25,7 +25,7 @@ points(KMEANS$centers, col = 1:nbre_cluster, pch = 8)
 
 
 
-mydata <-mydata[1:1000,]
+mydata <-mydata[1:200,]
 # Hierarchical clustering
 #mydist <- dist(mydata)
 #HCLUST <- hclust(mydist)
