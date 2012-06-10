@@ -1,5 +1,7 @@
 library(cluster)
-
+library(kernlab)
+library(rgl)
+library(FactoMineR)
 # Chargement et épuration des données.
 seal <- read.csv('constant.csv',sep='$',header=FALSE)
 mydata <- seal[,2:length(seal)]
@@ -31,10 +33,23 @@ plot(Data[,1:2], col = Algo$clustering)
 points(Algo$medoids, col = 1:nbre_cluster, pch = 8)
 return(0)
 }
+
 print('plotting KMEANS')
 plotcluster(mydata, KMEANS, nbre_cluster)
 
-#mydata <-mydata[1:1000,]
+
+
+plot3d(mydata[,1:3], col=KMEANS$cluster, size=3)
+
+
+mydata.pca <- PCA(mydata)
+
+summary(mydata.pca)
+plot3d(mydata.pca$ind$coord[,1:3], col = KMEANS$cluster)
+
+
+#z <- data.matrix(mydata)
+#SPECC <- specc(z, centers = 20)
 # Hierarchical clustering
 #mydist <- dist(mydata)
 #HCLUST <- hclust(mydist)
@@ -55,13 +70,23 @@ plotcluster(mydata, KMEANS, nbre_cluster)
 
 # Fuzzy Analysis clustering
 
-FANNY <- fanny(mydata, nbre_cluster, diss=FALSE, memb.exp = 1.2,metric = c("euclidean", "manhattan", "SqEuclidean"),stand = FALSE, iniMem.p = NULL, cluster.only = FALSE)
+#FANNY <- fanny(mydata, nbre_cluster, diss=FALSE, memb.exp = 1.2,metric = c("euclidean", "manhattan", "SqEuclidean"),stand = FALSE, iniMem.p = NULL, cluster.only = FALSE)
 
 print('plotting FANNY')
 plotclustering(mydata, FANNY, nbre_cluster)
 # Partionning around Medoids
 
-PAM <-pam(mydata, nbre_cluster, FALSE, metric = "euclidean",medoids = NULL, stand = FALSE, cluster.only = FALSE)
+#PAM <-pam(mydata, nbre_cluster, FALSE, metric = "euclidean",medoids = NULL, stand = FALSE, cluster.only = FALSE)
 
 print('plotting PAM')
 plotclustering(mydata, PAM, nbre_cluster)
+
+
+save(FANNY,file='fanny.data')
+save(PAM, file='pam.data')
+save(KMEANS, file='kmeans.data')
+
+write.table(KMEANS$cluster, file = "KMEANS.csv", sep = "$")
+
+
+
