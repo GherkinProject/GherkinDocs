@@ -118,6 +118,17 @@ En sortie de ce clustering, on souhait obtenir une nouvelle chaîne de Markov, t
 
 \chapter{Architecture en client/serveur}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=.8]{clientServeur.png}
+\caption{Relation client-serveur}
+\end{figure}
+
+L'architecture client-serveur est très souvent utilisée en informatique pour permettre de distinguer différentes parties d'un logiciel. Dans notre cas, nous avons identifié trois parties indépendantes pour le lecteur Gherkin. La première étant une couche que l'on pourrait appeler de bas niveau, la base audio. Celle-ci s'occupe de faire le lien entre Gherkin et la librairie audio du système hôte. Elle fournit alors une base solide et constante pour bâtir le coeur de notre logiciel : l'intelligence artificielle.
+
+Cet ensemble forme le serveur Gherkin, celui-ci est complètement indépendant du reste du logiciel. Et ses échanges avec ses clients se font au moyen de commandes réseau (via la librairie XMLRPC). Ceci permet donc de controler le serveur depuis une machine distante.
+
+Le client quant à lui possède deux fonctions. La première est de mettre en forme les informations envoyées par le serveur, par exemple, afficher la playlist, indiquer la position dans la chanson. La seconde, transmettre les actions effectuées par l'utilisateur au serveur qui prendra alors une décision, par exemple, passer en mode lecture aléatoire, passer la chanson, etc...
 
 \chapter{Langages et bibliothèques utilisés}
 

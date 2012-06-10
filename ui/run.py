@@ -41,55 +41,9 @@ class MyForm(QtGui.QMainWindow):
         self.Playlist_Window.setup_playlist_window(self.Widget)
 
         #self.Ui.AudioTrack.mousePressEvent = mousePressEvent        
- 
-        #connection with the server
-        self.server = xmlrpclib.ServerProxy("http://" + config.serverName + ":" + str(config.defaultPort))
-
-        #launching not in fetchmode
-        self.fetch = True
-        self.right = False 
-
-        #var linked with the server
-        self.point = -1
-        self.playlist = []
-
-        #sync with the server at the beginning
-        self.sync_server()
-        self.iconChange()
-        self.update_volume()
         
-        #get self.songsBase, self.artistsBase, self.albumsBase
-        self.get_lib()
-        
-        #self.artists,albums,songs can possibly change because of 'looking for'
-        self.artists = dict(self.artistsBase)
-        self.albums = dict(self.albumsBase)
-        self.songs = dict(self.songsBase)
-
-
-        #display artists and albums at launch, if server is playing, display current infos
-        self.date_display_name = -1
-        if self.playlist != []:
-            #displaying playlist
-            self.call_fetch()
-            self.selectedSongs = self.playlist
-            self.call_add_all()
-            if self.point != -1:
-                self.display_name()
-                if self.server.is_playing():
-                    self.run_stream()
-        else:
-            #fetching tracks
-            self.fetch = True
-            self.call_add_all()
-           
-        #update buttons state
-        self.button_fetch() 
-        self.button_repeat()
-        self.button_playlist()
-        
-        if self.server.is_playing():
-            self.run_stream()
+        #initializing server
+        self.start_ui()
         
         #signal received, functions called
 
@@ -146,6 +100,56 @@ class MyForm(QtGui.QMainWindow):
         # Server Window
         QtCore.QObject.connect(self.Dialog, QtCore.SIGNAL("accepted()"), self.change_server)
         QtCore.QObject.connect(self.Server_Window.radioButton, QtCore.SIGNAL("toggled(bool)"), self.lf_server)
+
+    def start_ui(self): 
+        #connection with the server
+        self.server = xmlrpclib.ServerProxy("http://" + config.serverName + ":" + str(config.defaultPort))
+
+        #launching not in fetchmode
+        self.fetch = True
+        self.right = False 
+
+        #var linked with the server
+        self.point = -1
+        self.playlist = []
+
+        #sync with the server at the beginning
+        self.sync_server()
+        self.iconChange()
+        self.update_volume()
+        
+        #get self.songsBase, self.artistsBase, self.albumsBase
+        self.get_lib()
+        
+        #self.artists,albums,songs can possibly change because of 'looking for'
+        self.artists = dict(self.artistsBase)
+        self.albums = dict(self.albumsBase)
+        self.songs = dict(self.songsBase)
+
+
+        #display artists and albums at launch, if server is playing, display current infos
+        self.date_display_name = -1
+        if self.playlist != []:
+            #displaying playlist
+            self.call_fetch()
+            self.selectedSongs = self.playlist
+            self.call_add_all()
+            if self.point != -1:
+                self.display_name()
+                if self.server.is_playing():
+                    self.run_stream()
+        else:
+            #fetching tracks
+            self.fetch = True
+            self.call_add_all()
+           
+        #update buttons state
+        self.button_fetch() 
+        self.button_repeat()
+        self.button_playlist()
+        
+        if self.server.is_playing():
+            self.run_stream()
     
     def call_right(self):
         self.right = True
@@ -174,8 +178,11 @@ class MyForm(QtGui.QMainWindow):
 
     def change_server(self):
         """Change the server to the one indicated in the Dialog box"""
-        U = str(self.Server_Window.lineEdit.text())
-        self.server.switch(U)
+        address = str(self.Server_Window.lineEdit.text())
+        address = address.split(":")
+        config.set('server', 'name', address[0])
+        config.set('server', 'port', address[1])
+        self.start_ui()
 
     def lf_server(self):
         """Look for new server"""
