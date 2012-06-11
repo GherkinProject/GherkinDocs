@@ -40,7 +40,6 @@ class MyForm(QtGui.QMainWindow):
         self.Playlist_Window = playlist_window()
         self.Playlist_Window.setup_playlist_window(self.Widget)
 
-
         #self.Ui.AudioTrack.mousePressEvent = mousePressEvent        
  
         #connection with the server
@@ -57,6 +56,7 @@ class MyForm(QtGui.QMainWindow):
         #sync with the server at the beginning
         self.sync_server()
         self.iconChange()
+        self.update_volume()
         
         #get self.songsBase, self.artistsBase, self.albumsBase
         self.get_lib()
@@ -133,7 +133,7 @@ class MyForm(QtGui.QMainWindow):
         
         #./! fetch mode
         QtCore.QObject.connect(self.Ui.LookingForNoTouch, QtCore.SIGNAL("clicked()"), self.call_fetch)  
-        #QtCore.QObject.connect(self.Ui.verticalSlider, QtCore.SIGNAL("valueChanged(int)"), self.call_volume )
+        QtCore.QObject.connect(self.Ui.verticalSlider, QtCore.SIGNAL("valueChanged(int)"), self.call_volume )
 
         # Playlist Window
         QtCore.QObject.connect(self.Playlist_Window.Playlist, QtCore.SIGNAL("itemActivated(QTreeWidgetItem*,int)"), self.call_play_playlist )
@@ -279,9 +279,11 @@ class MyForm(QtGui.QMainWindow):
         self.server.mode_repeat()
         self.button_repeat()
 
-    def call_volume(self, int):
-        self.server.set_volume(int * 10 / (self.Ui.verticalSlider.maximum()-self.Ui.verticalSlider.minimum()))
+    def call_volume(self, val):
+        self.server.set_volume(float(val)/100)
 
+    def update_volume(self):
+        self.Ui.verticalSlider.setValue(self.server.get_volume() * (self.Ui.verticalSlider.maximum()-self.Ui.verticalSlider.minimum()) + self.Ui.verticalSlider.minimum())
 
     def open_browser(self):
         self.Browser.setWindowModality(QtCore.Qt.ApplicationModal)

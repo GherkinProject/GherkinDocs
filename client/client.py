@@ -3,7 +3,7 @@
 
 #config constant
 
-from config import *
+from configServer import *
 
 #script with arguments
 import sys
@@ -58,7 +58,12 @@ class client:
 
         elif cmd in "playlist":
             print self.server.get_playlist()
-        
+
+        elif cmd in "volume":
+            try:
+                self.server.set_volume(float(sys.argv[2]))
+            except:
+                print self.server.get_volume()
         else:
             print "Unknown command"
 c = client()
