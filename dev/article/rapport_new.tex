@@ -4,10 +4,12 @@
 \usepackage[T1]{fontenc}
 \usepackage[francais]{babel}
 \usepackage{graphicx}
+\usepackage{subfig}
 \usepackage{lmodern}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{mathrsfs}
+\usepackage{float}
 \usepackage{geometry}
 \geometry{scale=0.8, nohead}
 
@@ -90,7 +92,15 @@ L'algorithme K-means consiste à dire qu'un morceau de musique appartient à un 
 
 Concrètement en projetant le résultat obtenu dans les deux premières dimensions, on obtient un graphique de ce type. Chaque rond y représente un morceau de musique, chaque étoile un cluster qui donne sa couleur à son groupe.
 
-ATTENTION PENSER A INSERER L'IMAGE PROPREMENT DITE
+
+\begin{figure}[H]
+\centering
+\subfloat[Bibliothèque en 2D]{\includegraphics[width=8cm]{KMEANSBiblio2D.png}}
+\subfloat[PCA 3D \#1]{\includegraphics[width=8cm]{KMEANS-PCA-3D1.png}}\\
+\subfloat[PCA 3D \#2]{\includegraphics[width=8cm]{KMEANS-PCA-3D2.png}}
+\subfloat[PCA 3D \#3]{\includegraphics[width=8cm]{KMEANS-PCA-3D3.png}}
+\caption{Projection des données en trois dimensiosn après clustering}
+\end{figure}
 
 \subsection{Fanny (Fuzzy Analysis clustering)}
 
@@ -125,28 +135,94 @@ Le client quant à lui possède deux fonctions. La première est de mettre en fo
 \section{Langages de programmation}
 \subsection{Python}
 
+Python est un langage de programmation multi-paradigme. Il favorise la programmation impérative structurée, et orientée objet. Il est doté d'un typage dynamique fort, d'une gestion automatique de la mémoire par ramasse-miettes et d'un système de gestion d'exceptions ; il est ainsi similaire à Perl, Ruby, Scheme, Smalltalk et Tcl. (Source : \emph{Wikipedia})
+
+
+Il est utilisé très majoritairement dans le code de Gherkin, puisque c'est lui qui réalise toutes les interfaces entre les différentes librairies. Un des points faibles de Python est qu'étant un langage interprété, il est plus lent qu'un langage compilé, mais sa syntaxe et sa souplesse rend la programmation bien plus agréable et plus simple à relire.
+
+
 \subsection{Bash}
+Bash, acronyme de Bourne-again shell, est le shell du projet GNU. Son nom est un jeu de mots sur le nom du shell historique d'Unix, le Bourne shell. 
+
+Basé sur le Bourne shell, Bash lui apporte de nombreuses améliorations, provenant notamment du Korn shell et du C shell. Bash est un logiciel libre publié sous GNU GPL. Il est l'interprète par défaut sur de nombreux Unix libres, notamment sur les systèmes GNU/Linux. C'est aussi le shell par défaut de Mac OS X et il a été porté sous Windows par le projet Cygwin. (source : \emph{Wikipedia})
+
+Ce langage est utilisé afin de réaliser des automatismes d'exécution. Expliquons-nous. Pour pouvoir utiliser Yaafe convenablement, sans avoir 6 Go de données temporaires, on utilise un script en Bash qui permet de traiter les données pour un morceau de musique, de les stocker puis de supprimer directement les fichiers temporaires, ce qui permet d'éviter les crashs parce que trop de mémoires dures ont été utilisées.
 
 \subsection{XML}
 
+Le XML (Extensible Markup Language, « langage de balisage extensible ») est un langage informatique de balisage générique qui dérive du SGML. Cette syntaxe est dite extensible car elle permet de définir différents espaces de noms, c'est-à-dire des langages avec chacun leur vocabulaire et leur grammaire, comme XHTML, XSLT, RSS… Elle est reconnaissable par son usage des chevrons (< >) encadrant les balises. L'objectif initial est de faciliter l'échange automatisé de contenus complexes (arbres, texte riche…) entre systèmes d'informations hétérogènes (interopérabilité). Avec ses outils et langages associés une application XML respecte généralement certains principes :
+\begin{itemize}
+\item    la structure d'un document XML est définie et validable par un schéma,
+\item    un document XML est entièrement transformable dans un autre document XML.
+\end{itemize}
+(source : \emph{Wikipedia})
+
+
+Le langage XML est utilisé pour le stockage de la base de données audio (db.xml). 
+
 \subsection{R}
+
+R est un langage de programmation et un environnement mathématique utilisés pour le traitement de données et l'analyse statistique. C'est un projet GNU fondé sur le langage S et sur l'environnement développé dans les laboratoires Bell par John Chambers et ses collègues. Depuis plusieurs années, deux nouvelles versions apparaissent au printemps et à l'automne. R dispose de nombreuses fonctions graphiques.
+
+R est considéré par ses créateurs comme étant une exécution de S, avec la sémantique dérivée du langage Scheme. R est un logiciel libre distribué selon les termes de la licence GNU GPL et est disponible sous GNU/Linux, FreeBSD, NetBSD, OpenBSD, Mac OS X et Windows. R représente aujourd'hui l'un des objectifs techniques majeurs de la communauté hacker GNU. (Source :\emph{Wikipedia})
+
+
+
+R est utilisé afin de réaliser l'apprentissage automatique sur les données générées par Yaafe. Il permet en outre l'affichage en 3D des données, la couleur dépendant du cluster auquel ils ont été attribués.
 
 \section{Bibliothèques}
 
 \subsection{GStreamer}
 
+GStreamer est une bibliothèque logicielle de gestion globale du son et de l'image (appelée aussi framework multimédia) écrite en C pour systèmes UNIX (GNU/Linux, BSD, etc.) initialement développé pour GNU/Linux. Il a dans un premier temps (sa première version publique date du 31 octobre 1999) été adopté par le projet GNOME dont il est devenu un pilier (Totem, Rhythmbox et PiTiVi, par exemple, en tirent largement partie), puis a continué son évolution et de plus en plus d'applications l'utilisent.
+
+(source : \emph{Wikipédia})
+
+Pour des soucis de portabilité, gstreamer ne fonctionne actuellement que sous plate-forme UNIX. Néanmoins, il devrait progressivement pouvoir être adaptable et utilisable sous Windows.
+
 \subsection{Yaafe}
 
+Yaafe est une bibliothèque créée au sein de Telecom Paristech et qui permet l'extraction de caractéristiques spécifiques sonores à un morceau de musique. Nous utilisons cette bibliothèque afin de récolter des données sur l'ensemble des morceaux de musique de la bibliothèque afin de réaliser ensuite de l'apprentissage automatique dessus.
+
+Yaafe permet :
+\begin{itemize}
+\item    de récolter une grande variété de caractéristiques spécifiques audio, ainsi que des transformations et des intégrations sur une fenêtre temporelle. 
+\item    permet de lire le format WAV, OGG, MP3.
+\item    permet d'écrire en sortie des fichiers CSV ou HDF5 regroupant les données calculées.
+\item    Interface en Python ou en Matlab.
+\end{itemize}
+
+
 \subsection{XMLRPC}
+XML-RPC est un protocole RPC (Remote procedure call), une spécification simple et un ensemble de codes qui permettent à des processus s'exécutant dans des environnements différents de faire des appels de méthodes à travers un réseau.
+
+XML-RPC permet d'appeler une fonction sur un serveur distant à partir de n'importe quel système (Windows, Mac OS X, GNU/Linux) et avec n'importe quel langage de programmation. Le serveur est lui même sur n'importe quel système et est programmé dans n'importe quel langage.
+
+Cela permet de fournir un Service web utilisable par tout le monde sans restriction de système ou de langage.
+
+Les processus d'invocation à distance utilisent le protocole HTTP pour le transfert des données et la norme XML pour la structuration des données.
+
+XML-RPC est conçu pour permettre à des structures de données complexes d'être transmises, exécutées et renvoyées très facilement.
+(source : \emph{Wikipédia})
+
 
 \subsection{ConfigParser}
 
-\subsection{Cluster (R)}
+
+
 
 \chapter{Historique de Gherkin}
 
 
 \chapter{Les grandes lignes du code}
 % DOXYGENE
+
+
+
+\chapter*{Bibliographie}
+
+YAAFE, an Easy to Use and Efficient Audio Feature Extraction Software, B.Mathieu, S.Essid, T.Fillon, J.Prado, G.Richard, proceedings of the 11th ISMIR conference, Utrecht, Netherlands, 2010.
+
+
 
 \end{document}
