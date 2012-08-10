@@ -5,8 +5,6 @@ This is the machine learning section to analyse audio file loaded by your server
 ======= Requirements ==========
 ===============================
 
-Before 
-
 1. R
 with the packages:
  - cluster
