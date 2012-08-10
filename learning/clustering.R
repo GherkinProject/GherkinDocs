@@ -8,8 +8,7 @@ mydata <- seal[,2:length(seal)]
 g <- length(mydata[,1])
 mydata <- mydata[1:g-1,]
 
-
-
+system("read r") 
 
 nbre_cluster <- 20
 # Normalisation des données
@@ -17,6 +16,7 @@ for(i in 1:length(mydata))
     mydata[,i]=mydata[,i]/max(mydata[,i])
  mydata[,1]=mydata[,1]^(1/17)
 
+print(mydata)
 
 #Clustering classique avec les k-means.
 KMEANS <- kmeans(mydata, nbre_cluster)

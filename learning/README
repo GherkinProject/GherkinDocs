@@ -1,2 +1,55 @@
-Just execute this command and shut your mouth
+Welcome to Gherkin Project.
+This is the machine learning section to analyse audio file loaded by your server.
+
+===============================
+======= Requirements ==========
+===============================
+
+Before 
+
+1. R
+with the packages:
+ - cluster
+ - kernlab
+ - rgl
+ - FactoMineR
+ - more?
+Reminder: to install R packages
+> install.packages('myPackageName')
+
+2. Python (>= 2.5)
+
+3. Gherkin Server
+
+4. ccmake
+sudo apt-get install ccmake
+
+5. Yaafe
+    
+- download the archive: http://sourceforge.net/projects/yaafe/files/yaafe-v0.64.tgz/download
+- extract the archive
+- make sure you have installed all the dependencies listed in the README (more help on that later)
+- run the following command into the extracted archive folder:
+$ make build
+$ cd build
+$ ccmake ..
+press c
+GO down to
+WITH_FFTW3 and make it ON (press space)
+WITH_MPG123 and make it ON (press space)
+press g
+$ make [-j{numberOfCoresOfYourMachine}]
+$ sudo make install
+ - now yaafe is installed to your machine, we just need to make it accessible to the user
+ - sudo chmod 766 /usr/local/bin/yaafe.py [We need to lower permissions here]
+
+===============================
+======= Direct use ============
+===============================
+
+Loading the constant.csv file from the songs in your server database.
 ./clear_data featureplan
+
+Analysing the data
+R
+> source('clustering.R')

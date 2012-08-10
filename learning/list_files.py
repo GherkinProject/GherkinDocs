@@ -7,7 +7,7 @@
 import xml.etree.ElementTree as ET
 
 #local libraries
-from config import *
+from configServer import *
 import codecs
 
 def get_dirs(dbLocation = config.defaultDbLocation, dbFile = config.defaultDbFile):

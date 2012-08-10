@@ -1,0 +1,1 @@
+/usr/local/ghk-server/configServer.py
