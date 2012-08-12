@@ -2,15 +2,19 @@ library(cluster)
 library(kernlab)
 library(rgl)
 library(FactoMineR)
+
 # Chargement et épuration des données.
 seal <- read.csv('constant.csv',sep='$',header=FALSE)
 mydata <- seal[,2:length(seal)]
 g <- length(mydata[,1])
 mydata <- mydata[1:g-1,]
 
+# Attente
+print("Ready to start?")
 system("read r") 
 
 nbre_cluster <- 20
+
 # Normalisation des données
 for(i in 1:length(mydata))
     mydata[,i]=mydata[,i]/max(mydata[,i])
@@ -18,8 +22,7 @@ for(i in 1:length(mydata))
 
 print(mydata)
 
-#Clustering classique avec les k-means.
-KMEANS <- kmeans(mydata, nbre_cluster)
+# -------- Useful functions
 
 plotcluster <-function(Data, Algo,nbre_cluster){
 
@@ -34,18 +37,48 @@ points(Algo$medoids, col = 1:nbre_cluster, pch = 8)
 return(0)
 }
 
-print('plotting KMEANS')
-plotcluster(mydata, KMEANS, nbre_cluster)
+# -------- Choix du clustering
+algoKmeans = F
+algoFanny = T
+algoPam = F
 
+#Clustering classique avec les k-means.
+if(algoKmeans) {
+    KMEANS <- kmeans(mydata, nbre_cluster)
+    print('plotting KMEANS')
+    plotcluster(mydata, KMEANS, nbre_cluster)
+    plot3d(mydata[,1:3], col=KMEANS$cluster, size=3)
+    save(KMEANS, file='kmeans.data')
+    write.table(KMEANS$cluster, file = "KMEANS.csv", sep = "$")
+}
 
+# Fuzzy Analysis clustering
+if(algoFanny) {
+    FANNY <- fanny(mydata, nbre_cluster, diss=FALSE, memb.exp = 1.2,metric = c("euclidean", "manhattan", "SqEuclidean"),stand = FALSE, iniMem.p = NULL, cluster.only = FALSE)
 
-plot3d(mydata[,1:3], col=KMEANS$cluster, size=3)
+    print('plotting FANNY')
+    plotclustering(mydata, FANNY, nbre_cluster)
+    plotcluster(mydata, FANNY, nbre_cluster)
+    plot3d(mydata[,1:3], col=FANNY$cluster, size=3)
+    save(FANNY,file='fanny.data')
+}
 
+# Partionning around Medoids
+if(algoPam) {
+    PAM <-pam(mydata, nbre_cluster, FALSE, metric = "euclidean",medoids = NULL, stand = FALSE, cluster.only = FALSE)
+
+    print('plotting PAM')
+    plotclustering(mydata, PAM, nbre_cluster)
+    plotcluster(mydata, PAM, nbre_cluster)
+    plot3d(mydata[,1:3], col=PAM$cluster, size=3)
+    save(PAM, file='pam.data')
+}
+
+# ACP of constants
 
 mydata.pca <- PCA(mydata)
-
 summary(mydata.pca)
-plot3d(mydata.pca$ind$coord[,1:3], col = KMEANS$cluster)
+plot3d(mydata.pca$ind$coord[,1:3], col = FANNY$cluster)
 
 
 #z <- data.matrix(mydata)
@@ -67,26 +100,3 @@ plot3d(mydata.pca$ind$coord[,1:3], col = KMEANS$cluster)
 
 # Divisive analysis clustering
 #DIANA<-diana(mydata, diss=FALSE, metric = "euclidean", stand = FALSE)
-
-# Fuzzy Analysis clustering
-
-#FANNY <- fanny(mydata, nbre_cluster, diss=FALSE, memb.exp = 1.2,metric = c("euclidean", "manhattan", "SqEuclidean"),stand = FALSE, iniMem.p = NULL, cluster.only = FALSE)
-
-print('plotting FANNY')
-plotclustering(mydata, FANNY, nbre_cluster)
-# Partionning around Medoids
-
-#PAM <-pam(mydata, nbre_cluster, FALSE, metric = "euclidean",medoids = NULL, stand = FALSE, cluster.only = FALSE)
-
-print('plotting PAM')
-plotclustering(mydata, PAM, nbre_cluster)
-
-
-save(FANNY,file='fanny.data')
-save(PAM, file='pam.data')
-save(KMEANS, file='kmeans.data')
-
-write.table(KMEANS$cluster, file = "KMEANS.csv", sep = "$")
-
-
-
