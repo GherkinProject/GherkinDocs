@@ -45,9 +45,14 @@ $ sudo make install
 ======= Direct use ============
 ===============================
 
-Loading the constant.csv file from the songs in your server database.
-./clear_data featureplan
+1. Loading the constant.csv file from the songs in your server database.
+./clear_data (-s) -f featureplan
+the '-s' option remove the last constants loaded.
 
-Analysing the data
+2. Ensure that the data were loaded correctly in constant.csv 
+
+3. Analysing the data
 R
 > source('clustering.R')
+
+

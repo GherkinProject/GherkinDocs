@@ -1,11 +1,40 @@
 #!/bin/sh
+
+#loading arguments
+if ! options=$(getopt -o f:s -l feature:,scratch -- "$@")
+then
+    # something went wrong, getopt will put out an error message for us
+    exit 1
+fi
+set -- $options
+
+
+featureFile=none
+while [ $# -gt 0 ]
+do
+    echo $1
+    case $1 in
+    (-f|--feature) featureFile=`echo "$2" | sed "s/'//g"`; shift;;
+    (-s|--scratch) rm -f constant.csv;;
+    (--) shift; break;;
+    (-*) echo "$0: error - unrecognized option $1" 1>&2; exit 1;;
+    (*) break;;
+    esac
+    shift
+done
+
+# create the source location file dirs.txt (all what is in db.xml)
 python list_files.py
+
+
+# processing audio files one by one
+mkdir -p data
 while read line
 do
 echo $line > tmp
 cat tmp
-YAAFE_PATH=/usr/local/yaafe_extensions LD_LIBRARY_PATH=/usr/local/lib PYTHONPATH=/usr/local/python_packages yaafe.py -c $1 -r 44100 -i tmp -b ./data
-python treat_data.py tmp $1
+YAAFE_PATH=/usr/local/yaafe_extensions LD_LIBRARY_PATH=/usr/local/lib PYTHONPATH=/usr/local/python_packages yaafe.py -c $featureFile -r 44100 -i tmp -b ./data
+python treat_data.py tmp $featureFile
 rm -R ./data/*
 rm tmp
 done < dirs.txt
