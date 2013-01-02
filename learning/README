@@ -1,9 +1,7 @@
 Welcome to Gherkin Project.
 This is the machine learning section to analyse audio file loaded by your server.
 
-===============================
-======= Requirements ==========
-===============================
+### Requirements
 
 1. R
 with the packages:
@@ -13,14 +11,16 @@ with the packages:
  - FactoMineR
  - more?
 Reminder: to install R packages
-> install.packages('myPackageName')
+  
+  > install.packages('myPackageName')
 
 2. Python (>= 2.5)
 
 3. Gherkin Server
 
 4. ccmake
-sudo apt-get install ccmake
+
+  sudo apt-get install ccmake
 
 5. Yaafe
     
@@ -28,31 +28,36 @@ sudo apt-get install ccmake
 - extract the archive
 - make sure you have installed all the dependencies listed in the README (more help on that later)
 - run the following command into the extracted archive folder:
-$ make build
-$ cd build
-$ ccmake ..
+
+  $ make build
+  $ cd build
+  $ ccmake ..
+
 press c
 GO down to
 WITH_FFTW3 and make it ON (press space)
 WITH_MPG123 and make it ON (press space)
 press g
-$ make [-j{numberOfCoresOfYourMachine}]
-$ sudo make install
- - now yaafe is installed to your machine, we just need to make it accessible to the user
+
+  $ make [-j{numberOfCoresOfYourMachine}]
+  $ sudo make install
+
+- now yaafe is installed to your machine, we just need to make it accessible to the user
  - sudo chmod 766 /usr/local/bin/yaafe.py [We need to lower permissions here]
 
-===============================
-======= Direct use ============
-===============================
+
+### Direct use
+
 
 1. Loading the constant.csv file from the songs in your server database.
-./clear_data (-s) -f featureplan
+
+  ./clear_data (-s) -f featureplan
+
 the '-s' option remove the last constants loaded.
 
 2. Ensure that the data were loaded correctly in constant.csv 
 
 3. Analysing the data
-R
-> source('clustering.R')
+  > source('clustering.R')
 
 
